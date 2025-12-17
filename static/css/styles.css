@@ -1,45 +1,43 @@
 body {
-    font-family: Arial;
-    background: #0f0f0f;
-    color: white;
-    margin: 0;
+  background:#0b0b0b;
+  color:white;
+  font-family:Inter,Arial;
 }
 
 nav {
-    background: #111;
-    padding: 10px;
+  display:flex;
+  gap:15px;
+  background:#111;
+  padding:15px;
 }
 
 nav a {
-    color: white;
-    margin-right: 15px;
-    text-decoration: none;
+  color:#fff;
+  text-decoration:none;
 }
 
 .container {
-    padding: 20px;
+  padding:20px;
 }
 
-.center {
-    text-align: center;
-    margin-top: 100px;
+.post {
+  background:#1a1a1a;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:10px;
 }
 
-input, textarea, button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
+textarea,input,button {
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  background:#222;
+  color:white;
+  border:none;
+  border-radius:6px;
 }
 
-textarea {
-    height: 100px;
-}
-
-.grid a {
-    display: block;
-    background: #222;
-    padding: 15px;
-    margin: 10px 0;
-    text-decoration: none;
-    color: white;
+button {
+  background:#ff0050;
+  cursor:pointer;
 }
