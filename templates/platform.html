@@ -1,15 +1,10 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="platform-header" style="border-color: {{ data.color }}">
-    <h1>{{ data.name }}</h1>
-    <p>{{ data.description }}</p>
-</div>
+<h2>Platforms</h2>
 
-<div class="cards">
-    <div class="card">🔧 Tools (coming)</div>
-    <div class="card">💡 Saved Ideas</div>
-    <div class="card">👥 Community</div>
-    <div class="card">👤 Profile</div>
+<div class="platforms">
+    <a href="/tiktok">TikTok Tools</a>
+    <a href="/instagram">Instagram Tools</a>
+    <a href="/youtube">YouTube Tools</a>
 </div>
 {% endblock %}
