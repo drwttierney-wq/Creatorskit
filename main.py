@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template
 
 app = Flask(__name__)
@@ -18,8 +19,6 @@ def instagram():
 def youtube():
     return render_template("youtube.html")
 
-import os
-
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))
+    port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
