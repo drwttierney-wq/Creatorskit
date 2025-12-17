@@ -55,4 +55,5 @@ def platform_page(platform):
     )
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+    app.run(host="0.0.0.0", port=8080)from flask import request, redirect, url_for, session
+from database import init_db, get_db
