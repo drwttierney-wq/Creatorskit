@@ -1,16 +1,36 @@
-def generate_hook(niche):
-    return f"Stop scrolling if you're into {niche}..."
+import os
+import requests
 
-def generate_hashtags(niche):
-    return f"#{niche} #viral #fyp #growth"
+API_KEY = os.getenv("OPENAI_API_KEY")
 
-def generate_plan(niche):
-    return [
-        "Day 1: Hook video",
-        "Day 2: Story post",
-        "Day 3: Problem → Solution",
-        "Day 4: Behind the scenes",
-        "Day 5: Viral remix",
-        "Day 6: Call to action",
-        "Day 7: Results post"
-    ]
+def ai(prompt):
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "model": "gpt-3.5-turbo",
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0.8
+    }
+
+    r = requests.post(
+        "https://api.openai.com/v1/chat/completions",
+        headers=headers,
+        json=data
+    )
+
+    return r.json()["choices"][0]["message"]["content"]
+
+def viral_hooks(niche):
+    return ai(f"Generate 5 viral TikTok hooks for niche: {niche}")
+
+def captions(niche):
+    return ai(f"Generate 5 high converting captions for {niche}")
+
+def hashtags(niche):
+    return ai(f"Generate viral hashtags for {niche}")
+
+def content_plan(niche):
+    return ai(f"Create a 7-day viral content plan for {niche}")
