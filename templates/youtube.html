@@ -1,5 +1,3 @@
-{% extends "base.html" %}
-{% block content %}
-<h2>YouTube Toolkit</h2>
-<p>Titles, thumbnails, descriptions, analytics.</p>
-{% endblock %}
+@app.route("/youtube")
+def youtube():
+    return render_template("youtube.html")
