@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Welcome {{ session.username }}</h2>
+<p>Select a platform to use tools and save ideas.</p>
+
+<div class="grid">
+    <a href="/platform/tiktok">TikTok Tools</a>
+    <a href="/platform/instagram">Instagram Tools</a>
+    <a href="/platform/youtube">YouTube Tools</a>
+    <a href="/platform/twitter">X Tools</a>
+</div>
+
+{% endblock %}
