@@ -1,29 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>TikTok Tools</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
-
-<nav class="navbar">
-  <a href="/">← Back</a>
-  <h1>TikTok Toolkit</h1>
-</nav>
-
-<div class="container">
-  <h2>Go Viral on TikTok</h2>
-
-  <form>
-    <label>Video Topic</label>
-    <input type="text" placeholder="What is your video about?">
-
-    <label>Niche</label>
-    <input type="text" placeholder="Fitness, money, motivation…">
-
-    <button type="submit">Generate Viral Caption 🚀</button>
-  </form>
-</div>
-
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<h2>TikTok Toolkit</h2>
+<p>Viral ideas, hooks, captions, downloads.</p>
+{% endblock %}
