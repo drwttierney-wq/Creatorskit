@@ -1,7 +1,8 @@
 from flask import request, redirect, url_for, session
 from database import init_db, get_dbfrom flask import Flask, render_template, abort
 
-app = Flask(__name__)
+app = Flask(__name__)app.secret_key = "change_this_later"
+init_db()
 
 PLATFORMS = {
     "tiktok": {
