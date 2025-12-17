@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, session
 import sqlite3
+from ai_engine import viral_hooks, captions, hashtags, content_plan
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
@@ -26,10 +27,6 @@ def init():
         public INTEGER DEFAULT 0
     )""")
 
-    c.execute("""CREATE TABLE IF NOT EXISTS follows (
-        follower INTEGER,
-        following INTEGER
-    )""")
     c.commit()
     c.close()
 
@@ -51,8 +48,10 @@ def register():
 @app.route("/login", methods=["POST","GET"])
 def login():
     if request.method == "POST":
-        user = db().execute("SELECT * FROM users WHERE username=? AND password=?",
-        (request.form["username"], request.form["password"])).fetchone()
+        user = db().execute(
+            "SELECT * FROM users WHERE username=? AND password=?",
+            (request.form["username"], request.form["password"])
+        ).fetchone()
         if user:
             session["id"] = user["id"]
             session["username"] = user["username"]
@@ -68,29 +67,22 @@ def dashboard():
 def platform(name):
     if "id" not in session: return redirect("/login")
 
+    ai_result = None
+
     if request.method == "POST":
-        db().execute(
-            "INSERT INTO ideas (user_id,platform,content,public) VALUES (?,?,?,1)",
-            (session["id"], name, request.form["content"])
-        )
-        db().commit()
+        niche = request.form["niche"]
+        tool = request.form["tool"]
 
-    ideas = db().execute(
-        "SELECT * FROM ideas WHERE user_id=? AND platform=?",
-        (session["id"], name)
-    ).fetchall()
+        if tool == "hooks":
+            ai_result = viral_hooks(niche)
+        elif tool == "captions":
+            ai_result = captions(niche)
+        elif tool == "hashtags":
+            ai_result = hashtags(niche)
+        elif tool == "plan":
+            ai_result = content_plan(niche)
 
-    return render_template("platform.html", platform=name, ideas=ideas)
-
-@app.route("/community")
-def community():
-    posts = db().execute("""
-        SELECT ideas.content, ideas.platform, users.username
-        FROM ideas JOIN users ON users.id = ideas.user_id
-        WHERE ideas.public = 1
-        ORDER BY ideas.id DESC
-    """).fetchall()
-    return render_template("community.html", posts=posts)
+    return render_template("platform.html", platform=name, result=ai_result)
 
 @app.route("/logout")
 def logout():
