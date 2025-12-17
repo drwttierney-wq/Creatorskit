@@ -1,29 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>YouTube Tools</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
-
-<nav class="navbar">
-  <a href="/">← Back</a>
-  <h1>YouTube Toolkit</h1>
-</nav>
-
-<div class="container">
-  <h2>Win on YouTube</h2>
-
-  <form>
-    <label>Video Idea</label>
-    <input type="text">
-
-    <label>Channel Type</label>
-    <input type="text">
-
-    <button>Generate Title 🎬</button>
-  </form>
-</div>
-
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<h2>YouTube Toolkit</h2>
+<p>Titles, thumbnails, descriptions, analytics.</p>
+{% endblock %}
