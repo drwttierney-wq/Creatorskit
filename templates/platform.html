@@ -1,10 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Platforms</h2>
 
-<div class="platforms">
-    <a href="/tiktok">TikTok Tools</a>
-    <a href="/instagram">Instagram Tools</a>
-    <a href="/youtube">YouTube Tools</a>
-</div>
+<h2>{{ platform|capitalize }} Toolkit</h2>
+
+<form method="post">
+    <textarea name="content" placeholder="Add idea, hook, caption, script..."></textarea>
+    <button>Save</button>
+</form>
+
+<h3>Saved Ideas</h3>
+<ul>
+{% for idea in ideas %}
+    <li>{{ idea.content }}</li>
+{% endfor %}
+</ul>
+
 {% endblock %}
