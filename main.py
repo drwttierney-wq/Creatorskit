@@ -49,7 +49,40 @@ def home():
 @app.route("/platform/<platform>")
 def platform_page(platform):
     if platform not in PLATFORMS:
-        abort(404)
+        abort(404)@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        db = get_db()
+        user = db.execute(
+            "SELECT * FROM users WHERE username = ? AND password = ?",
+            (request.form["username"], request.form["password"])
+        ).fetchone()
+        if user:
+            session["user_id"] = user["id"]
+            return redirect(url_for("home"))
+    return render_template("login.html")
+
+
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        db = get_db()
+        try:
+            db.execute(
+                "INSERT INTO users (username, password) VALUES (?, ?)",
+                (request.form["username"], request.form["password"])
+            )
+            db.commit()
+            return redirect(url_for("login"))
+        except:
+            pass
+    return render_template("signup.html")
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("home"))
     return render_template(
         "platform.html",
         platform=platform,
