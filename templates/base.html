@@ -1,25 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Creator Platform</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>Platform Engine</title>
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="/platform/tiktok">TikTok</a>
-    <a href="/platform/instagram">Instagram</a>
-    <a href="/platform/youtube">YouTube</a>
-    <a href="/platform/twitter">X</a>
-    <a href="/platform/linkedin">LinkedIn</a>
-    <a href="/platform/snapchat">Snapchat</a>
-    <a href="/platform/twitch">Twitch</a>
-</nav><a href="/login">Login</a>
-<a href="/signup">Sign up</a>
-<a href="/logout">Logout</a>
+<nav>
+    <a href="/">Home</a>
+    <a href="/platform">Platforms</a>
+    <a href="/profile">Profile</a>
+    <a href="/logout">Logout</a>
+</nav>
 
-<div class="content">
+<div class="container">
     {% block content %}{% endblock %}
 </div>
 
