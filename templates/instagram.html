@@ -1,29 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Instagram Tools</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
-
-<nav class="navbar">
-  <a href="/">← Back</a>
-  <h1>Instagram Toolkit</h1>
-</nav>
-
-<div class="container">
-  <h2>Grow on Instagram</h2>
-
-  <form>
-    <label>Post Topic</label>
-    <input type="text">
-
-    <label>Audience</label>
-    <input type="text">
-
-    <button>Generate Caption ✨</button>
-  </form>
-</div>
-
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<h2>Instagram Toolkit</h2>
+<p>Reels, captions, hashtag tools.</p>
+{% endblock %}
