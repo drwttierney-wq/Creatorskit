@@ -1,46 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>{{ platform|capitalize }} Toolkit</h2>
-
-<div class="tool-box">
+<h2>{{ platform|capitalize }} AI Toolkit</h2>
 
 <form method="post">
-    <textarea name="content" placeholder="Paste idea, hook, caption, script..."></textarea>
-    <button>Save Idea</button>
+    <input name="niche" placeholder="Your niche (e.g. fitness, dropshipping)" required>
+
+    <select name="tool">
+        <option value="hooks">Viral Hooks</option>
+        <option value="captions">Captions</option>
+        <option value="hashtags">Hashtags</option>
+        <option value="plan">7-Day Content Plan</option>
+    </select>
+
+    <button>Generate 🚀</button>
 </form>
 
-<div class="tools">
-    <h3>Quick Tools</h3>
-
-    {% if platform == "tiktok" %}
-        <ul>
-            <li>🔥 Viral Hook Generator</li>
-            <li># Hashtag Pack Builder</li>
-            <li>📆 7-Day Content Planner</li>
-            <li>🎬 Video Script Formatter</li>
-        </ul>
-    {% elif platform == "instagram" %}
-        <ul>
-            <li>📸 Reel Caption Generator</li>
-            <li># Hashtag Groups</li>
-            <li>🧠 Bio Optimizer</li>
-        </ul>
-    {% elif platform == "youtube" %}
-        <ul>
-            <li>🎥 Title + Thumbnail Ideas</li>
-            <li>🕒 Retention Hooks</li>
-        </ul>
-    {% endif %}
+{% if result %}
+<div class="post">
+    <pre>{{ result }}</pre>
 </div>
-
-<h3>Saved Ideas</h3>
-<ul class="idea-list">
-{% for idea in ideas %}
-    <li>{{ idea.content }}</li>
-{% endfor %}
-</ul>
-
-</div>
+{% endif %}
 
 {% endblock %}
