@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Community Viral Ideas</h2>
+
+{% for post in posts %}
+<div class="post">
+    <strong>@{{ post.username }}</strong>
+    <small>{{ post.platform }}</small>
+    <p>{{ post.content }}</p>
+</div>
+{% endfor %}
+
+{% endblock %}
