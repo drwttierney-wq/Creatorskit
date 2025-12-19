@@ -1,31 +1,10 @@
-{% extends "base.html" %}
-
+{% extends 'base.html' %}
 {% block content %}
-<h2>Welcome to CreatorsKit 🚀</h2>
-
-<p>
-Everything creators need — tools, ideas, AI, and community — all in one place.
-</p>
-
-<div class="dashboard">
-  <div class="card">
-    <a href="/youtube">📺 YouTube Tools</a>
-    <p>Titles, descriptions, growth tools</p>
-  </div>
-
-  <div class="card">
-    <a href="/tiktok">🎵 TikTok Tools</a>
-    <p>Hooks, captions, viral ideas</p>
-  </div>
-
-  <div class="card">
-    <a href="/instagram">📸 Instagram Tools</a>
-    <p>Reels, captions, engagement</p>
-  </div>
-
-  <div class="card">
-    <a href="/community">💬 Community</a>
-    <p>Share ideas & viral strategies</p>
-  </div>
+<div class="text-center py-20">
+    <h1 class="text-5xl font-bold mb-6 bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+        Creators Kit
+    </h1>
+    <p class="text-xl mb-10 text-gray-300">The ultimate all-in-one toolkit for every social platform.</p>
+    <a href="/register" class="bg-pink-600 hover:bg-pink-700 px-8 py-4 rounded-xl text-xl font-bold">Get Started Free</a>
 </div>
 {% endblock %}
