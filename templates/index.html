@@ -1,12 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>CreatorsKit</title>
-</head>
-<body>
-  <h1>CreatorsKit</h1>
-  <p>All-in-one creator platform</p>
+{% extends "base.html" %}
 
-  <a href="/youtube">YouTube Tools</a>
-</body>
-</html>
+{% block content %}
+<h2>Welcome to CreatorsKit 🚀</h2>
+
+<p>
+Everything creators need — tools, ideas, AI, and community —
+all in one place.
+</p>
+
+<div class="platform-grid">
+  <a href="/youtube" class="card">📺 YouTube Tools</a>
+  <a href="/tiktok" class="card">🎵 TikTok Tools</a>
+  <a href="/instagram" class="card">📸 Instagram Tools</a>
+  <a href="/community" class="card">💬 Community</a>
+</div>
+{% endblock %}
