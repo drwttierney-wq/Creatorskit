@@ -11,12 +11,12 @@
                 {% if item.prompt %}<p class="text-gray-400">Prompt: {{ item.prompt }}</p>{% endif %}
             </div>
         </div>
-        <div class="result-box">
+        <div class="result-box block">
             {{ item.result|replace('\n', '<br>')|safe }}
         </div>
     </div>
     {% endfor %}
 {% else %}
-    <p class="text-xl text-gray-400">No saved items yet. Start generating on any platform!</p>
+    <p class="text-xl text-gray-400">No saved items yet. Start generating!</p>
 {% endif %}
 {% endblock %}
