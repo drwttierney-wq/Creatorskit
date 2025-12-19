@@ -1,5 +1,22 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-<h2>Your Profile</h2>
-<p>Saved ideas, downloads, tools, and future analytics will live here.</p>
+<h1 class="text-4xl font-bold mb-8">Your Saved Creations</h1>
+{% if items %}
+    {% for item in items %}
+    <div class="platform-card mb-8 p-6">
+        <div class="flex justify-between items-start mb-4">
+            <div>
+                <span class="text-gray-500">{{ item.timestamp.strftime('%b %d, %Y - %H:%M') }}</span>
+                <h3 class="text-2xl font-bold">{{ item.platform|capitalize }} → {{ item.tool_name }}</h3>
+                {% if item.prompt %}<p class="text-gray-400">Prompt: {{ item.prompt }}</p>{% endif %}
+            </div>
+        </div>
+        <div class="result-box">
+            {{ item.result|replace('\n', '<br>')|safe }}
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+    <p class="text-xl text-gray-400">No saved items yet. Start generating on any platform!</p>
+{% endif %}
 {% endblock %}
