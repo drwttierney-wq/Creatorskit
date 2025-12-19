@@ -22,7 +22,6 @@ socketio = SocketIO(app)
 
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
-# Models
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
@@ -44,7 +43,6 @@ with app.app_context():
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# AI Generation
 def ai_generate(platform: str, tool: str, prompt: str) -> str:
     system_prompts = {
         "tiktok": {
@@ -160,6 +158,15 @@ def ai_generate(platform: str, tool: str, prompt: str) -> str:
             "Event Announcement": "Event post.",
             "Rules Text": "Clear server rules.",
             "Emoji Pack": "Custom emoji concepts."
+        },
+        "monetization": {
+            "Revenue Strategy Planner": "Create a full 30-day monetization plan with multiple income streams.",
+            "Pricing Calculator": "Suggest optimal pricing for products/services based on niche and audience.",
+            "Sponsorship Pitch Script": "Professional sponsorship pitch email/DM script.",
+            "Product Idea Generator": "5 high-demand product ideas for your niche.",
+            "Upsell & Funnel Builder": "Design a sales funnel with offers.",
+            "Affiliate Program Suggestions": "Top affiliate programs + promo ideas.",
+            "Tax & Finance Tips": "Creator-specific tax and finance advice for 2025."
         }
     }
 
@@ -175,7 +182,6 @@ def ai_generate(platform: str, tool: str, prompt: str) -> str:
     )
     return response.choices[0].message.content.strip()
 
-# Routes
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -224,7 +230,7 @@ def profile():
 @app.route('/platform/<platform>')
 @login_required
 def platform_page(platform):
-    valid_platforms = ['tiktok','youtube','instagram','twitter','facebook','snapchat','linkedin','pinterest','threads','reddit','twitch','onlyfans','discord']
+    valid_platforms = ['tiktok','youtube','instagram','twitter','facebook','snapchat','linkedin','pinterest','threads','reddit','twitch','onlyfans','discord','monetization']
     if platform not in valid_platforms:
         flash('Platform not found')
         return redirect(url_for('dashboard'))
@@ -250,7 +256,6 @@ def generate():
 def community():
     return render_template('community.html')
 
-# SocketIO
 @socketio.on('join_community')
 def on_join():
     join_room('community')
@@ -261,4 +266,4 @@ def on_message(data):
     emit('new_message', {'user': current_user.username, 'msg': data['msg']}, room='community')
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, host='0.0.0.0', port=5000)
+    socketio.run(app, host='0.0.0.0', port=5000)
