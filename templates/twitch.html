@@ -1,1 +1,21 @@
-
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="text-5xl font-bold mb-10 twitch-accent">Twitch Toolkit</h1>
+<div class="space-y-5 max-w-4xl">
+    {% set tools = [
+        "Stream Title Generator",
+        "Schedule Planner",
+        "Overlay Ideas",
+        "Emote Suggestions",
+        "Clip Highlight Script",
+        "Panel Text",
+        "Raid Message"
+    ] %}
+    {% for tool in tools %}
+    <div class="tool-btn" onclick="useTool('twitch', '{{ tool }}')">
+        <h3 class="text-2xl font-semibold">{{ tool }}</h3>
+        <div id="result-twitch-{{ tool.replace(' ', '') }}" class="result-box hidden"></div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
