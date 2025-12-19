@@ -1,15 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login</title>
-    <link rel="stylesheet" href="/static/styles.css">
-</head>
-<body class="center">
-    <h2>Login</h2>
-    <form method="post">
-        <input name="username" placeholder="Username" required>
-        <input name="password" placeholder="Password" required>
-        <button>Login</button>
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-md mx-auto mt-20">
+    <h1 class="text-4xl font-bold text-center mb-10">Login</h1>
+    <form method="POST" class="space-y-6">
+        <input type="text" name="username" placeholder="Username" required class="w-full p-4 bg-gray-800 rounded-xl text-lg">
+        <input type="password" name="password" placeholder="Password" required class="w-full p-4 bg-gray-800 rounded-xl text-lg">
+        <button type="submit" class="w-full bg-gradient-to-r from-pink-600 to-purple-600 py-4 rounded-xl text-xl font-bold">Login</button>
     </form>
-</body>
-</html>
+</div>
+{% endblock %}
