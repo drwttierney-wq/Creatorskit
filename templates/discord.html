@@ -1,1 +1,21 @@
-
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="text-5xl font-bold mb-10 discord-accent">Discord Toolkit</h1>
+<div class="space-y-5 max-w-4xl">
+    {% set tools = [
+        "Server Intro",
+        "Role Suggestions",
+        "Channel Structure",
+        "Bot Commands",
+        "Event Announcement",
+        "Rules Text",
+        "Emoji Pack"
+    ] %}
+    {% for tool in tools %}
+    <div class="tool-btn" onclick="useTool('discord', '{{ tool }}')">
+        <h3 class="text-2xl font-semibold">{{ tool }}</h3>
+        <div id="result-discord-{{ tool.replace(' ', '') }}" class="result-box hidden"></div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
