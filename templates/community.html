@@ -1,14 +1,27 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-
-<h2>Community Viral Ideas</h2>
-
-{% for post in posts %}
-<div class="post">
-    <strong>@{{ post.username }}</strong>
-    <small>{{ post.platform }}</small>
-    <p>{{ post.content }}</p>
+<h1 class="text-4xl font-bold mb-8">Community Live Chat</h1>
+<div id="chat" class="platform-card h-96 overflow-y-auto p-6 mb-6"></div>
+<div class="flex gap-4">
+    <input id="msg" type="text" placeholder="Type your message..." class="flex-1 bg-gray-800 p-4 rounded-l-xl text-lg">
+    <button onclick="sendMsg()" class="bg-gradient-to-r from-pink-600 to-purple-600 px-10 rounded-r-xl text-lg font-bold hover:from-pink-700 hover:to-purple-700">Send</button>
 </div>
-{% endfor %}
 
+<script>
+    const socket = io();
+    socket.emit('join_community');
+    socket.on('new_message', data => {
+        const chat = document.getElementById('chat');
+        chat.innerHTML += `<p class="mb-3"><strong class="text-pink-400">${data.user}:</strong> ${data.msg}</p>`;
+        chat.scrollTop = chat.scrollHeight;
+    });
+    function sendMsg() {
+        const msg = document.getElementById('msg').value.trim();
+        if (msg) {
+            socket.emit('send_message', {msg});
+            document.getElementById('msg').value = '';
+        }
+    }
+    document.getElementById('msg').addEventListener('keypress', e => { if (e.key === 'Enter') sendMsg(); });
+</script>
 {% endblock %}
