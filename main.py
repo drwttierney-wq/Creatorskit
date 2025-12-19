@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return "CreatorsKit is running 🚀"
+    return render_template("index.html")
 
 @app.route("/youtube")
 def youtube():
