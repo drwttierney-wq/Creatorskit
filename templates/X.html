@@ -1,1 +1,20 @@
-
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="text-5xl font-bold mb-10 twitter-accent">Twitter/X Toolkit</h1>
+<div class="space-y-5 max-w-4xl">
+    {% set tools = [
+        "Thread Writer",
+        "Tweet Generator",
+        "Reply Ideas",
+        "Poll Creator",
+        "Quote Tweet",
+        "Viral Hook"
+    ] %}
+    {% for tool in tools %}
+    <div class="tool-btn" onclick="useTool('twitter', '{{ tool }}')">
+        <h3 class="text-2xl font-semibold">{{ tool }}</h3>
+        <div id="result-twitter-{{ tool.replace(' ', '') }}" class="result-box hidden"></div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
