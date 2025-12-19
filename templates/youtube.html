@@ -2,19 +2,11 @@
 {% block content %}
 <h1 class="text-5xl font-bold mb-10 youtube-accent">YouTube Toolkit</h1>
 <div class="space-y-5 max-w-4xl">
-    {% set tools = [
-        "Title Generator",
-        "Description Writer",
-        "Script Writer",
-        "Thumbnail Prompt",
-        "Tag Generator",
-        "Idea Brainstorm",
-        "SEO Analyzer"
-    ] %}
+    {% set tools = ["Title Generator","Description Writer","Script Writer","Thumbnail Prompt","Tag Generator","Idea Brainstorm","SEO Analyzer"] %}
     {% for tool in tools %}
     <div class="tool-btn" onclick="useTool('youtube', '{{ tool }}')">
         <h3 class="text-2xl font-semibold">{{ tool }}</h3>
-        <div id="result-youtube-{{ tool.replace(' ', '') }}" class="result-box hidden"></div>
+        <div id="result-youtube-{{ tool.replace(' ', '') }}" class="result-box"></div>
     </div>
     {% endfor %}
 </div>
