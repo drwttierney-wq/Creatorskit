@@ -1,5 +1,21 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
-<h2>Instagram Toolkit</h2>
-<p>Reels, captions, hashtag tools.</p>
+<h1 class="text-5xl font-bold mb-10 instagram-accent">Instagram Toolkit</h1>
+<div class="space-y-5 max-w-4xl">
+    {% set tools = [
+        "Caption Creator",
+        "Hashtag Set",
+        "Reels Idea",
+        "Story Ideas",
+        "Bio Optimizer",
+        "Carousel Post",
+        "Highlight Covers"
+    ] %}
+    {% for tool in tools %}
+    <div class="tool-btn" onclick="useTool('instagram', '{{ tool }}')">
+        <h3 class="text-2xl font-semibold">{{ tool }}</h3>
+        <div id="result-instagram-{{ tool.replace(' ', '') }}" class="result-box hidden"></div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}
