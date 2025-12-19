@@ -2,17 +2,11 @@
 {% block content %}
 <h1 class="text-5xl font-bold mb-10 facebook-accent">Facebook Toolkit</h1>
 <div class="space-y-5 max-w-4xl">
-    {% set tools = [
-        "Post Caption",
-        "Ad Copy",
-        "Group Post",
-        "Event Description",
-        "Reels Idea"
-    ] %}
+    {% set tools = ["Post Caption","Ad Copy","Group Post","Event Description","Reels Idea"] %}
     {% for tool in tools %}
     <div class="tool-btn" onclick="useTool('facebook', '{{ tool }}')">
         <h3 class="text-2xl font-semibold">{{ tool }}</h3>
-        <div id="result-facebook-{{ tool.replace(' ', '') }}" class="result-box hidden"></div>
+        <div id="result-facebook-{{ tool.replace(' ', '') }}" class="result-box"></div>
     </div>
     {% endfor %}
 </div>
