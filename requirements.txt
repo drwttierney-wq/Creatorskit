@@ -1,1 +1,8 @@
-gunicorn app:app
+flask
+flask-socketio
+eventlet
+gunicorn
+flask-sqlalchemy
+flask-login
+python-dotenv
+openai
