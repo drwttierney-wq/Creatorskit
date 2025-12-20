@@ -8,8 +8,9 @@
         <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
             <div class="flex items-center mb-4">
                 <div class="font-bold text-xl">{{ post.user.username }}</div>
-                <a href="/follow/{{ post.user.id }}" class="ml-auto text-sm px-4 py-2 rounded {% if current_user.is_following(post.user) %}bg-gray-700{% else %}bg-pink-600{% endif %}">
-                    {% if current_user.is_following(post.user) %}Unfollow{% else %}Follow{% endif %}
+                {% set is_following = Follow.query.filter_by(follower_id=current_user.id, followed_id=post.user.id).first() %}
+                <a href="/follow/{{ post.user.id }}" class="ml-auto text-sm px-4 py-2 rounded {% if is_following %}bg-gray-700{% else %}bg-pink-600{% endif %}">
+                    {% if is_following %}Unfollow{% else %}Follow{% endif %}
                 </a>
             </div>
             <p class="mb-4 text-lg">{{ post.content }}</p>
@@ -18,7 +19,7 @@
             {% endif %}
             {% if post.attached_idea %}
             <div class="bg-gray-700 p-4 rounded-xl mb-4 whitespace-pre-wrap border-l-4 border-pink-500">
-                <strong>Attached Idea:</strong><br>{{ post.attached_idea }}
+                <strong>Attached Idea:</strong><br>{{ post.attached_idea|safe }}
             </div>
             {% endif %}
             <div class="flex items-center text-sm">
