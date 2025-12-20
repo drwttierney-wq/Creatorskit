@@ -60,6 +60,14 @@ class Follow(db.Model):
     follower_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     followed_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
 
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    content = db.Column(db.Text)
+    image = db.Column(db.String(200))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
 with app.app_context():
     db.create_all()
 
@@ -67,233 +75,22 @@ with app.app_context():
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-def ai_generate(platform: str, tool: str, prompt: str) -> str:
-    system_prompts = {
-        "tiktok": {
-            "Idea Generator": "Generate a viral TikTok video idea with hook, trend, music, and CTA.",
-            "Script Writer": "Write a full TikTok script with lines, overlays, transitions.",
-            "Hashtag Generator": "Give 15 trending + niche hashtags.",
-            "Caption Creator": "Write 5 engaging captions with emojis.",
-            "Trend Analyzer": "Explain current trends and how to use them.",
-            "Sound Finder": "Suggest 5 viral sounds.",
-            "Thumbnail Idea": "Describe 5 eye-catching thumbnails."
-        },
-        "youtube": {
-            "Title Generator": "10 SEO-optimized YouTube titles.",
-            "Description Writer": "Full SEO description with timestamps & links.",
-            "Script Writer": "Complete video script.",
-            "Thumbnail Prompt": "Detailed Midjourney thumbnail prompts.",
-            "Tag Generator": "15 high-volume tags.",
-            "Idea Brainstorm": "5 unique video ideas.",
-            "SEO Analyzer": "SEO improvement suggestions."
-        },
-        "instagram": {
-            "Caption Creator": "5 aesthetic captions.",
-            "Hashtag Set": "30 targeted hashtags.",
-            "Reels Idea": "Trending Reels concept.",
-            "Story Ideas": "10 Story ideas.",
-            "Bio Optimizer": "3 catchy bios.",
-            "Carousel Post": "10-slide carousel plan.",
-            "Highlight Covers": "Theme & text suggestions."
-        },
-        "twitter": {
-            "Thread Writer": "10-tweet viral thread.",
-            "Tweet Generator": "5 punchy tweets.",
-            "Reply Ideas": "5 engagement replies.",
-            "Poll Creator": "Poll + 4 options.",
-            "Quote Tweet": "Quote response.",
-            "Viral Hook": "5 opening hooks."
-        },
-        "facebook": {
-            "Post Caption": "Engaging post copy.",
-            "Ad Copy": "Ad headline + body + CTA.",
-            "Group Post": "Community post.",
-            "Event Description": "Event text.",
-            "Reels Idea": "Facebook Reels concept."
-        },
-        "snapchat": {
-            "Story Idea Generator": "5 Story ideas with filters.",
-            "Spotlight Video Concept": "Viral Spotlight idea.",
-            "AR Lens Prompt": "Lens Studio prompt.",
-            "Caption & Sticker Ideas": "10 captions + stickers.",
-            "Trend Challenge": "Current trend challenge.",
-            "Bitmoji Outfit Suggestion": "5 outfits.",
-            "Memories Compilation": "Compilation plan."
-        },
-        "linkedin": {
-            "Post Generator": "Professional post with CTA.",
-            "Carousel Planner": "10-slide carousel.",
-            "Thought Leadership Article": "800-1200 word article.",
-            "Comment Reply Ideas": "5 insightful replies.",
-            "Headline Optimizer": "10 headlines.",
-            "Poll Creator": "Professional poll.",
-            "Bio Refresher": "3 optimized bios."
-        },
-        "pinterest": {
-            "Pin Idea Generator": "5 pin ideas + visuals.",
-            "Pin Title Creator": "10 SEO titles.",
-            "Description Writer": "Engaging description.",
-            "Hashtag Set": "20 hashtags.",
-            "Board Strategy": "Board organization tips.",
-            "Trend Analyzer": "Current trends.",
-            "Rich Pin Optimizer": "Idea/Product/Video pin text."
-        },
-        "threads": {
-            "Thread Starter": "Strong opening post.",
-            "Full Thread Builder": "5-10 post thread.",
-            "Reply Generator": "5 replies.",
-            "Poll Idea": "Poll + options.",
-            "Quote Post": "Quote response.",
-            "Viral Hook": "10 hooks.",
-            "Conversation Extender": "Follow-up posts."
-        },
-        "reddit": {
-            "Post Title Generator": "10 upvote titles.",
-            "Post Body Writer": "Full post body.",
-            "Comment Ideas": "5 comments.",
-            "AMA Planner": "AMA outline.",
-            "Subreddit Fit": "Best subreddits.",
-            "Meme Caption": "Funny captions.",
-            "Self-Promotion Text": "Rule-compliant promo."
-        },
-        "twitch": {
-            "Stream Title Generator": "10 catchy titles.",
-            "Schedule Planner": "Weekly stream schedule.",
-            "Overlay Ideas": "Stream overlay concepts.",
-            "Emote Suggestions": "Emote ideas.",
-            "Clip Highlight Script": "Clip narration.",
-            "Panel Text": "About/Donate panels.",
-            "Raid Message": "Raid/shoutout messages."
-        },
-        "onlyfans": {
-            "Post Caption": "Engaging caption ideas.",
-            "Promo Tweet": "Twitter promo text.",
-            "PPV Message": "Pay-per-view tease.",
-            "Welcome Message": "New subscriber DM.",
-            "Content Calendar": "Weekly posting plan.",
-            "Tip Menu": "Tip menu suggestions.",
-            "Story Teaser": "Story/Status teasers."
-        },
-        "discord": {
-            "Server Intro": "Welcome channel text.",
-            "Role Suggestions": "Role ideas & permissions.",
-            "Channel Structure": "Channel layout plan.",
-            "Bot Commands": "Fun/useful bot ideas.",
-            "Event Announcement": "Event post.",
-            "Rules Text": "Clear server rules.",
-            "Emoji Pack": "Custom emoji concepts."
-        },
-        "monetization": {
-            "Revenue Strategy Planner": "Create a full 30-day monetization plan with multiple income streams.",
-            "Pricing Calculator": "Suggest optimal pricing for products/services based on niche and audience.",
-            "Sponsorship Pitch Script": "Professional sponsorship pitch email/DM script.",
-            "Product Idea Generator": "5 high-demand product ideas for your niche.",
-            "Upsell & Funnel Builder": "Design a sales funnel with offers.",
-            "Affiliate Program Suggestions": "Top affiliate programs + promo ideas.",
-            "Tax & Finance Tips": "Creator-specific tax and finance advice for 2025."
-        }
-    }
+# ... (keep your ai_generate function exactly as is from previous full code)
 
-    full_prompt = system_prompts.get(platform, {}).get(tool, "Generate helpful content.")
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": full_prompt},
-            {"role": "user", "content": prompt or "Generate now."}
-        ],
-        temperature=0.9,
-        max_tokens=1000
-    )
-    return response.choices[0].message.content.strip()
+# Routes (keep your existing routes, add these new messaging ones at the end)
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+@app.route('/messages')
+@login_required
+def messages():
+    users = User.query.filter(User.id != current_user.id).all()
+    return render_template('messages_inbox.html', users=users)
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
+@app.route('/messages/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def chat(user_id):
+    other_user = User.query.get_or_404(user_id)
     if request.method == 'POST':
-        username = request.form['username']
-        if User.query.filter_by(username=username).first():
-            flash('Username already exists')
-            return redirect(url_for('register'))
-        user = User(username=username, password=generate_password_hash(request.form['password']))
-        db.session.add(user)
-        db.session.commit()
-        login_user(user)
-        return redirect(url_for('dashboard'))
-    return render_template('register.html')
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        user = User.query.filter_by(username=request.form['username']).first()
-        if user and check_password_hash(user.password, request.form['password']):
-            login_user(user)
-            return redirect(url_for('dashboard'))
-        flash('Invalid username or password')
-    return render_template('login.html')
-
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('index'))
-
-@app.route('/dashboard')
-@login_required
-def dashboard():
-    return render_template('dashboard.html')
-
-@app.route('/profile')
-@login_required
-def profile():
-    items = SavedItem.query.filter_by(user_id=current_user.id).order_by(SavedItem.timestamp.desc()).all()
-    return render_template('profile.html', items=items)
-
-@app.route('/platform/<platform>')
-@login_required
-def platform_page(platform):
-    valid_platforms = ['tiktok','youtube','instagram','twitter','facebook','snapchat','linkedin','pinterest','threads','reddit','twitch','onlyfans','discord','monetization']
-    if platform not in valid_platforms:
-        flash('Platform not found')
-        return redirect(url_for('dashboard'))
-    return render_template(f'{platform}.html')
-
-@app.route('/generate', methods=['POST'])
-@login_required
-def generate():
-    data = request.get_json()
-    platform = data['platform']
-    tool = data['tool']
-    prompt = data.get('prompt', '')
-    result = ai_generate(platform, tool, prompt)
-
-    saved = SavedItem(user_id=current_user.id, platform=platform, tool_name=tool, prompt=prompt, result=result)
-    db.session.add(saved)
-    db.session.commit()
-
-    return jsonify({'result': result})
-
-@app.route('/community')
-@login_required
-def community():
-    return render_template('community.html')
-
-@app.route('/feed')
-@login_required
-def feed():
-    followed = [f.followed_id for f in Follow.query.filter_by(follower_id=current_user.id).all()]
-    followed.append(current_user.id)
-    posts = Post.query.filter(Post.user_id.in_(followed)).order_by(Post.timestamp.desc()).all()
-    return render_template('feed.html', posts=posts)
-
-@app.route('/post', methods=['GET', 'POST'])
-@login_required
-def post():
-    if request.method == 'POST':
-        content = request.form['content']
-        attached = request.form.get('attached_idea', '')
+        content = request.form.get('content')
         image = None
         if 'image' in request.files:
             file = request.files['image']
@@ -301,49 +98,31 @@ def post():
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 image = filename
-        new_post = Post(user_id=current_user.id, content=content, image=image, attached_idea=attached)
-        db.session.add(new_post)
+        msg = Message(sender_id=current_user.id, receiver_id=user_id, content=content, image=image)
+        db.session.add(msg)
         db.session.commit()
-        return redirect(url_for('feed'))
-    saved = SavedItem.query.filter_by(user_id=current_user.id).all()
-    return render_template('post.html', saved=saved)
+        return redirect(url_for('chat', user_id=user_id))
+    messages = Message.query.filter(
+        ((Message.sender_id == current_user.id) & (Message.receiver_id == user_id)) |
+        ((Message.sender_id == user_id) & (Message.receiver_id == current_user.id))
+    ).order_by(Message.timestamp.asc()).all()
+    return render_template('chat.html', other_user=other_user, messages=messages)
 
-@app.route('/like/<int:post_id>')
-@login_required
-def like(post_id):
-    like = Like.query.filter_by(user_id=current_user.id, post_id=post_id).first()
-    if like:
-        db.session.delete(like)
-    else:
-        db.session.add(Like(user_id=current_user.id, post_id=post_id))
+# SocketIO for real-time messages
+@socketio.on('send_private_message')
+def handle_private_message(data):
+    receiver_id = data['receiver_id']
+    content = data['content']
+    msg = Message(sender_id=current_user.id, receiver_id=receiver_id, content=content)
+    db.session.add(msg)
     db.session.commit()
-    return redirect(request.referrer or url_for('feed'))
+    emit('new_private_message', {
+        'sender': current_user.username,
+        'content': content,
+        'timestamp': msg.timestamp.strftime('%H:%M')
+    }, room=f"user_{receiver_id}")
 
-@app.route('/follow/<int:user_id>')
-@login_required
-def follow(user_id):
-    if user_id == current_user.id:
-        return redirect(request.referrer or url_for('feed'))
-    follow = Follow.query.filter_by(follower_id=current_user.id, followed_id=user_id).first()
-    if follow:
-        db.session.delete(follow)
-    else:
-        db.session.add(Follow(follower_id=current_user.id, followed_id=user_id))
-    db.session.commit()
-    return redirect(request.referrer or url_for('feed'))
-
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
-@socketio.on('join_community')
-def on_join():
-    join_room('community')
-    emit('status', {'msg': f'{current_user.username} joined'}, room='community')
-
-@socketio.on('send_message')
-def on_message(data):
-    emit('new_message', {'user': current_user.username, 'msg': data['msg']}, room='community')
+# Keep your existing @socketio.on for community chat
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000)
