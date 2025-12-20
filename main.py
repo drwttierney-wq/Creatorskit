@@ -21,7 +21,13 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
-socketio = SocketIO(app)
+
+# IMPORTANT: explicitly set eventlet + CORS for Render
+socketio = SocketIO(
+    app,
+    cors_allowed_origins="*",
+    async_mode="eventlet"
+)
 
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
@@ -248,7 +254,13 @@ def generate():
     prompt = data.get('prompt', '')
     result = ai_generate(platform, tool, prompt)
 
-    saved = SavedItem(user_id=current_user.id, platform=platform, tool_name=tool, prompt=prompt, result=result)
+    saved = SavedItem(
+        user_id=current_user.id,
+        platform=platform,
+        tool_name=tool,
+        prompt=prompt,
+        result=result
+    )
     db.session.add(saved)
     db.session.commit()
 
@@ -266,8 +278,12 @@ def on_join():
 
 @socketio.on('send_message')
 def on_message(data):
-    emit('new_message', {'user': current_user.username, 'msg': data['msg']}, room='community')
+    emit(
+        'new_message',
+        {'user': current_user.username, 'msg': data['msg']},
+        room='community'
+    )
 
-if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000)
-# Small commit to trigger new deploy - launch time!
+# ✅ Production entrypoint
+# Render + Gunicorn will start the app
+# DO NOT call socketio.run() here
