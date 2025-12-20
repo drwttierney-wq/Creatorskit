@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="text-4xl font-bold mb-8">{{ user.username }}'s Profile</h1>
+<p class="text-xl mb-4">{{ user.bio or 'No bio yet' }}</p>
+<p class="text-lg mb-8">Followers: {{ user.followers|length }} | Following: {{ user.following|length }}</p>
+<a href="/follow/{{ user.id }}" class="bg-pink-600 hover:bg-pink-700 px-6 py-3 rounded-xl inline-block mb-8 font-bold">
+    {% if is_following %}Unfollow{% else %}Follow{% endif %}
+</a>
+<h2 class="text-3xl font-bold mb-4">Posts</h2>
+<div class="space-y-8">
+    {% for post in posts %}
+    <div class="post-card">
+        <p>{{ post.content }}</p>
+        {% if post.image %}
+        <img src="{{ url_for('uploaded_file', filename=post.image) }}" class="max-w-full rounded mb-4">
+        {% endif %}
+        {% if post.attached_idea %}
+        <div class="result-box">
+            {{ post.attached_idea|safe }}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+<h2 class="text-3xl font-bold mb-4 mt-8">Saved Ideas</h2>
+<div class="space-y-8">
+    {% for item in saved %}
+    <div class="post-card">
+        <h3 class="text-2xl font-bold">{{ item.platform|capitalize }} → {{ item.tool_name }}</h3>
+        <div class="result-box">
+            {{ item.result|safe }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
