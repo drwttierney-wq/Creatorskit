@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="text-4xl font-bold mb-8">Share an Idea</h1>
+<form method="POST" enctype="multipart/form-data" class="space-y-6 max-w-2xl">
+    <textarea name="content" placeholder="What's your viral idea?" class="w-full p-4 bg-gray-800 rounded-xl h-32"></textarea>
+    <input type="file" name="image" accept="image/*" class="block">
+    <select name="attached_idea" class="w-full p-4 bg-gray-800 rounded-xl">
+        <option value="">Attach a saved idea (optional)</option>
+        {% for item in saved %}
+        <option value="{{ item.result }}">{{ item.platform }} - {{ item.tool_name }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="bg-pink-600 hover:bg-pink-700 px-8 py-4 rounded-xl text-xl font-bold">Post to Community</button>
+</form>
+{% endblock %}
