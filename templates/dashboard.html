@@ -1,20 +1,76 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1 class="text-5xl font-bold text-center mb-12">Choose Your Platform</h1>
+<h1 class="text-5xl font-bold text-center mb-12 text-white">Choose Your Platform</h1>
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-    <a href="/platform/tiktok" class="platform-card tiktok-accent border-4"><h2 class="text-2xl font-bold">TikTok</h2><p>7 viral tools</p></a>
-    <a href="/platform/youtube" class="platform-card youtube-accent border-4"><h2 class="text-2xl font-bold">YouTube</h2><p>7 growth tools</p></a>
-    <a href="/platform/instagram" class="platform-card instagram-accent border-4"><h2 class="text-2xl font-bold">Instagram</h2><p>7 aesthetic tools</p></a>
-    <a href="/platform/twitter" class="platform-card twitter-accent border-4"><h2 class="text-2xl font-bold">Twitter/X</h2><p>6 thread tools</p></a>
-    <a href="/platform/facebook" class="platform-card facebook-accent border-4"><h2 class="text-2xl font-bold">Facebook</h2><p>5 community tools</p></a>
-    <a href="/platform/snapchat" class="platform-card snapchat-accent border-4"><h2 class="text-2xl font-bold">Snapchat</h2><p>7 AR & Story tools</p></a>
-    <a href="/platform/linkedin" class="platform-card linkedin-accent border-4"><h2 class="text-2xl font-bold">LinkedIn</h2><p>7 professional tools</p></a>
-    <a href="/platform/pinterest" class="platform-card pinterest-accent border-4"><h2 class="text-2xl font-bold">Pinterest</h2><p>7 pin tools</p></a>
-    <a href="/platform/threads" class="platform-card threads-accent border-4"><h2 class="text-2xl font-bold">Threads</h2><p>7 conversation tools</p></a>
-    <a href="/platform/reddit" class="platform-card reddit-accent border-4"><h2 class="text-2xl font-bold">Reddit</h2><p>7 upvote tools</p></a>
-    <a href="/platform/twitch" class="platform-card twitch-accent border-4"><h2 class="text-2xl font-bold">Twitch</h2><p>7 streaming tools</p></a>
-    <a href="/platform/onlyfans" class="platform-card onlyfans-accent border-4"><h2 class="text-2xl font-bold">OnlyFans</h2><p>7 creator tools</p></a>
-    <a href="/platform/discord" class="platform-card discord-accent border-4"><h2 class="text-2xl font-bold">Discord</h2><p>7 server tools</p></a>
-    <a href="/platform/monetization" class="platform-card monetization-accent border-4"><h2 class="text-2xl font-bold">Monetization</h2><p>7 money-making tools 💰</p></a>
+    <a href="/platform/tiktok" class="platform-card bg-gradient-to-br from-pink-900 to-purple-900 border-pink-500 hover:scale-105">
+        <div class="text-6xl mb-4">🎵</div>
+        <h2 class="text-3xl font-bold">TikTok</h2>
+        <p class="text-lg">7 viral tools</p>
+    </a>
+    <a href="/platform/youtube" class="platform-card bg-gradient-to-br from-red-900 to-orange-900 border-red-600 hover:scale-105">
+        <div class="text-6xl mb-4">📺</div>
+        <h2 class="text-3xl font-bold">YouTube</h2>
+        <p class="text-lg">7 growth tools</p>
+    </a>
+    <a href="/platform/instagram" class="platform-card bg-gradient-to-br from-purple-900 to-pink-900 border-purple-500 hover:scale-105">
+        <div class="text-6xl mb-4">📸</div>
+        <h2 class="text-3xl font-bold">Instagram</h2>
+        <p class="text-lg">7 aesthetic tools</p>
+    </a>
+    <a href="/platform/twitter" class="platform-card bg-gradient-to-br from-blue-900 to-cyan-900 border-blue-400 hover:scale-105">
+        <div class="text-6xl mb-4">🐦</div>
+        <h2 class="text-3xl font-bold">Twitter/X</h2>
+        <p class="text-lg">6 thread tools</p>
+    </a>
+    <a href="/platform/facebook" class="platform-card bg-gradient-to-br from-blue-900 to-indigo-900 border-blue-600 hover:scale-105">
+        <div class="text-6xl mb-4">👥</div>
+        <h2 class="text-3xl font-bold">Facebook</h2>
+        <p class="text-lg">5 community tools</p>
+    </a>
+    <a href="/platform/snapchat" class="platform-card bg-gradient-to-br from-yellow-900 to-orange-900 border-yellow-400 hover:scale-105">
+        <div class="text-6xl mb-4">👻</div>
+        <h2 class="text-3xl font-bold">Snapchat</h2>
+        <p class="text-lg">7 AR & Story tools</p>
+    </a>
+    <a href="/platform/linkedin" class="platform-card bg-gradient-to-br from-blue-900 to-teal-900 border-blue-700 hover:scale-105">
+        <div class="text-6xl mb-4">💼</div>
+        <h2 class="text-3xl font-bold">LinkedIn</h2>
+        <p class="text-lg">7 professional tools</p>
+    </a>
+    <a href="/platform/pinterest" class="platform-card bg-gradient-to-br from-red-900 to-pink-900 border-red-500 hover:scale-105">
+        <div class="text-6xl mb-4">📌</div>
+        <h2 class="text-3xl font-bold">Pinterest</h2>
+        <p class="text-lg">7 pin tools</p>
+    </a>
+    <a href="/platform/threads" class="platform-card bg-gradient-to-br from-gray-800 to-gray-900 border-gray-300 hover:scale-105">
+        <div class="text-6xl mb-4">🧵</div>
+        <h2 class="text-3xl font-bold">Threads</h2>
+        <p class="text-lg">7 conversation tools</p>
+    </a>
+    <a href="/platform/reddit" class="platform-card bg-gradient-to-br from-orange-900 to-red-900 border-orange-500 hover:scale-105">
+        <div class="text-6xl mb-4">👽</div>
+        <h2 class="text-3xl font-bold">Reddit</h2>
+        <p class="text-lg">7 upvote tools</p>
+    </a>
+    <a href="/platform/twitch" class="platform-card bg-gradient-to-br from-purple-900 to-indigo-900 border-purple-600 hover:scale-105">
+        <div class="text-6xl mb-4">🎮</div>
+        <h2 class="text-3xl font-bold">Twitch</h2>
+        <p class="text-lg">7 streaming tools</p>
+    </a>
+    <a href="/platform/onlyfans" class="platform-card bg-gradient-to-br from-pink-900 to-red-900 border-pink-600 hover:scale-105">
+        <div class="text-6xl mb-4">🔒</div>
+        <h2 class="text-3xl font-bold">OnlyFans</h2>
+        <p class="text-lg">7 creator tools</p>
+    </a>
+    <a href="/platform/discord" class="platform-card bg-gradient-to-br from-indigo-900 to-purple-900 border-indigo-500 hover:scale-105">
+        <div class="text-6xl mb-4">💬</div>
+        <h2 class="text-3xl font-bold">Discord</h2>
+        <p class="text-lg">7 server tools</p>
+    </a>
+    <a href="/platform/monetization" class="platform-card bg-gradient-to-br from-green-900 to-emerald-900 border-green-500 hover:scale-105">
+        <div class="text-6xl mb-4">💰</div>
+        <h2 class="text-3xl font-bold">Monetization</h2>
+        <p class="text-lg">7 money-making tools</p>
+    </a>
 </div>
 {% endblock %}
