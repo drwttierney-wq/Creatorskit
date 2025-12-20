@@ -1,15 +1,22 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1 class="text-4xl font-bold mb-8">Share an Idea</h1>
-<form method="POST" enctype="multipart/form-data" class="space-y-6 max-w-2xl">
-    <textarea name="content" placeholder="What's your viral idea?" class="w-full p-4 bg-gray-800 rounded-xl h-32"></textarea>
-    <input type="file" name="image" accept="image/*" class="block">
-    <select name="attached_idea" class="w-full p-4 bg-gray-800 rounded-xl">
-        <option value="">Attach a saved idea (optional)</option>
-        {% for item in saved %}
-        <option value="{{ item.result }}">{{ item.platform }} - {{ item.tool_name }}</option>
-        {% endfor %}
-    </select>
-    <button type="submit" class="bg-pink-600 hover:bg-pink-700 px-8 py-4 rounded-xl text-xl font-bold">Post to Community</button>
+<form method="POST" enctype="multipart/form-data" class="space-y-6 max-w-2xl bg-gray-800 p-8 rounded-xl">
+    <textarea name="content" placeholder="What's your viral idea or tip for creators?" required class="w-full p-4 bg-gray-900 rounded-xl h-40 text-lg"></textarea>
+    <div>
+        <label class="block mb-2 text-lg">Add an image (optional)</label>
+        <input type="file" name="image" accept="image/*" class="block w-full text-gray-400">
+    </div>
+    <div>
+        <label class="block mb-2 text-lg">Attach a saved idea (optional)</label>
+        <select name="attached_idea" class="w-full p-4 bg-gray-900 rounded-xl">
+            <option value="">None</option>
+            {% for item in saved %}
+            <option value="{{ item.result }}">{{ item.platform|capitalize }} - {{ item.tool_name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 px-8 py-4 rounded-xl text-xl font-bold">Post to Feed</button>
 </form>
+<a href="/feed" class="block mt-6 text-pink-400 hover:underline">← Back to Feed</a>
 {% endblock %}
