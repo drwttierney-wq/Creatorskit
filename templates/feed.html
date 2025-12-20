@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="text-4xl font-bold mb-8">Community Feed</h1>
+<a href="/post" class="bg-pink-600 hover:bg-pink-700 px-6 py-3 rounded-xl mb-8 inline-block">+ Share Idea</a>
+<div class="space-y-8">
+    {% for post in posts %}
+    <div class="bg-gray-800 p-6 rounded-xl">
+        <div class="flex items-center mb-4">
+            <div class="font-bold">{{ post.user.username }}</div>
+            <a href="/follow/{{ post.user.id }}" class="ml-auto text-sm {% if current_user in post.user.followers %}text-gray-500{% else %}text-pink-400{% endif %}">
+                {% if current_user in post.user.followers %}Unfollow{% else %}Follow{% endif %}
+            </a>
+        </div>
+        <p class="mb-4">{{ post.content }}</p>
+        {% if post.image %}
+        <img src="{{ url_for('uploaded_file', filename=post.image) }}" class="max-w-full rounded mb-4">
+        {% endif %}
+        {% if post.attached_idea %}
+        <div class="bg-gray-700 p-4 rounded mb-4 whitespace-pre-wrap">{{ post.attached_idea }}</div>
+        {% endif %}
+        <div class="flex items-center">
+            <a href="/like/{{ post.id }}" class="text-pink-400">
+                ❤️ {{ post.likes|length }} Likes
+            </a>
+            <span class="ml-auto text-gray-500 text-sm">{{ post.timestamp.strftime('%b %d') }}</span>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
