@@ -1,30 +1,36 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1 class="text-4xl font-bold mb-8">Community Feed</h1>
-<a href="/post" class="bg-pink-600 hover:bg-pink-700 px-6 py-3 rounded-xl mb-8 inline-block">+ Share Idea</a>
+<a href="/post" class="bg-pink-600 hover:bg-pink-700 px-6 py-3 rounded-xl mb-8 inline-block font-bold">+ Share Idea</a>
 <div class="space-y-8">
-    {% for post in posts %}
-    <div class="bg-gray-800 p-6 rounded-xl">
-        <div class="flex items-center mb-4">
-            <div class="font-bold">{{ post.user.username }}</div>
-            <a href="/follow/{{ post.user.id }}" class="ml-auto text-sm {% if current_user in post.user.followers %}text-gray-500{% else %}text-pink-400{% endif %}">
-                {% if current_user in post.user.followers %}Unfollow{% else %}Follow{% endif %}
-            </a>
+    {% if posts %}
+        {% for post in posts %}
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+            <div class="flex items-center mb-4">
+                <div class="font-bold text-xl">{{ post.user.username }}</div>
+                <a href="/follow/{{ post.user.id }}" class="ml-auto text-sm px-4 py-2 rounded {% if current_user.id in [f.follower_id for f in post.user.followed_by] %}bg-gray-700{% else %}bg-pink-600{% endif %}">
+                    {% if current_user.id in [f.follower_id for f in post.user.followed_by] %}Unfollow{% else %}Follow{% endif %}
+                </a>
+            </div>
+            <p class="mb-4 text-lg">{{ post.content }}</p>
+            {% if post.image %}
+            <img src="{{ url_for('uploaded_file', filename=post.image) }}" class="max-w-full rounded-xl mb-4">
+            {% endif %}
+            {% if post.attached_idea %}
+            <div class="bg-gray-700 p-4 rounded-xl mb-4 whitespace-pre-wrap border-l-4 border-pink-500">
+                <strong>Attached Idea:</strong><br>{{ post.attached_idea }}
+            </div>
+            {% endif %}
+            <div class="flex items-center text-sm">
+                <a href="/like/{{ post.id }}" class="text-pink-400 mr-6">
+                    ❤️ {{ post.likes|length }} Likes
+                </a>
+                <span class="text-gray-500">{{ post.timestamp.strftime('%b %d at %H:%M') }}</span>
+            </div>
         </div>
-        <p class="mb-4">{{ post.content }}</p>
-        {% if post.image %}
-        <img src="{{ url_for('uploaded_file', filename=post.image) }}" class="max-w-full rounded mb-4">
-        {% endif %}
-        {% if post.attached_idea %}
-        <div class="bg-gray-700 p-4 rounded mb-4 whitespace-pre-wrap">{{ post.attached_idea }}</div>
-        {% endif %}
-        <div class="flex items-center">
-            <a href="/like/{{ post.id }}" class="text-pink-400">
-                ❤️ {{ post.likes|length }} Likes
-            </a>
-            <span class="ml-auto text-gray-500 text-sm">{{ post.timestamp.strftime('%b %d') }}</span>
-        </div>
-    </div>
-    {% endfor %}
+        {% endfor %}
+    {% else %}
+        <p class="text-xl text-gray-400">No posts yet — be the first to share an idea!</p>
+    {% endif %}
 </div>
 {% endblock %}
