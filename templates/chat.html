@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1 class="text-4xl font-bold mb-8">Chat with {{ other_user.username }}</h1>
+<div id="chat-messages" class="space-y-4 mb-8 h-96 overflow-y-auto bg-gray-800 p-6 rounded-xl">
+    {% for msg in messages %}
+    <div class="flex {% if msg.sender_id == current_user.id %}justify-end{% else %}justify-start{% endif %}">
+        <div class="{% if msg.sender_id == current_user.id %}bg-pink-600{% else %}bg-gray-700{% endif %} p-4 rounded-xl max-w-md">
+            {% if msg.image %}
+            <img src="{{ url_for('uploaded_file', filename=msg.image) }}" class="max-w-full rounded mb-2">
+            {% endif %}
+            {% if msg.content %}
+            <p>{{ msg.content }}</p>
+            {% endif %}
+            <p class="text-xs text-gray-400 mt-2">{{ msg.timestamp.strftime('%H:%M') }}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<form method="POST" enctype="multipart/form-data" class="space-y-4">
+    <textarea name="content" placeholder="Type a message..." class="w-full p-4 bg-gray-800 rounded-xl"></textarea>
+    <input type="file" name="image" accept="image/*">
+    <button type="submit" class="bg-pink-600 hover:bg-pink-700 px-8 py-4 rounded-xl font-bold">Send</button>
+</form>
+{% endblock %}
