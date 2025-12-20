@@ -1,10 +1,11 @@
 import eventlet
 eventlet.monkey_patch()
 
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 import os
 from openai import OpenAI
@@ -17,17 +18,13 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///creatorskit.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
-
-# IMPORTANT: explicitly set eventlet + CORS for Render
-socketio = SocketIO(
-    app,
-    cors_allowed_origins="*",
-    async_mode="eventlet"
-)
+socketio = SocketIO(app)
 
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
@@ -44,6 +41,24 @@ class SavedItem(db.Model):
     prompt = db.Column(db.Text)
     result = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    content = db.Column(db.Text)
+    image = db.Column(db.String(200))
+    attached_idea = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    likes = db.relationship('Like', backref='post', lazy=True)
+
+class Like(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
+
+class Follow(db.Model):
+    follower_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    followed_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
 
 with app.app_context():
     db.create_all()
@@ -254,13 +269,7 @@ def generate():
     prompt = data.get('prompt', '')
     result = ai_generate(platform, tool, prompt)
 
-    saved = SavedItem(
-        user_id=current_user.id,
-        platform=platform,
-        tool_name=tool,
-        prompt=prompt,
-        result=result
-    )
+    saved = SavedItem(user_id=current_user.id, platform=platform, tool_name=tool, prompt=prompt, result=result)
     db.session.add(saved)
     db.session.commit()
 
@@ -271,6 +280,62 @@ def generate():
 def community():
     return render_template('community.html')
 
+@app.route('/feed')
+@login_required
+def feed():
+    followed = [f.followed_id for f in Follow.query.filter_by(follower_id=current_user.id).all()]
+    followed.append(current_user.id)
+    posts = Post.query.filter(Post.user_id.in_(followed)).order_by(Post.timestamp.desc()).all()
+    return render_template('feed.html', posts=posts)
+
+@app.route('/post', methods=['GET', 'POST'])
+@login_required
+def post():
+    if request.method == 'POST':
+        content = request.form['content']
+        attached = request.form.get('attached_idea', '')
+        image = None
+        if 'image' in request.files:
+            file = request.files['image']
+            if file.filename:
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                image = filename
+        new_post = Post(user_id=current_user.id, content=content, image=image, attached_idea=attached)
+        db.session.add(new_post)
+        db.session.commit()
+        return redirect(url_for('feed'))
+    saved = SavedItem.query.filter_by(user_id=current_user.id).all()
+    return render_template('post.html', saved=saved)
+
+@app.route('/like/<int:post_id>')
+@login_required
+def like(post_id):
+    like = Like.query.filter_by(user_id=current_user.id, post_id=post_id).first()
+    if like:
+        db.session.delete(like)
+    else:
+        db.session.add(Like(user_id=current_user.id, post_id=post_id))
+    db.session.commit()
+    return redirect(request.referrer or url_for('feed'))
+
+@app.route('/follow/<int:user_id>')
+@login_required
+def follow(user_id):
+    if user_id == current_user.id:
+        return redirect(request.referrer or url_for('feed'))
+    follow = Follow.query.filter_by(follower_id=current_user.id, followed_id=user_id).first()
+    if follow:
+        db.session.delete(follow)
+    else:
+        db.session.add(Follow(follower_id=current_user.id, followed_id=user_id))
+    db.session.commit()
+    return redirect(request.referrer or url_for('feed'))
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
 @socketio.on('join_community')
 def on_join():
     join_room('community')
@@ -278,12 +343,7 @@ def on_join():
 
 @socketio.on('send_message')
 def on_message(data):
-    emit(
-        'new_message',
-        {'user': current_user.username, 'msg': data['msg']},
-        room='community'
-    )
+    emit('new_message', {'user': current_user.username, 'msg': data['msg']}, room='community')
 
-# ✅ Production entrypoint
-# Render + Gunicorn will start the app
-# DO NOT call socketio.run() here
+if __name__ == '__main__':
+    socketio.run(app, host='0.0.0.0', port=5000)
