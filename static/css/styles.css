@@ -2,26 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
-body { @apply bg-gray-950 text-gray-100 font-sans min-h-screen; }
-.platform-card { @apply bg-gray-900 border border-gray-800 rounded-xl p-8 shadow-2xl text-center hover:scale-105 transition duration-300; }
-.tool-btn { @apply w-full text-left bg-gray-800 hover:bg-gray-700 p-5 rounded-xl mb-4 transition cursor-pointer; }
-.result-box { @apply mt-4 p-6 bg-gray-850 rounded-lg whitespace-pre-wrap border border-gray-700; }
-.post-card { @apply bg-gray-800 p-6 rounded-xl shadow-xl; }
-.chat-bubble { @apply p-4 rounded-xl max-w-md; }
-.notification { @apply bg-pink-900 p-4 rounded mb-4; }
+body {
+    @apply bg-gradient-to-b from-gray-950 to-black text-gray-100 font-sans min-h-screen;
+}
 
-/* Platform accents */
-.tiktok-accent { @apply text-pink-500 border-pink-500; }
-.youtube-accent { @apply text-red-600 border-red-600; }
-.instagram-accent { @apply text-purple-500 border-purple-500; }
-.twitter-accent { @apply text-blue-400 border-blue-400; }
-.facebook-accent { @apply text-blue-600 border-blue-600; }
-.snapchat-accent { @apply text-yellow-400 border-yellow-400; }
-.linkedin-accent { @apply text-blue-700 border-blue-700; }
-.pinterest-accent { @apply text-red-500 border-red-500; }
-.threads-accent { @apply text-gray-300 border-gray-300; }
-.reddit-accent { @apply text-orange-500 border-orange-500; }
-.twitch-accent { @apply text-purple-600 border-purple-600; }
-.onlyfans-accent { @apply text-pink-600 border-pink-600; }
-.discord-accent { @apply text-indigo-500 border-indigo-500; }
-.monetization-accent { @apply text-green-500 border-green-500; }
+nav {
+    @apply bg-gray-900/80 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50 shadow-lg;
+}
+
+.platform-card {
+    @apply bg-gradient-to-br from-gray-900 to-gray-800 border-2 rounded-3xl p-10 shadow-2xl text-center transition-all duration-500 transform hover:scale-105 hover:shadow-[0_0_40px_rgba(255,105,180,0.4)];
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.platform-card .icon {
+    @apply text-8xl mb-6;
+}
+
+.platform-card h2 {
+    @apply text-3xl font-bold;
+}
+
+.platform-card p {
+    @apply text-xl mt-4 opacity-90;
+}
+
+.tool-btn {
+    @apply w-full bg-gray-800 hover:bg-gray-700 p-6 rounded-2xl mb-6 transition-all duration-300 border-2 border-gray-700 hover:border-pink-500 cursor-pointer shadow-xl hover:shadow-2xl;
+}
+
+.result-box {
+    @apply mt-6 p-8 bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl whitespace-pre-wrap border-2 border-pink-500/30 shadow-inner text-lg;
+}
+
+.post-card {
+    @apply bg-gradient-to-r from-gray-900 to-gray-800 p-8 rounded-3xl shadow-2xl border border-gray-700 mb-8;
+}
+
+.chat-bubble {
+    @apply p-5 rounded-2xl max-w-lg shadow-lg mb-4;
+}
+
+.chat-bubble.sent {
+    @apply bg-gradient-to-r from-pink-600 to-purple-600 ml-auto;
+}
+
+.chat-bubble.received {
+    @apply bg-gray-700 mr-auto;
+}
+
+.btn-primary {
+    @apply bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 px-10 py-5 rounded-full text-2xl font-bold shadow-2xl hover:shadow-3xl transition-all duration-300;
+}
+
+.btn-secondary {
+    @apply bg-gray-700 hover:bg-gray-600 px-8 py-4 rounded-full font-bold transition-all duration-300;
+}
+
+.notification {
+    @apply bg-pink-900/50 p-4 rounded-xl mb-4 border border-pink-500/30;
+}
+
+.platform-accent-tiktok { @apply from-pink-900 to-purple-900 border-pink-500 hover:shadow-pink-500/50; }
+.platform-accent-youtube { @apply from-red-900 to-orange-900 border-red-600 hover:shadow-red-600/50; }
+.platform-accent-instagram { @apply from-purple-900 to-pink-900 border-purple-500 hover:shadow-purple-500/50; }
+.platform-accent-twitter { @apply from-blue-900 to-cyan-900 border-blue-400 hover:shadow-blue-400/50; }
+.platform-accent-facebook { @apply from-blue-900 to-indigo-900 border-blue-600 hover:shadow-blue-600/50; }
+.platform-accent-snapchat { @apply from-yellow-900 to-orange-900 border-yellow-400 hover:shadow-yellow-400/50; }
+.platform-accent-linkedin { @apply from-blue-900 to-teal-900 border-blue-700 hover:shadow-blue-700/50; }
+.platform-accent-pinterest { @apply from-red-900 to-pink-900 border-red-500 hover:shadow-red-500/50; }
+.platform-accent-threads { @apply from-gray-800 to-black border-gray-300 hover:shadow-gray-300/50; }
+.platform-accent-reddit { @apply from-orange-900 to-red-900 border-orange-500 hover:shadow-orange-500/50; }
+.platform-accent-twitch { @apply from-purple-900 to-indigo-900 border-purple-600 hover:shadow-purple-600/50; }
+.platform-accent-onlyfans { @apply from-pink-900 to-red-900 border-pink-600 hover:shadow-pink-600/50; }
+.platform-accent-discord { @apply from-indigo-900 to-purple-900 border-indigo-500 hover:shadow-indigo-500/50; }
+.platform-accent-monetization { @apply from-green-900 to-emerald-900 border-green-500 hover:shadow-green-500/50; }
