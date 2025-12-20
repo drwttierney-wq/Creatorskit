@@ -9,17 +9,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
-<body class="min-h-screen">
-    <nav class="bg-gray-900 border-b border-gray-800 px-6 py-5">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <a href="/" class="text-3xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">Creators Kit</a>
-            <div class="space-x-8 text-lg">
+<body>
+    <nav>
+        <div class="max-w-7xl mx-auto flex justify-between items-center p-6">
+            <a href="/" class="text-4xl font-bold bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">Creators Kit</a>
+            <div class="space-x-10 text-xl">
                 {% if current_user.is_authenticated %}
-                    <a href="/dashboard" class="hover:text-pink-400">Dashboard</a>
+                    <a href="/dashboard" class="hover:text-pink-400">Tools</a>
                     <a href="/feed" class="hover:text-pink-400">Feed</a>
                     <a href="/messages" class="hover:text-pink-400">Messages</a>
-                    <a href="/notifications" class="hover:text-pink-400">Notifications</a>
-                    <a href="/community" class="hover:text-pink-400">Community</a>
                     <a href="/live" class="hover:text-pink-400">Live</a>
                     <a href="/profile" class="hover:text-pink-400">Profile</a>
                     <a href="/logout" class="text-red-400 hover:text-red-300">Logout</a>
@@ -31,37 +29,7 @@
         </div>
     </nav>
     <main class="max-w-7xl mx-auto p-6">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for msg in messages %}
-                    <div class="bg-red-900 text-red-200 p-4 rounded mb-6">{{ msg }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
         {% block content %}{% endblock %}
     </main>
-
-    <script>
-        async function useTool(platform, tool) {
-            const prompt = window.prompt(`Enter details for "${tool}" (optional):`) || '';
-            const res = await fetch('/generate', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({platform, tool, prompt})
-            });
-            const data = await res.json();
-
-            let divId = `result-\( {platform}- \){tool.replace(/\s+/g, '')}`;
-            let div = document.getElementById(divId);
-            if (!div) {
-                div = document.createElement('div');
-                div.id = divId;
-                div.className = 'result-box';
-                event.target.appendChild(div);
-            }
-            div.innerHTML = `<strong>Result:</strong><br><br>${data.result.replace(/\n/g, '<br>')}`;
-            div.classList.remove('hidden');
-        }
-    </script>
 </body>
 </html>
