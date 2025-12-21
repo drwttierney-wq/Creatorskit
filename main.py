@@ -31,11 +31,12 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
 
-# -------------------- SOCKET.IO (RENDER SAFE) --------------------
+# -------------------- SOCKET.IO (THREADING MODE) --------------------
+# This works on Python 3.13 and Render
 
 socketio = SocketIO(
     app,
-    async_mode="eventlet",
+    async_mode="threading",
     cors_allowed_origins="*"
 )
 
@@ -109,6 +110,5 @@ def handle_disconnect():
     print("Client disconnected")
 
 # -------------------- GUNICORN ENTRYPOINT --------------------
-# IMPORTANT: Gunicorn uses THIS, not app
 
-application = socketio.wsgi_app
+application = app
