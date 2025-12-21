@@ -9,15 +9,12 @@ from flask_login import (
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
-from flask_socketio import SocketIO
-from datetime import datetime
 import os
+from datetime import datetime
 
-# -------------------- LOAD ENV --------------------
+# -------------------- SETUP --------------------
 
 load_dotenv()
-
-# -------------------- APP SETUP --------------------
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret")
@@ -30,15 +27,6 @@ db = SQLAlchemy(app)
 
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
-
-# -------------------- SOCKET.IO (SAFE MODE) --------------------
-# This works on Render and Python 3.13
-
-socketio = SocketIO(
-    app,
-    async_mode="threading",
-    cors_allowed_origins="*"
-)
 
 # -------------------- MODELS --------------------
 
@@ -53,8 +41,6 @@ class Post(db.Model):
     content = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
-# -------------------- DB INIT --------------------
-
 with app.app_context():
     db.create_all()
 
@@ -62,7 +48,7 @@ with app.app_context():
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# -------------------- ROUTES --------------------
+# -------------------- AUTH --------------------
 
 @app.route("/")
 def index():
@@ -88,27 +74,92 @@ def register():
         return redirect(url_for("login"))
     return render_template("register.html")
 
-@app.route("/dashboard")
-@login_required
-def dashboard():
-    return render_template("dashboard.html")
-
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
     return redirect(url_for("index"))
 
-# -------------------- SOCKET EVENTS --------------------
+# -------------------- DASHBOARD --------------------
 
-@socketio.on("connect")
-def handle_connect():
-    print("Client connected")
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    return render_template("dashboard.html")
 
-@socketio.on("disconnect")
-def handle_disconnect():
-    print("Client disconnected")
+# -------------------- PLATFORM ROUTES --------------------
+# THESE FIX YOUR ERRORS 🔥
 
-# -------------------- ENTRY POINT FOR RENDER --------------------
+@app.route("/tiktok")
+@login_required
+def tiktok():
+    return render_template("tictok.html")
+
+@app.route("/instagram")
+@login_required
+def instagram():
+    return render_template("instagram.html")
+
+@app.route("/youtube")
+@login_required
+def youtube():
+    return render_template("youtube.html")
+
+@app.route("/twitter")
+@login_required
+def twitter():
+    return render_template("twitter.html")
+
+@app.route("/facebook")
+@login_required
+def facebook():
+    return render_template("Facebook.html")
+
+@app.route("/linkedin")
+@login_required
+def linkedin():
+    return render_template("linkedin.html")
+
+@app.route("/threads")
+@login_required
+def threads():
+    return render_template("threads.html")
+
+@app.route("/reddit")
+@login_required
+def reddit():
+    return render_template("reddit.html")
+
+@app.route("/discord")
+@login_required
+def discord():
+    return render_template("discord.html")
+
+@app.route("/snapchat")
+@login_required
+def snapchat():
+    return render_template("snapchat.html")
+
+@app.route("/pinterest")
+@login_required
+def pinterest():
+    return render_template("pinterest.html")
+
+@app.route("/twitch")
+@login_required
+def twitch():
+    return render_template("twitch.html")
+
+@app.route("/onlyfans")
+@login_required
+def onlyfans():
+    return render_template("onlyfans.html")
+
+@app.route("/monetization")
+@login_required
+def monetization():
+    return render_template("monetization.html")
+
+# -------------------- GUNICORN ENTRY --------------------
 
 application = app
