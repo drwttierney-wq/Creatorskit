@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import (
     LoginManager,
@@ -6,7 +6,6 @@ from flask_login import (
     login_user,
     login_required,
     logout_user,
-    current_user,
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
@@ -14,9 +13,11 @@ from flask_socketio import SocketIO
 from datetime import datetime
 import os
 
-# -------------------- SETUP --------------------
+# -------------------- LOAD ENV --------------------
 
 load_dotenv()
+
+# -------------------- APP SETUP --------------------
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret")
@@ -27,11 +28,11 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
 
-login_manager = LoginManager()
-login_manager.init_app(app)
+login_manager = LoginManager(app)
 login_manager.login_view = "login"
 
-# SocketIO (Render-safe)
+# -------------------- SOCKET.IO (RENDER SAFE) --------------------
+
 socketio = SocketIO(
     app,
     async_mode="eventlet",
@@ -107,5 +108,7 @@ def handle_connect():
 def handle_disconnect():
     print("Client disconnected")
 
-# ❌ DO NOT RUN app.run()
-# Gunicorn + Render handle this
+# -------------------- GUNICORN ENTRYPOINT --------------------
+# IMPORTANT: Gunicorn uses THIS, not app
+
+application = socketio.wsgi_app
