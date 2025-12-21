@@ -31,8 +31,8 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
 
-# -------------------- SOCKET.IO (THREADING MODE) --------------------
-# This works on Python 3.13 and Render
+# -------------------- SOCKET.IO (SAFE MODE) --------------------
+# This works on Render and Python 3.13
 
 socketio = SocketIO(
     app,
@@ -109,6 +109,6 @@ def handle_connect():
 def handle_disconnect():
     print("Client disconnected")
 
-# -------------------- GUNICORN ENTRYPOINT --------------------
+# -------------------- ENTRY POINT FOR RENDER --------------------
 
 application = app
