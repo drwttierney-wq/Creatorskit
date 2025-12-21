@@ -11,3 +11,27 @@
     {% endfor %}
 </div>
 {% endblock %}
+<script>
+function useTool(platform, tool) {
+    // Example: generate content temporarily
+    let content = tool + " generated content here 💡"; // replace with AI logic later
+
+    // Update result box
+    let resultDiv = document.getElementById(`result-${platform}-${tool.replace(/ /g,'')}`);
+    resultDiv.innerText = content;
+
+    // Optionally save to user profile/feed/community
+    let save = confirm("Save this content to your profile/feed?");
+    if(save){
+        fetch("/use_tool", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({platform: platform, tool: tool, content: content, save: true})
+        })
+        .then(res=>res.json())
+        .then(data=>{
+            if(data.status=="success") alert("Saved!");
+        })
+    }
+}
+</script>
