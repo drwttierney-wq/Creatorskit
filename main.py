@@ -12,11 +12,17 @@ app.secret_key = os.environ.get("SECRET_KEY", "super-secret-key")
 init_db()
 
 # --------------------
-# Static uploads folder
+# Upload folder setup
 # --------------------
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+# --------------------
+# TEMP in-memory storage
+# --------------------
+posts = []  # Stores community feed posts
+users_online = []  # Optional for future chat
 
 # --------------------
 # BASIC PAGES
@@ -32,13 +38,12 @@ def login():
         password = request.form.get("password")
         db = get_db()
         cursor = db.cursor()
-        cursor.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
+        cursor.execute("SELECT * FROM users WHERE username = ? AND password = ?", (username, password))
         user = cursor.fetchone()
         if user:
             session["user"] = username
             return redirect(url_for("dashboard"))
-        else:
-            return render_template("login.html", error="Invalid username or password")
+        return render_template("login.html", error="Invalid credentials")
     return render_template("login.html")
 
 @app.route("/register", methods=["GET", "POST"])
@@ -54,12 +59,9 @@ def register():
             session["user"] = username
             return redirect(url_for("dashboard"))
         except Exception as e:
-            return f"Error: {e}"
+            return render_template("register.html", error=f"Error: {e}")
     return render_template("register.html")
 
-# --------------------
-# Dashboard
-# --------------------
 @app.route("/dashboard")
 def dashboard():
     if "user" not in session:
@@ -67,43 +69,47 @@ def dashboard():
     return render_template("dashboard.html")
 
 # --------------------
-# Platform pages
+# PLATFORM PAGES
 # --------------------
 @app.route("/platform/<name>")
 def platform(name):
-    return render_template(f"{name}.html")
+    if "user" not in session:
+        return redirect(url_for("login"))
+    template_name = f"{name}.html"
+    if not os.path.exists(os.path.join("templates", template_name)):
+        return render_template("404.html"), 404
+    return render_template(template_name)
 
 # --------------------
-# Community feed / posts
+# COMMUNITY FEED
 # --------------------
-# Temporary in-memory posts for testing
-POSTS = []
-
 @app.route("/feed")
 def feed():
-    return render_template("feed.html", posts=POSTS)
+    if "user" not in session:
+        return redirect(url_for("login"))
+    return render_template("feed.html", posts=posts)
 
 @app.route("/post", methods=["GET", "POST"])
 def post():
-    saved = []  # TEMP saved ideas
+    if "user" not in session:
+        return redirect(url_for("login"))
+    saved_ideas = posts  # Show previous posts as "attached ideas"
     if request.method == "POST":
         content = request.form.get("content")
+        attached_idea = request.form.get("attached_idea")
         image_file = request.files.get("image")
         filename = None
         if image_file:
             filename = image_file.filename
             image_file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-        attached_idea = request.form.get("attached_idea")
-        POSTS.append({
-            "user": {"username": session.get("user")},
+        posts.append({
+            "user": {"username": session["user"]},
             "content": content,
-            "image": filename,
             "attached_idea": attached_idea,
-            "likes": [],
-            "timestamp": "Just now"
+            "image": filename
         })
         return redirect(url_for("feed"))
-    return render_template("post.html", saved=saved)
+    return render_template("post.html", saved=saved_ideas)
 
 # --------------------
 # Serve uploaded files
@@ -113,23 +119,37 @@ def uploaded_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 # --------------------
-# Tools API
+# AI TOOL HANDLER
 # --------------------
 @app.route("/use_tool", methods=["POST"])
 def use_tool():
     data = request.get_json()
-    print(data)
+    print("Tool used:", data)
+    # Here you can later save to database if needed
     return jsonify({"status": "success"})
 
 # --------------------
-# Catch-all 404
+# MESSAGES PAGE (Inbox)
+# --------------------
+@app.route("/messages")
+def messages_inbox():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM users")
+    users = [dict(row) for row in cursor.fetchall() if row["username"] != session["user"]]
+    return render_template("messages_inbox.html", users=users)
+
+# --------------------
+# 404 HANDLER
 # --------------------
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template("404.html"), 404
 
 # --------------------
-# Run locally
+# RUN
 # --------------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
