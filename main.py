@@ -1,114 +1,69 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import (
-    LoginManager,
-    UserMixin,
-    login_user,
-    login_required,
-    logout_user,
-)
-from werkzeug.security import generate_password_hash, check_password_hash
-from dotenv import load_dotenv
-from flask_socketio import SocketIO
-from datetime import datetime
-import os
-
-# -------------------- LOAD ENV --------------------
-
-load_dotenv()
-
-# -------------------- APP SETUP --------------------
+from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask_login import LoginManager, login_required, login_user, logout_user, UserMixin, current_user
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret")
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-    "DATABASE_URL", "sqlite:///creatorskit.db"
-)
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.secret_key = "super-secret-key"
 
-db = SQLAlchemy(app)
-
-login_manager = LoginManager(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
 login_manager.login_view = "login"
 
-# -------------------- SOCKET.IO (SAFE MODE) --------------------
-# This works on Render and Python 3.13
+# ---- TEMP USER MODEL (STABLE) ----
+class User(UserMixin):
+    def __init__(self, id):
+        self.id = id
 
-socketio = SocketIO(
-    app,
-    async_mode="threading",
-    cors_allowed_origins="*"
-)
-
-# -------------------- MODELS --------------------
-
-class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
-
-class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, nullable=False)
-    content = db.Column(db.Text)
-    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-
-# -------------------- DB INIT --------------------
-
-with app.app_context():
-    db.create_all()
+users = {"admin": {"password": "admin"}}
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return User(user_id)
 
-# -------------------- ROUTES --------------------
-
-@app.route("/")
-def index():
-    return render_template("index.html")
-
+# ---- AUTH ----
+@app.route("/", methods=["GET", "POST"])
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        user = User.query.filter_by(username=request.form["username"]).first()
-        if user and check_password_hash(user.password, request.form["password"]):
-            login_user(user)
+        username = request.form.get("username")
+        password = request.form.get("password")
+        if username in users and users[username]["password"] == password:
+            login_user(User(username))
             return redirect(url_for("dashboard"))
-        flash("Invalid credentials")
     return render_template("login.html")
-
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        hashed_pw = generate_password_hash(request.form["password"])
-        user = User(username=request.form["username"], password=hashed_pw)
-        db.session.add(user)
-        db.session.commit()
-        return redirect(url_for("login"))
-    return render_template("register.html")
-
-@app.route("/dashboard")
-@login_required
-def dashboard():
-    return render_template("dashboard.html")
 
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("index"))
+    return redirect(url_for("login"))
 
-# -------------------- SOCKET EVENTS --------------------
+# ---- CORE PAGES ----
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    return render_template("dashboard.html")
 
-@socketio.on("connect")
-def handle_connect():
-    print("Client connected")
+# ---- PLATFORM ROUTES (MATCH FILE NAMES EXACTLY) ----
+platforms = [
+    "Facebook","instagram","twitter","tictok","snapchat","youtube",
+    "linkedin","pinterest","threads","discord","reddit","twitch"
+]
 
-@socketio.on("disconnect")
-def handle_disconnect():
-    print("Client disconnected")
+for p in platforms:
+    def page(p=p):
+        return render_template(f"{p}.html")
+    app.add_url_rule(f"/{p}", p, login_required(page))
 
-# -------------------- ENTRY POINT FOR RENDER --------------------
+# ---- TOOL ENDPOINT ----
+@app.route("/use_tool", methods=["POST"])
+@login_required
+def use_tool():
+    data = request.json
+    return jsonify({
+        "status": "success",
+        "platform": data["platform"],
+        "tool": data["tool"]
+    })
 
-application = app
+if __name__ == "__main__":
+    app.run()
