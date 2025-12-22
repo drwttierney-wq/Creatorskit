@@ -2,21 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Creators Kit</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background: #0f172a; color: #fff; margin: 0; }
+        .btn-primary { background: #ec4899; padding: 15px 30px; border-radius: 10px; color: #fff; text-decoration: none; font-weight: bold; display: inline-block; }
+        .max-w-md { max-width: 500px; margin: 0 auto; }
+        input { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 10px; border: none; }
+    </style>
 </head>
-<body class="bg-gray-900 text-white">
-
-<nav class="p-4 bg-black font-bold text-xl">
-    Creators Kit
-</nav>
-
-<div class="p-6">
+<body>
     {% block content %}{% endblock %}
-</div>
-
-{% block scripts %}{% endblock %}
-
 </body>
 </html>
