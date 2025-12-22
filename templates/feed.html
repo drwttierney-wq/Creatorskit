@@ -1,37 +1,51 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1 class="text-4xl font-bold mb-8">Community Feed</h1>
-<a href="/post" class="bg-pink-600 hover:bg-pink-700 px-6 py-3 rounded-xl mb-8 inline-block font-bold">+ Share Idea</a>
+<a href="/post" class="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 px-6 py-3 rounded-xl mb-8 inline-block font-bold">
+    + Share Idea
+</a>
+
 <div class="space-y-8">
     {% if posts %}
         {% for post in posts %}
         <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+            
+            <!-- User & Follow Button -->
             <div class="flex items-center mb-4">
                 <div class="font-bold text-xl">{{ post.user.username }}</div>
                 {% set is_following = Follow.query.filter_by(follower_id=current_user.id, followed_id=post.user.id).first() %}
-                <a href="/follow/{{ post.user.id }}" class="ml-auto text-sm px-4 py-2 rounded {% if is_following %}bg-gray-700{% else %}bg-pink-600{% endif %}">
+                <a href="/follow/{{ post.user.id }}" class="ml-auto text-sm px-4 py-2 rounded {% if is_following %}bg-gray-700{% else %}bg-pink-600{% endif %} hover:opacity-90 transition">
                     {% if is_following %}Unfollow{% else %}Follow{% endif %}
                 </a>
             </div>
+
+            <!-- Post Content -->
             <p class="mb-4 text-lg">{{ post.content }}</p>
+
+            <!-- Post Image -->
             {% if post.image %}
-            <img src="{{ url_for('uploaded_file', filename=post.image) }}" class="max-w-full rounded-xl mb-4">
+            <img src="{{ url_for('uploaded_file', filename=post.image) }}" class="max-w-full rounded-xl mb-4 object-cover">
             {% endif %}
+
+            <!-- Attached Idea -->
             {% if post.attached_idea %}
             <div class="bg-gray-700 p-4 rounded-xl mb-4 whitespace-pre-wrap border-l-4 border-pink-500">
                 <strong>Attached Idea:</strong><br>{{ post.attached_idea|safe }}
             </div>
             {% endif %}
+
+            <!-- Likes & Timestamp -->
             <div class="flex items-center text-sm">
-                <a href="/like/{{ post.id }}" class="text-pink-400 mr-6">
+                <a href="/like/{{ post.id }}" class="text-pink-400 mr-6 hover:opacity-80 transition">
                     ❤️ {{ post.likes|length }} Likes
                 </a>
                 <span class="text-gray-500">{{ post.timestamp.strftime('%b %d at %H:%M') }}</span>
             </div>
+
         </div>
         {% endfor %}
     {% else %}
-        <p class="text-xl text-gray-400">No posts yet — be the first to share an idea!</p>
+        <p class="text-xl text-gray-400 italic">No posts yet — be the first to share an idea!</p>
     {% endif %}
 </div>
 {% endblock %}
