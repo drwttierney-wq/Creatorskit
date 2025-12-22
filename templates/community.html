@@ -1,29 +1,64 @@
 {% extends 'base.html' %}
+
 {% block content %}
 <h1 class="text-4xl font-bold mb-8">Community Live Chat</h1>
-<div id="chat" class="platform-card h-96 overflow-y-auto p-6 mb-6 bg-gray-800 rounded-xl">
+
+<!-- Chat Container -->
+<div id="chat" class="h-96 overflow-y-auto p-6 mb-6 bg-gray-800 rounded-xl">
     <p class="text-gray-500 italic">Welcome! Send a message to start chatting with other creators.</p>
 </div>
-<div class="flex gap-4">
-    <input id="msg" type="text" placeholder="Type your message..." class="flex-1 bg-gray-800 p-4 rounded-l-xl text-lg">
-    <button onclick="sendMsg()" class="bg-gradient-to-r from-pink-600 to-purple-600 px-10 rounded-r-xl text-lg font-bold">Send</button>
-</div>
 
+<!-- Message Input -->
+<div class="flex gap-0 max-w-2xl">
+    <input 
+        id="msg" 
+        type="text" 
+        placeholder="Type your message..." 
+        class="flex-1 bg-gray-800 p-4 rounded-l-xl text-lg"
+    >
+    <button 
+        onclick="sendMsg()" 
+        class="bg-gradient-to-r from-pink-600 to-purple-600 px-8 rounded-r-xl text-lg font-bold"
+    >
+        Send
+    </button>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 <script>
     const socket = io();
+
+    // Join community room
     socket.emit('join_community');
+
+    // Listen for new messages
     socket.on('new_message', data => {
         const chat = document.getElementById('chat');
-        chat.innerHTML += `<p class="mb-3"><strong class="text-pink-400">${data.user}:</strong> ${data.msg}</p>`;
+        const msgEl = document.createElement('p');
+        msgEl.classList.add('mb-3');
+        msgEl.innerHTML = `<strong class="text-pink-400">${data.user}:</strong> ${data.msg}`;
+        chat.appendChild(msgEl);
         chat.scrollTop = chat.scrollHeight;
     });
+
+    // Send message function
     function sendMsg() {
-        const msg = document.getElementById('msg').value.trim();
+        const msgInput = document.getElementById('msg');
+        const msg = msgInput.value.trim();
         if (msg) {
-            socket.emit('send_message', {msg});
-            document.getElementById('msg').value = '';
+            socket.emit('send_message', { msg });
+            msgInput.value = '';
         }
     }
-    document.getElementById('msg').addEventListener('keypress', e => { if (e.key === 'Enter') sendMsg(); });
+
+    // Enter key to send
+    document.getElementById('msg').addEventListener('keypress', e => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            sendMsg();
+        }
+    });
 </script>
 {% endblock %}
