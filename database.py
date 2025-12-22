@@ -1,27 +1,46 @@
-import sqlite3
+from flask_sqlalchemy import SQLAlchemy
+from main import app
 
-DB_NAME = "database.db"
+db = SQLAlchemy(app)
 
-def get_db():
-    """
-    Returns a SQLite connection.
-    Rows can be accessed as dictionaries.
-    """
-    conn = sqlite3.connect(DB_NAME)
-    conn.row_factory = sqlite3.Row
-    return conn
+# ----------------------
+# MODELS
+# ----------------------
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(150), nullable=False)
+    posts = db.relationship('Post', backref='user', lazy=True)
 
-def init_db():
-    """
-    Initializes the database and creates tables if they don't exist.
-    """
-    with get_db() as db:
-        cursor = db.cursor()
-        cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
-        )
-        """)
-        db.commit()
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    image = db.Column(db.String(300))
+    attached_idea = db.Column(db.Text)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
+    likes = db.relationship('Like', backref='post', lazy=True)
+
+class Like(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+class Follow(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    follower_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    followed_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    receiver_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    content = db.Column(db.Text)
+    image = db.Column(db.String(300))
+    timestamp = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+# ----------------------
+# INITIALIZE DB
+# ----------------------
+with app.app_context():
+    db.create_all()
