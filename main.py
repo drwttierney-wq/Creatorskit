@@ -1,7 +1,4 @@
 import os
-import eventlet
-eventlet.monkey_patch()
-
 from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory, jsonify
 from database import get_db, init_db
 
@@ -15,7 +12,7 @@ app.secret_key = os.environ.get("SECRET_KEY", "super-secret-key")
 init_db()
 
 # --------------------
-# Uploads folder
+# Static uploads folder
 # --------------------
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -28,20 +25,21 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 def index():
     return render_template("index.html")
 
-
-# --------------------
-# LOGIN & REGISTER
-# --------------------
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        # TEMP login: store username in session
-        session["user"] = username
-        return redirect(url_for("dashboard"))
+        db = get_db()
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
+        user = cursor.fetchone()
+        if user:
+            session["user"] = username
+            return redirect(url_for("dashboard"))
+        else:
+            return render_template("login.html", error="Invalid username or password")
     return render_template("login.html")
-
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -59,9 +57,8 @@ def register():
             return f"Error: {e}"
     return render_template("register.html")
 
-
 # --------------------
-# DASHBOARD
+# Dashboard
 # --------------------
 @app.route("/dashboard")
 def dashboard():
@@ -69,35 +66,26 @@ def dashboard():
         return redirect(url_for("login"))
     return render_template("dashboard.html")
 
-
 # --------------------
-# PLATFORM PAGES
+# Platform pages
 # --------------------
 @app.route("/platform/<name>")
 def platform(name):
-    if "user" not in session:
-        return redirect(url_for("login"))
     return render_template(f"{name}.html")
 
+# --------------------
+# Community feed / posts
+# --------------------
+# Temporary in-memory posts for testing
+POSTS = []
 
-# --------------------
-# COMMUNITY / POSTS
-# --------------------
 @app.route("/feed")
 def feed():
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM users")  # TEMP: just show users
-    posts = cursor.fetchall()
-    return render_template("feed.html", posts=posts)
-
+    return render_template("feed.html", posts=POSTS)
 
 @app.route("/post", methods=["GET", "POST"])
 def post():
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM users")  # TEMP saved ideas
-    saved = cursor.fetchall()
+    saved = []  # TEMP saved ideas
     if request.method == "POST":
         content = request.form.get("content")
         image_file = request.files.get("image")
@@ -106,33 +94,26 @@ def post():
             filename = image_file.filename
             image_file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
         attached_idea = request.form.get("attached_idea")
-        # TEMP: store post later
+        POSTS.append({
+            "user": {"username": session.get("user")},
+            "content": content,
+            "image": filename,
+            "attached_idea": attached_idea,
+            "likes": [],
+            "timestamp": "Just now"
+        })
         return redirect(url_for("feed"))
     return render_template("post.html", saved=saved)
 
-
 # --------------------
-# MESSAGES
-# --------------------
-@app.route("/messages")
-def messages_inbox():
-    db = get_db()
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM users")
-    users = cursor.fetchall()
-    return render_template("messages_inbox.html", users=users)
-
-
-# --------------------
-# UPLOADED FILES
+# Serve uploaded files
 # --------------------
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
-
 # --------------------
-# AI TOOL ROUTE (TEMP)
+# Tools API
 # --------------------
 @app.route("/use_tool", methods=["POST"])
 def use_tool():
@@ -140,19 +121,15 @@ def use_tool():
     print(data)
     return jsonify({"status": "success"})
 
-
 # --------------------
-# 404 ERROR
+# Catch-all 404
 # --------------------
 @app.errorhandler(404)
-def not_found(e):
+def page_not_found(e):
     return render_template("404.html"), 404
 
-
 # --------------------
-# RUN APP
+# Run locally
 # --------------------
 if __name__ == "__main__":
-    from flask_socketio import SocketIO
-    socketio_app = SocketIO(app, async_mode="eventlet")
-    socketio_app.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    app.run(debug=True)
