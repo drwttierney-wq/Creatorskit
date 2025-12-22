@@ -4,7 +4,6 @@ eventlet.monkey_patch()
 
 from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory, jsonify
 from database import get_db, init_db
-from flask_socketio import SocketIO
 
 # --------------------
 # Flask app setup
@@ -15,15 +14,12 @@ app.secret_key = os.environ.get("SECRET_KEY", "super-secret-key")
 # Ensure database is initialized
 init_db()
 
+# --------------------
 # Uploads folder
+# --------------------
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-
-# --------------------
-# SocketIO
-# --------------------
-socketio_app = SocketIO(app, async_mode="eventlet")
 
 # --------------------
 # BASIC PAGES
@@ -33,12 +29,15 @@ def index():
     return render_template("index.html")
 
 
+# --------------------
+# LOGIN & REGISTER
+# --------------------
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        # TEMP login (no password check yet)
+        # TEMP login: store username in session
         session["user"] = username
         return redirect(url_for("dashboard"))
     return render_template("login.html")
@@ -61,29 +60,36 @@ def register():
     return render_template("register.html")
 
 
+# --------------------
+# DASHBOARD
+# --------------------
 @app.route("/dashboard")
 def dashboard():
+    if "user" not in session:
+        return redirect(url_for("login"))
     return render_template("dashboard.html")
 
 
 # --------------------
-# Platform Pages
+# PLATFORM PAGES
 # --------------------
 @app.route("/platform/<name>")
 def platform(name):
+    if "user" not in session:
+        return redirect(url_for("login"))
     return render_template(f"{name}.html")
 
 
 # --------------------
-# Feed & Posts
+# COMMUNITY / POSTS
 # --------------------
 @app.route("/feed")
 def feed():
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM users")  # TEMP: no posts table yet
-    users = cursor.fetchall()
-    return render_template("feed.html", posts=users)
+    cursor.execute("SELECT * FROM users")  # TEMP: just show users
+    posts = cursor.fetchall()
+    return render_template("feed.html", posts=posts)
 
 
 @app.route("/post", methods=["GET", "POST"])
@@ -100,25 +106,25 @@ def post():
             filename = image_file.filename
             image_file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
         attached_idea = request.form.get("attached_idea")
-        # TEMP: just redirect to feed
+        # TEMP: store post later
         return redirect(url_for("feed"))
     return render_template("post.html", saved=saved)
 
 
 # --------------------
-# Messages Inbox
+# MESSAGES
 # --------------------
 @app.route("/messages")
 def messages_inbox():
     db = get_db()
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM users")  # TEMP
+    cursor.execute("SELECT * FROM users")
     users = cursor.fetchall()
     return render_template("messages_inbox.html", users=users)
 
 
 # --------------------
-# Serve uploaded files
+# UPLOADED FILES
 # --------------------
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
@@ -126,7 +132,7 @@ def uploaded_file(filename):
 
 
 # --------------------
-# Tool usage API
+# AI TOOL ROUTE (TEMP)
 # --------------------
 @app.route("/use_tool", methods=["POST"])
 def use_tool():
@@ -136,30 +142,17 @@ def use_tool():
 
 
 # --------------------
-# SocketIO: Community chat
-# --------------------
-@socketio_app.on("join_community")
-def join_community():
-    print("User joined community")
-
-
-@socketio_app.on("send_message")
-def handle_message(data):
-    msg = data.get("msg")
-    socketio_app.emit("new_message", {"user": session.get("user", "Anon"), "msg": msg})
-
-
-# --------------------
-# 404 Page
+# 404 ERROR
 # --------------------
 @app.errorhandler(404)
-def page_not_found(e):
+def not_found(e):
     return render_template("404.html"), 404
 
 
 # --------------------
-# Run locally / Render
+# RUN APP
 # --------------------
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    socketio_app.run(app, host="0.0.0.0", port=port, debug=True)
+    from flask_socketio import SocketIO
+    socketio_app = SocketIO(app, async_mode="eventlet")
+    socketio_app.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
