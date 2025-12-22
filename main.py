@@ -4,7 +4,7 @@ app = Flask(__name__)
 app.secret_key = "creators-kit-secret"
 
 # --------------------
-# AUTH (SIMPLE + STABLE)
+# AUTH (SIMPLE & STABLE)
 # --------------------
 @app.route("/", methods=["GET", "POST"])
 @app.route("/login", methods=["GET", "POST"])
@@ -26,7 +26,7 @@ def require_login():
 
 
 # --------------------
-# CORE PAGES
+# CORE PAGE
 # --------------------
 @app.route("/dashboard")
 def dashboard():
@@ -52,7 +52,6 @@ PLATFORMS = [
     "reddit",
     "twitch"
 ]
-
 
 for platform in PLATFORMS:
     def make_view(name):
@@ -87,7 +86,7 @@ def use_tool():
 
 
 # --------------------
-# RENDER ENTRYPOINT
+# ENTRYPOINT
 # --------------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
