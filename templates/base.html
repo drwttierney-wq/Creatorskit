@@ -3,16 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Creators Kit</title>
-
-    <!-- Tailwind CDN (safe) -->
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Optional custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-<body class="bg-black text-white min-h-screen">
+<body class="bg-gray-900 text-white">
 
+<nav class="p-4 bg-black">Creators Kit</nav>
+
+<div class="p-8">
     {% block content %}{% endblock %}
+</div>
+
+<script>
+function useTool(platform, tool) {
+    const safe = tool.replace(/ /g,'');
+    const box = document.getElementById(`result-${platform}-${safe}`);
+    if (box) box.innerText = tool + " generated content 💡";
+
+    fetch("/use_tool", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({platform, tool})
+    });
+}
+</script>
 
 </body>
 </html>
