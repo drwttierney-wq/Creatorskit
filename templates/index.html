@@ -1,14 +1,22 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<div class="text-center py-32">
+<div class="text-center py-32 px-4">
+    
+    <!-- Main Heading -->
     <h1 class="text-8xl font-bold mb-8 bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
         Creators Kit
     </h1>
+
+    <!-- Subheading -->
     <p class="text-3xl mb-12 text-gray-300 max-w-5xl mx-auto">
         The ultimate creator social platform — AI tools, community feed, messaging, live streams, monetization, all in one.
     </p>
-    <a href="/register" class="btn-primary">
+
+    <!-- Call-to-Action -->
+    <a href="/register" class="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 px-8 py-4 rounded-xl text-xl font-bold inline-block transition">
         Get Started Free
     </a>
+
 </div>
 {% endblock %}
