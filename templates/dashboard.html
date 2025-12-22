@@ -1,109 +1,84 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<h1 class="text-6xl font-bold text-center mb-16 bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
-    Your Creator Tools
+
+<h1 class="text-6xl font-extrabold text-center mb-16 bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+    Creator Control Center
 </h1>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
 
-    <!-- TikTok -->
     <a href="/platform/tiktok" class="platform-card platform-accent-tiktok">
-        <div class="icon text-4xl">🎵</div>
-        <h2 class="text-xl font-semibold mt-2">TikTok</h2>
-        <p class="text-gray-300">7 viral tools</p>
+        <div class="icon">🎵</div>
+        <h2>TikTok</h2>
+        <p>Viral growth tools</p>
     </a>
 
-    <!-- YouTube -->
     <a href="/platform/youtube" class="platform-card platform-accent-youtube">
-        <div class="icon text-4xl">📺</div>
-        <h2 class="text-xl font-semibold mt-2">YouTube</h2>
-        <p class="text-gray-300">7 growth tools</p>
+        <div class="icon">📺</div>
+        <h2>YouTube</h2>
+        <p>Long-form dominance</p>
     </a>
 
-    <!-- Instagram -->
     <a href="/platform/instagram" class="platform-card platform-accent-instagram">
-        <div class="icon text-4xl">📸</div>
-        <h2 class="text-xl font-semibold mt-2">Instagram</h2>
-        <p class="text-gray-300">7 aesthetic tools</p>
+        <div class="icon">📸</div>
+        <h2>Instagram</h2>
+        <p>Aesthetic & reach</p>
     </a>
 
-    <!-- Twitter/X -->
     <a href="/platform/twitter" class="platform-card platform-accent-twitter">
-        <div class="icon text-4xl">🐦</div>
-        <h2 class="text-xl font-semibold mt-2">Twitter/X</h2>
-        <p class="text-gray-300">6 thread tools</p>
+        <div class="icon">🐦</div>
+        <h2>Twitter / X</h2>
+        <p>Threads & virality</p>
     </a>
 
-    <!-- Facebook -->
     <a href="/platform/facebook" class="platform-card platform-accent-facebook">
-        <div class="icon text-4xl">👥</div>
-        <h2 class="text-xl font-semibold mt-2">Facebook</h2>
-        <p class="text-gray-300">5 community tools</p>
+        <div class="icon">👥</div>
+        <h2>Facebook</h2>
+        <p>Communities & pages</p>
     </a>
 
-    <!-- Snapchat -->
     <a href="/platform/snapchat" class="platform-card platform-accent-snapchat">
-        <div class="icon text-4xl">👻</div>
-        <h2 class="text-xl font-semibold mt-2">Snapchat</h2>
-        <p class="text-gray-300">7 AR & Story tools</p>
+        <div class="icon">👻</div>
+        <h2>Snapchat</h2>
+        <p>Stories & AR</p>
     </a>
 
-    <!-- LinkedIn -->
     <a href="/platform/linkedin" class="platform-card platform-accent-linkedin">
-        <div class="icon text-4xl">💼</div>
-        <h2 class="text-xl font-semibold mt-2">LinkedIn</h2>
-        <p class="text-gray-300">7 professional tools</p>
+        <div class="icon">💼</div>
+        <h2>LinkedIn</h2>
+        <p>Professional growth</p>
     </a>
 
-    <!-- Pinterest -->
     <a href="/platform/pinterest" class="platform-card platform-accent-pinterest">
-        <div class="icon text-4xl">📌</div>
-        <h2 class="text-xl font-semibold mt-2">Pinterest</h2>
-        <p class="text-gray-300">7 pin tools</p>
+        <div class="icon">📌</div>
+        <h2>Pinterest</h2>
+        <p>Discovery & traffic</p>
     </a>
 
-    <!-- Threads -->
-    <a href="/platform/threads" class="platform-card platform-accent-threads">
-        <div class="icon text-4xl">🧵</div>
-        <h2 class="text-xl font-semibold mt-2">Threads</h2>
-        <p class="text-gray-300">7 conversation tools</p>
-    </a>
-
-    <!-- Reddit -->
     <a href="/platform/reddit" class="platform-card platform-accent-reddit">
-        <div class="icon text-4xl">👽</div>
-        <h2 class="text-xl font-semibold mt-2">Reddit</h2>
-        <p class="text-gray-300">7 upvote tools</p>
+        <div class="icon">👽</div>
+        <h2>Reddit</h2>
+        <p>Authority & upvotes</p>
     </a>
 
-    <!-- Twitch -->
     <a href="/platform/twitch" class="platform-card platform-accent-twitch">
-        <div class="icon text-4xl">🎮</div>
-        <h2 class="text-xl font-semibold mt-2">Twitch</h2>
-        <p class="text-gray-300">7 streaming tools</p>
+        <div class="icon">🎮</div>
+        <h2>Twitch</h2>
+        <p>Streaming tools</p>
     </a>
 
-    <!-- OnlyFans -->
-    <a href="/platform/onlyfans" class="platform-card platform-accent-onlyfans">
-        <div class="icon text-4xl">🔒</div>
-        <h2 class="text-xl font-semibold mt-2">OnlyFans</h2>
-        <p class="text-gray-300">7 creator tools</p>
-    </a>
-
-    <!-- Discord -->
     <a href="/platform/discord" class="platform-card platform-accent-discord">
-        <div class="icon text-4xl">💬</div>
-        <h2 class="text-xl font-semibold mt-2">Discord</h2>
-        <p class="text-gray-300">7 server tools</p>
+        <div class="icon">💬</div>
+        <h2>Discord</h2>
+        <p>Servers & engagement</p>
     </a>
 
-    <!-- Monetization -->
     <a href="/platform/monetization" class="platform-card platform-accent-monetization">
-        <div class="icon text-4xl">💰</div>
-        <h2 class="text-xl font-semibold mt-2">Monetization</h2>
-        <p class="text-gray-300">7 money-making tools</p>
+        <div class="icon">💰</div>
+        <h2>Monetization</h2>
+        <p>Turn content into income</p>
     </a>
 
 </div>
+
 {% endblock %}
