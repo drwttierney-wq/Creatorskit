@@ -2,10 +2,16 @@ from flask import Flask, render_template, redirect, url_for, request, flash, jso
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from datetime import datetime
+import os
 
 app = Flask(__name__)
-app.secret_key = "your_secret_key_here"  # change this
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///social_platform.db'
+app.secret_key = "your_secret_key_here"  # CHANGE THIS
+
+# Make sure data folder exists
+if not os.path.exists("data"):
+    os.makedirs("data")
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/social_platform.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -18,7 +24,6 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True)
     password = db.Column(db.String(150))
-    # optional profile info
     posts = db.relationship('Post', backref='author', lazy=True)
 
 class Post(db.Model):
@@ -83,14 +88,9 @@ def dashboard():
 # ------------------- PLATFORM PAGES ------------------- #
 platform_pages = ["Facebook","tictok","twitter","instagram","linkedin","snapchat","youtube","pinterest","threads","discord"]
 for page in platform_pages:
-    route = f"/{page}"
-    def make_route(page):
-        @app.route(route)
-        @login_required
-        def platform_page(page=page):
-            return render_template(f"{page}.html")
-        return platform_page
-    make_route(page)
+    def platform_page(page=page):
+        return render_template(f"{page}.html")
+    app.add_url_rule(f"/{page}", page, login_required(platform_page))
 
 # ------------------- SOCIAL FEATURES ------------------- #
 @app.route("/feed")
@@ -131,16 +131,6 @@ def messages_inbox():
 @app.route("/use_tool", methods=["POST"])
 @login_required
 def use_tool():
-    """
-    Called via JS when a tool is used.
-    Expects JSON:
-        {
-            "platform": "facebook",
-            "tool": "Post Caption",
-            "content": "Generated content here",
-            "save": true/false
-        }
-    """
     data = request.json
     platform = data.get("platform")
     tool = data.get("tool")
