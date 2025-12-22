@@ -1,37 +1,73 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<h1 class="text-5xl font-bold mb-10 facebook-accent">Facebook Toolkit</h1>
+<h1 class="text-5xl font-bold mb-10 facebook-accent">
+    Facebook Toolkit
+</h1>
+
 <div class="space-y-5 max-w-4xl">
-    {% set tools = ["Post Caption","Ad Copy","Group Post","Event Description","Reels Idea"] %}
-    {% for tool in tools %}
-    <div class="tool-btn" onclick="useTool('facebook', '{{ tool }}')">
-        <h3 class="text-2xl font-semibold">{{ tool }}</h3>
-        <div id="result-facebook-{{ tool.replace(' ', '') }}" class="result-box"></div>
+
+    <div class="tool-btn" onclick="useTool('facebook','Post Caption')">
+        <h3 class="text-2xl font-semibold">Post Caption</h3>
+        <div id="result-facebook-PostCaption" class="result-box"></div>
     </div>
-    {% endfor %}
+
+    <div class="tool-btn" onclick="useTool('facebook','Ad Copy')">
+        <h3 class="text-2xl font-semibold">Ad Copy</h3>
+        <div id="result-facebook-AdCopy" class="result-box"></div>
+    </div>
+
+    <div class="tool-btn" onclick="useTool('facebook','Group Post')">
+        <h3 class="text-2xl font-semibold">Group Post</h3>
+        <div id="result-facebook-GroupPost" class="result-box"></div>
+    </div>
+
+    <div class="tool-btn" onclick="useTool('facebook','Event Description')">
+        <h3 class="text-2xl font-semibold">Event Description</h3>
+        <div id="result-facebook-EventDescription" class="result-box"></div>
+    </div>
+
+    <div class="tool-btn" onclick="useTool('facebook','Reels Idea')">
+        <h3 class="text-2xl font-semibold">Reels Idea</h3>
+        <div id="result-facebook-ReelsIdea" class="result-box"></div>
+    </div>
+
 </div>
 {% endblock %}
+
 <script>
 function useTool(platform, tool) {
-    // Example: generate content temporarily
-    let content = tool + " generated content here 💡"; // replace with AI logic later
 
-    // Update result box
-    let resultDiv = document.getElementById(`result-${platform}-${tool.replace(/ /g,'')}`);
-    resultDiv.innerText = content;
+    // TEMP content (AI later)
+    const content = tool + " generated content 💡";
 
-    // Optionally save to user profile/feed/community
-    let save = confirm("Save this content to your profile/feed?");
-    if(save){
+    const safeTool = tool.replace(/ /g,'');
+    const resultBox = document.getElementById(
+        `result-${platform}-${safeTool}`
+    );
+
+    if (resultBox) {
+        resultBox.innerText = content;
+    }
+
+    const save = confirm("Save this to your profile/feed?");
+    if (save) {
         fetch("/use_tool", {
             method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({platform: platform, tool: tool, content: content, save: true})
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                platform: platform,
+                tool: tool,
+                content: content,
+                save: true
+            })
         })
-        .then(res=>res.json())
-        .then(data=>{
-            if(data.status=="success") alert("Saved!");
-        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "success") {
+                alert("Saved successfully ✅");
+            }
+        });
     }
 }
 </script>
