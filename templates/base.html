@@ -7,7 +7,7 @@
 </head>
 <body class="bg-gray-900 text-white">
 
-<nav class="p-4 bg-black text-xl font-bold">
+<nav class="p-4 bg-black font-bold text-xl">
     Creators Kit
 </nav>
 
@@ -17,8 +17,8 @@
 
 <script>
 function useTool(platform, tool) {
-    const safeTool = tool.replace(/ /g, "");
-    const box = document.getElementById(`result-${platform}-${safeTool}`);
+    const safe = tool.replace(/ /g, "");
+    const box = document.getElementById(`result-${platform}-${safe}`);
 
     if (box) {
         box.innerText = tool + " generated content 💡";
