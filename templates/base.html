@@ -7,22 +7,31 @@
 </head>
 <body class="bg-gray-900 text-white">
 
-<nav class="p-4 bg-black">Creators Kit</nav>
+<nav class="p-4 bg-black text-xl font-bold">
+    Creators Kit
+</nav>
 
-<div class="p-8">
+<div class="p-6">
     {% block content %}{% endblock %}
 </div>
 
 <script>
 function useTool(platform, tool) {
-    const safe = tool.replace(/ /g,'');
-    const box = document.getElementById(`result-${platform}-${safe}`);
-    if (box) box.innerText = tool + " generated content 💡";
+    const safeTool = tool.replace(/ /g, "");
+    const box = document.getElementById(`result-${platform}-${safeTool}`);
+
+    if (box) {
+        box.innerText = tool + " generated content 💡";
+    }
 
     fetch("/use_tool", {
         method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({platform, tool})
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            platform: platform,
+            tool: tool,
+            content: box ? box.innerText : ""
+        })
     });
 }
 </script>
