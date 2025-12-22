@@ -1,8 +1,11 @@
-from flask import request, redirect, url_for
-
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        # TEMP login (no database yet)
-        return redirect(url_for("dashboard"))
-    return render_template("login.html")
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-md mx-auto mt-20">
+    <h1 class="text-4xl font-bold text-center mb-10">Login</h1>
+    <form method="POST" class="space-y-6">
+        <input type="text" name="username" placeholder="Username" required class="w-full p-4 rounded-xl">
+        <input type="password" name="password" placeholder="Password" required class="w-full p-4 rounded-xl">
+        <button type="submit" class="w-full bg-pink-600 py-4 rounded-xl text-xl font-bold">Login</button>
+    </form>
+</div>
+{% endblock %}
