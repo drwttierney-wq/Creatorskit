@@ -1,11 +1,11 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
 <h1 class="text-5xl font-bold mb-10 facebook-accent">
     Facebook Toolkit
 </h1>
 
-<div class="space-y-5 max-w-4xl">
+<div class="space-y-6 max-w-4xl">
 
     <div class="tool-btn" onclick="useTool('facebook','Post Caption')">
         <h3 class="text-2xl font-semibold">Post Caption</h3>
@@ -35,13 +35,13 @@
 </div>
 {% endblock %}
 
+{% block scripts %}
 <script>
 function useTool(platform, tool) {
 
-    // TEMP content (AI later)
     const content = tool + " generated content 💡";
 
-    const safeTool = tool.replace(/ /g,'');
+    const safeTool = tool.replace(/ /g, "");
     const resultBox = document.getElementById(
         `result-${platform}-${safeTool}`
     );
@@ -50,24 +50,22 @@ function useTool(platform, tool) {
         resultBox.innerText = content;
     }
 
-    const save = confirm("Save this to your profile/feed?");
-    if (save) {
-        fetch("/use_tool", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                platform: platform,
-                tool: tool,
-                content: content,
-                save: true
-            })
+    fetch("/use_tool", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            platform: platform,
+            tool: tool,
+            content: content,
+            save: true
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "success") {
-                alert("Saved successfully ✅");
-            }
-        });
-    }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "success") {
+            console.log("Saved");
+        }
+    });
 }
 </script>
+{% endblock %}
