@@ -1,8 +1,21 @@
 {% extends 'base.html' %}
+
 {% block content %}
-<h1 class="text-5xl font-bold mb-10 monetization-accent">Monetization Toolkit 💰</h1>
+<h1 class="text-5xl font-bold mb-10 monetization-accent">
+    Monetization Toolkit 💰
+</h1>
+
 <div class="space-y-5 max-w-4xl">
-    {% set tools = ["Revenue Strategy Planner","Pricing Calculator","Sponsorship Pitch Script","Product Idea Generator","Upsell &amp; Funnel Builder","Affiliate Program Suggestions","Tax &amp; Finance Tips"] %}
+    {% set tools = [
+        "Revenue Strategy Planner",
+        "Pricing Calculator",
+        "Sponsorship Pitch Script",
+        "Product Idea Generator",
+        "Upsell & Funnel Builder",
+        "Affiliate Program Suggestions",
+        "Tax & Finance Tips"
+    ] %}
+    
     {% for tool in tools %}
     <div class="tool-btn" onclick="useTool('monetization', '{{ tool }}')">
         <h3 class="text-2xl font-semibold">{{ tool }}</h3>
@@ -10,4 +23,28 @@
     </div>
     {% endfor %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function useTool(platform, tool) {
+    const content = tool + " generated content 💡";
+    const safeTool = tool.replace(/ /g, "");
+    const resultBox = document.getElementById(`result-${platform}-${safeTool}`);
+
+    if (resultBox) {
+        resultBox.innerText = content;
+    }
+
+    fetch("/use_tool", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({platform, tool, content, save: true})
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === "success") console.log("Saved");
+    });
+}
+</script>
 {% endblock %}
