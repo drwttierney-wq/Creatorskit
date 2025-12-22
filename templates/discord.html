@@ -1,8 +1,21 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
 {% block content %}
-<h1 class="text-5xl font-bold mb-10 discord-accent">Discord Toolkit</h1>
+<h1 class="text-5xl font-bold mb-10 discord-accent">
+    Discord Toolkit
+</h1>
+
 <div class="space-y-5 max-w-4xl">
-    {% set tools = ["Server Intro","Role Suggestions","Channel Structure","Bot Commands","Event Announcement","Rules Text","Emoji Pack"] %}
+    {% set tools = [
+        "Server Intro",
+        "Role Suggestions",
+        "Channel Structure",
+        "Bot Commands",
+        "Event Announcement",
+        "Rules Text",
+        "Emoji Pack"
+    ] %}
+
     {% for tool in tools %}
     <div class="tool-btn" onclick="useTool('discord', '{{ tool }}')">
         <h3 class="text-2xl font-semibold">{{ tool }}</h3>
@@ -11,27 +24,39 @@
     {% endfor %}
 </div>
 {% endblock %}
+
+{% block scripts %}
 <script>
 function useTool(platform, tool) {
-    // Example: generate content temporarily
-    let content = tool + " generated content here 💡"; // replace with AI logic later
+    const content = tool + " generated content here 💡";
 
-    // Update result box
-    let resultDiv = document.getElementById(`result-${platform}-${tool.replace(/ /g,'')}`);
-    resultDiv.innerText = content;
+    const resultDiv = document.getElementById(
+        `result-${platform}-${tool.replace(/ /g,'')}`
+    );
 
-    // Optionally save to user profile/feed/community
-    let save = confirm("Save this content to your profile/feed?");
-    if(save){
+    if (resultDiv) {
+        resultDiv.innerText = content;
+    }
+
+    if (confirm("Save this content to your profile/feed?")) {
         fetch("/use_tool", {
             method: "POST",
             headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({platform: platform, tool: tool, content: content, save: true})
+            body: JSON.stringify({
+                platform: platform,
+                tool: tool,
+                content: content,
+                save: true
+            })
         })
-        .then(res=>res.json())
-        .then(data=>{
-            if(data.status=="success") alert("Saved!");
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "success") {
+                alert("Saved!");
+            }
         })
+        .catch(err => console.error(err));
     }
 }
 </script>
+{% endblock %}
