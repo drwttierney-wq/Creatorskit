@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Creators Kit</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -15,26 +16,7 @@
     {% block content %}{% endblock %}
 </div>
 
-<script>
-function useTool(platform, tool) {
-    const safe = tool.replace(/ /g, "");
-    const box = document.getElementById(`result-${platform}-${safe}`);
-
-    if (box) {
-        box.innerText = tool + " generated content 💡";
-    }
-
-    fetch("/use_tool", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            platform: platform,
-            tool: tool,
-            content: box ? box.innerText : ""
-        })
-    });
-}
-</script>
+{% block scripts %}{% endblock %}
 
 </body>
 </html>
