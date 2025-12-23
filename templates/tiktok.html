@@ -1,62 +1,14 @@
-{% extends "base.html" %}
-
+{% extends 'base.html' %}
+{% set platform = "tiktok" %}
+{% set tools = ["Idea Generator","Script Writer","Hashtag Generator","Caption Creator","Trend Analyzer","Sound Finder","Thumbnail Idea"] %}
 {% block content %}
-<h1 class="text-5xl font-bold mb-10 tiktok-accent">
-    TikTok Toolkit
-</h1>
-
-<div class="space-y-5 max-w-4xl">
-    {% set tools = [
-        "Idea Generator",
-        "Script Writer",
-        "Hashtag Generator",
-        "Caption Creator",
-        "Trend Analyzer",
-        "Sound Finder",
-        "Thumbnail Idea"
-    ] %}
-
+<h1 class="text-5xl font-bold mb-10 tiktok-accent">{{ platform|capitalize }} Toolkit</h1>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
     {% for tool in tools %}
-    <div class="tool-btn" onclick="useTool('tiktok', '{{ tool }}')">
+    <div class="tool-btn" onclick="useTool('{{ platform }}', '{{ tool }}')">
         <h3 class="text-2xl font-semibold">{{ tool }}</h3>
-        <div id="result-tiktok-{{ tool.replace(' ', '') }}" class="result-box"></div>
+        <div id="result-{{ platform }}-{{ tool.replace(' ', '') }}" class="result-box"></div>
     </div>
     {% endfor %}
 </div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-function useTool(platform, tool) {
-    const content = tool + " generated content here 💡";
-
-    const resultDiv = document.getElementById(
-        `result-${platform}-${tool.replace(/ /g,'')}`
-    );
-
-    if (resultDiv) {
-        resultDiv.innerText = content;
-    }
-
-    if (confirm("Save this content to your profile/feed?")) {
-        fetch("/use_tool", {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({
-                platform: platform,
-                tool: tool,
-                content: content,
-                save: true
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "success") {
-                alert("Saved!");
-            }
-        })
-        .catch(err => console.error(err));
-    }
-}
-</script>
 {% endblock %}
