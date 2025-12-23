@@ -1,23 +1,110 @@
-{% extends 'base.html' %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ platform_name }} – Creators Kit</title>
 
-<h1 style="font-size:48px;font-weight:900;margin-bottom:40px;">
-    {{ platform_name }} Toolkit
-</h1>
+  <style>
+    body {
+      margin: 0;
+      background: #0f172a;
+      color: #fff;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont;
+    }
 
-<div class="grid">
+    header {
+      padding: 30px;
+      background: linear-gradient(135deg, #6366f1, #ec4899);
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .container {
+      padding: 30px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: #111827;
+      border-radius: 18px;
+      padding: 25px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid #1f2937;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .card p {
+      opacity: 0.8;
+      font-size: 14px;
+    }
+
+    .result {
+      margin-top: 15px;
+      padding: 15px;
+      background: #020617;
+      border-radius: 10px;
+      display: none;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  {{ platform_name }} Toolkit
+</header>
+
+<div class="container">
+  <div class="grid">
     {% for tool in tools %}
-    <div class="card" onclick="useTool('{{ platform_id }}','{{ tool }}')">
-        <h2>{{ tool }}</h2>
-        <p>Click to generate</p>
-    </div>
+      <div class="card" onclick="runTool('{{ tool.id }}', this)">
+        <h3>{{ tool.name }}</h3>
+        <p>{{ tool.desc }}</p>
+        <div class="result"></div>
+      </div>
     {% endfor %}
+  </div>
 </div>
 
 <script>
-function useTool(platform, tool) {
-    alert(tool + " generated for " + platform);
+function runTool(toolId, card) {
+  const box = card.querySelector(".result");
+  box.style.display = "block";
+  box.innerText = "Generating " + toolId + " ideas…";
+
+  fetch("/use_tool", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      platform: "{{ platform_id }}",
+      tool: toolId
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    box.innerText = "✅ " + toolId + " ready. (AI coming next)";
+  })
+  .catch(() => {
+    box.innerText = "❌ Something went wrong";
+  });
 }
 </script>
 
-{% endblock %}
+</body>
+</html>
