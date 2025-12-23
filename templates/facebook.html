@@ -1,11 +1,14 @@
-{% set platform_name = "Facebook" %}
-{% set platform_id = "facebook" %}
-
-{% set tools = [
-  {"id": "post_writer", "name": "Post Writer", "desc": "High-reach posts"},
-  {"id": "group_posts", "name": "Group Content", "desc": "Community-friendly posts"},
-  {"id": "ad_copy", "name": "Ad Copy", "desc": "Conversion-focused ads"},
-  {"id": "hooks", "name": "Hooks", "desc": "Attention grabbing openers"}
-] %}
-
-{% include "platform.html" %}
+{% extends 'base.html' %}
+{% set platform = "facebook" %}
+{% set tools = ["Group Post Ideas","Page Content Planner","Event Scheduler","Ad Copy Generator","Community Poll","Story Idea","Engagement Boost Tips"] %}
+{% block content %}
+<h1 class="text-5xl font-bold mb-10 facebook-accent">{{ platform|capitalize }} Toolkit</h1>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+    {% for tool in tools %}
+    <div class="tool-btn" onclick="useTool('{{ platform }}', '{{ tool }}')">
+        <h3 class="text-2xl font-semibold">{{ tool }}</h3>
+        <div id="result-{{ platform }}-{{ tool.replace(' ', '') }}" class="result-box"></div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
