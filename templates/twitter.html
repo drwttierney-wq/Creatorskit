@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% set platform = "twitter" %}
+{% set tools = ["Thread Writer","Tweet Generator","Reply Ideas","Poll Creator","Quote Tweet","Viral Hook"] %}
+{% block content %}
+<h1 class="text-5xl font-bold mb-10 twitter-accent">{{ platform|capitalize }} Toolkit</h1>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+    {% for tool in tools %}
+    <div class="tool-btn" onclick="useTool('{{ platform }}', '{{ tool }}')">
+        <h3 class="text-2xl font-semibold">{{ tool }}</h3>
+        <div id="result-{{ platform }}-{{ tool.replace(' ', '') }}" class="result-box"></div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
