@@ -1,25 +1,23 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% block content %}
 
-<h2>{{ platform|capitalize }} AI Toolkit</h2>
+<h1 style="font-size:48px;font-weight:900;margin-bottom:40px;">
+    {{ platform_name }} Toolkit
+</h1>
 
-<form method="post">
-    <input name="niche" placeholder="Your niche (e.g. fitness, dropshipping)" required>
-
-    <select name="tool">
-        <option value="hooks">Viral Hooks</option>
-        <option value="captions">Captions</option>
-        <option value="hashtags">Hashtags</option>
-        <option value="plan">7-Day Content Plan</option>
-    </select>
-
-    <button>Generate 🚀</button>
-</form>
-
-{% if result %}
-<div class="post">
-    <pre>{{ result }}</pre>
+<div class="grid">
+    {% for tool in tools %}
+    <div class="card" onclick="useTool('{{ platform_id }}','{{ tool }}')">
+        <h2>{{ tool }}</h2>
+        <p>Click to generate</p>
+    </div>
+    {% endfor %}
 </div>
-{% endif %}
+
+<script>
+function useTool(platform, tool) {
+    alert(tool + " generated for " + platform);
+}
+</script>
 
 {% endblock %}
