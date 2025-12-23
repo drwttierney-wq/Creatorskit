@@ -1,52 +1,23 @@
-/* ==========================
-   BASE STYLES
-========================== */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-    @apply bg-gray-950 text-gray-100 font-sans min-h-screen;
-    margin: 0;
+    @apply bg-gradient-to-b from-gray-950 to-black text-gray-100 font-sans min-h-screen;
 }
 
-/* ==========================
-   NAVIGATION
-========================== */
 nav {
-    @apply bg-gray-900/90 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50 shadow-lg p-4 flex justify-between items-center;
+    @apply bg-gray-900/80 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50 shadow-lg;
 }
 
-nav a {
-    @apply text-pink-400 font-bold hover:text-pink-300 transition-colors duration-300;
-}
-
-/* ==========================
-   HEADINGS
-========================== */
-h1, h2, h3 {
-    font-family: 'Inter', sans-serif;
-    font-weight: 800;
-}
-
-h1 {
-    @apply text-5xl md:text-6xl lg:text-7xl mb-8;
-}
-
-h2 {
-    @apply text-3xl md:text-4xl mb-6;
-}
-
-h3 {
-    @apply text-2xl md:text-3xl mb-4;
-}
-
-/* ==========================
-   DASHBOARD / PLATFORM CARDS
-========================== */
+/* PLATFORM CARDS */
 .platform-card {
-    @apply bg-gradient-to-br from-gray-900 to-gray-800 border-2 rounded-3xl p-10 shadow-2xl text-center transition-all duration-500 transform hover:scale-105 hover:shadow-[0_0_40px_rgba(255,105,180,0.4)];
-    min-height: 280px;
+    @apply bg-gradient-to-br from-gray-900 to-gray-800
+    border-2 border-gray-700 rounded-3xl p-10
+    shadow-2xl text-center transition-all duration-500
+    transform hover:scale-105
+    hover:shadow-[0_0_40px_rgba(255,105,180,0.35)];
+    min-height: 300px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -58,94 +29,58 @@ h3 {
 }
 
 .platform-card h2 {
-    @apply text-3xl font-bold;
+    @apply text-3xl font-bold tracking-tight;
 }
 
 .platform-card p {
     @apply text-xl mt-4 opacity-90;
 }
 
-/* ==========================
-   TOOL BUTTONS
-========================== */
+/* TOOL BUTTONS */
 .tool-btn {
-    @apply w-full bg-gray-800 hover:bg-gray-700 p-6 rounded-2xl mb-6 transition-all duration-300 border-2 border-gray-700 hover:border-pink-500 cursor-pointer shadow-xl hover:shadow-2xl;
+    @apply w-full bg-gradient-to-br from-gray-900 to-gray-800
+    p-8 rounded-3xl mb-8
+    border border-gray-700
+    transition-all duration-300
+    cursor-pointer relative overflow-hidden
+    hover:border-pink-500
+    hover:shadow-[0_0_40px_rgba(255,105,180,0.25)];
 }
 
+/* TOOL RESULTS */
 .result-box {
-    @apply mt-6 p-6 bg-gradient-to-r from-gray-900 to-gray-800 rounded-2xl whitespace-pre-wrap border-2 border-pink-500/30 shadow-inner text-lg;
+    @apply mt-6 p-6 bg-black/60 rounded-2xl
+    border border-pink-500/30
+    whitespace-pre-wrap text-base
+    shadow-inner backdrop-blur-sm;
 }
 
-/* ==========================
-   POSTS / FEED
-========================== */
-.post-card {
-    @apply bg-gradient-to-r from-gray-900 to-gray-800 p-8 rounded-3xl shadow-2xl border border-gray-700 mb-8;
-}
-
-.post-card img {
-    @apply max-w-full rounded-xl mt-4;
-}
-
-/* ==========================
-   CHAT BUBBLES
-========================== */
-.chat-bubble {
-    @apply p-4 rounded-2xl max-w-lg shadow-lg mb-4 break-words;
-}
-
-.chat-bubble.sent {
-    @apply bg-gradient-to-r from-pink-600 to-purple-600 ml-auto text-white;
-}
-
-.chat-bubble.received {
-    @apply bg-gray-700 mr-auto text-gray-100;
-}
-
-#chat-messages {
-    @apply overflow-y-auto h-96 p-4 rounded-xl bg-gray-800 mb-6;
-}
-
-/* ==========================
-   BUTTONS
-========================== */
+/* BUTTONS */
 .btn-primary {
-    @apply bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 px-10 py-5 rounded-full text-2xl font-bold shadow-2xl hover:shadow-3xl transition-all duration-300;
+    @apply bg-gradient-to-r from-pink-600 to-purple-600
+    hover:from-pink-700 hover:to-purple-700
+    px-10 py-5 rounded-full text-2xl font-bold
+    shadow-2xl transition-all duration-300;
 }
 
 .btn-secondary {
-    @apply bg-gray-700 hover:bg-gray-600 px-8 py-4 rounded-full font-bold transition-all duration-300;
+    @apply bg-gray-700 hover:bg-gray-600
+    px-8 py-4 rounded-full font-bold
+    transition-all duration-300;
 }
 
-/* ==========================
-   NOTIFICATIONS / MISC
-========================== */
-.notification {
-    @apply bg-pink-900/50 p-4 rounded-xl mb-4 border border-pink-500/30;
-}
-
-select, input, textarea {
-    @apply bg-gray-900 rounded-xl p-4 text-gray-100 w-full focus:outline-none focus:ring-2 focus:ring-pink-500;
-}
-
-a {
-    @apply hover:underline transition duration-300;
-}
-
-/* ==========================
-   PLATFORM ACCENTS
-========================== */
-.platform-accent-tiktok { @apply from-pink-900 to-purple-900 border-pink-500 hover:shadow-pink-500/50; }
-.platform-accent-youtube { @apply from-red-900 to-orange-900 border-red-600 hover:shadow-red-600/50; }
-.platform-accent-instagram { @apply from-purple-900 to-pink-900 border-purple-500 hover:shadow-purple-500/50; }
-.platform-accent-twitter { @apply from-blue-900 to-cyan-900 border-blue-400 hover:shadow-blue-400/50; }
-.platform-accent-facebook { @apply from-blue-900 to-indigo-900 border-blue-600 hover:shadow-blue-600/50; }
-.platform-accent-snapchat { @apply from-yellow-900 to-orange-900 border-yellow-400 hover:shadow-yellow-400/50; }
-.platform-accent-linkedin { @apply from-blue-900 to-teal-900 border-blue-700 hover:shadow-blue-700/50; }
-.platform-accent-pinterest { @apply from-red-900 to-pink-900 border-red-500 hover:shadow-red-500/50; }
-.platform-accent-threads { @apply from-gray-800 to-black border-gray-300 hover:shadow-gray-300/50; }
-.platform-accent-reddit { @apply from-orange-900 to-red-900 border-orange-500 hover:shadow-orange-500/50; }
-.platform-accent-twitch { @apply from-purple-900 to-indigo-900 border-purple-600 hover:shadow-purple-600/50; }
-.platform-accent-onlyfans { @apply from-pink-900 to-red-900 border-pink-600 hover:shadow-pink-600/50; }
-.platform-accent-discord { @apply from-indigo-900 to-purple-900 border-indigo-500 hover:shadow-indigo-500/50; }
-.platform-accent-monetization { @apply from-green-900 to-green-700 border-green-500 hover:shadow-green-500/50; }
+/* PLATFORM ACCENTS */
+.platform-accent-tiktok { @apply border-pink-500; }
+.platform-accent-youtube { @apply border-red-600; }
+.platform-accent-instagram { @apply border-purple-500; }
+.platform-accent-twitter { @apply border-blue-400; }
+.platform-accent-facebook { @apply border-blue-600; }
+.platform-accent-snapchat { @apply border-yellow-400; }
+.platform-accent-linkedin { @apply border-blue-700; }
+.platform-accent-pinterest { @apply border-red-500; }
+.platform-accent-threads { @apply border-gray-300; }
+.platform-accent-reddit { @apply border-orange-500; }
+.platform-accent-twitch { @apply border-purple-600; }
+.platform-accent-onlyfans { @apply border-pink-600; }
+.platform-accent-discord { @apply border-indigo-500; }
+.platform-accent-monetization { @apply border-green-500; }
