@@ -1,61 +1,13 @@
-{% extends "base.html" %}
+{% set platform_name = "Twitter / X" %}
+{% set platform_id = "twitter" %}
 
-{% block content %}
-<h1 class="text-5xl font-bold mb-10 twitter-accent">
-    Twitter/X Toolkit
-</h1>
+{% set tools = [
+  {"id": "thread_writer", "name": "Thread Writer", "desc": "Create viral threads"},
+  {"id": "tweet_generator", "name": "Tweet Generator", "desc": "High-engagement tweets"},
+  {"id": "reply_builder", "name": "Reply Builder", "desc": "Smart replies that convert"},
+  {"id": "poll_creator", "name": "Poll Creator", "desc": "Engaging poll ideas"},
+  {"id": "viral_hooks", "name": "Viral Hooks", "desc": "Scroll-stopping hooks"},
+  {"id": "quote_tweets", "name": "Quote Tweets", "desc": "React with impact"}
+] %}
 
-<div class="space-y-5 max-w-4xl">
-    {% set tools = [
-        "Thread Writer",
-        "Tweet Generator",
-        "Reply Ideas",
-        "Poll Creator",
-        "Quote Tweet",
-        "Viral Hook"
-    ] %}
-
-    {% for tool in tools %}
-    <div class="tool-btn" onclick="useTool('twitter', '{{ tool }}')">
-        <h3 class="text-2xl font-semibold">{{ tool }}</h3>
-        <div id="result-twitter-{{ tool.replace(' ', '') }}" class="result-box"></div>
-    </div>
-    {% endfor %}
-</div>
-{% endblock %}
-
-{% block scripts %}
-<script>
-function useTool(platform, tool) {
-    const content = tool + " generated content here 💡";
-
-    const resultDiv = document.getElementById(
-        `result-${platform}-${tool.replace(/ /g,'')}`
-    );
-
-    if (resultDiv) {
-        resultDiv.innerText = content;
-    }
-
-    if (confirm("Save this content to your profile/feed?")) {
-        fetch("/use_tool", {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({
-                platform: platform,
-                tool: tool,
-                content: content,
-                save: true
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "success") {
-                alert("Saved!");
-            }
-        })
-        .catch(err => console.error(err));
-    }
-}
-</script>
-{% endblock %}
+{% include "platform.html" %}
