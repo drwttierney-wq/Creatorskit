@@ -1,84 +1,60 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1 class="text-6xl font-extrabold text-center mb-16 bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
-    Creator Control Center
-</h1>
+<!-- HERO -->
+<section class="text-center py-20">
+    <h1 class="text-7xl font-extrabold mb-6 bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+        Creators Kit
+    </h1>
+    <p class="text-2xl text-gray-400 max-w-4xl mx-auto">
+        The all-in-one creator social platform with built-in AI toolkits,
+        community, messaging, and monetization.
+    </p>
+</section>
 
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+<!-- PLATFORM GRID -->
+<section class="max-w-7xl mx-auto px-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
 
-    <a href="/platform/tiktok" class="platform-card platform-accent-tiktok">
-        <div class="icon">🎵</div>
-        <h2>TikTok</h2>
-        <p>Viral growth tools</p>
-    </a>
+        {% set platforms = [
+            ("tiktok","🎵","TikTok","7 viral tools"),
+            ("youtube","📺","YouTube","7 growth tools"),
+            ("instagram","📸","Instagram","7 aesthetic tools"),
+            ("twitter","🐦","Twitter / X","6 thread tools"),
+            ("facebook","👥","Facebook","5 community tools"),
+            ("snapchat","👻","Snapchat","7 story tools"),
+            ("linkedin","💼","LinkedIn","7 professional tools"),
+            ("pinterest","📌","Pinterest","7 pin tools"),
+            ("threads","🧵","Threads","7 conversation tools"),
+            ("reddit","👽","Reddit","7 upvote tools"),
+            ("twitch","🎮","Twitch","7 streaming tools"),
+            ("onlyfans","🔒","OnlyFans","7 creator tools"),
+            ("discord","💬","Discord","7 server tools"),
+            ("monetization","💰","Monetization","7 revenue tools")
+        ] %}
 
-    <a href="/platform/youtube" class="platform-card platform-accent-youtube">
-        <div class="icon">📺</div>
-        <h2>YouTube</h2>
-        <p>Long-form dominance</p>
-    </a>
+        {% for slug, icon, name, desc in platforms %}
+        <a href="/platform/{{ slug }}"
+           class="group bg-gradient-to-br from-gray-900 to-gray-800
+           border border-gray-700 rounded-3xl p-10 text-center
+           transition-all duration-300 hover:border-pink-500
+           hover:shadow-[0_0_40px_rgba(255,105,180,0.3)]">
 
-    <a href="/platform/instagram" class="platform-card platform-accent-instagram">
-        <div class="icon">📸</div>
-        <h2>Instagram</h2>
-        <p>Aesthetic & reach</p>
-    </a>
+            <div class="text-7xl mb-6 group-hover:scale-110 transition">
+                {{ icon }}
+            </div>
 
-    <a href="/platform/twitter" class="platform-card platform-accent-twitter">
-        <div class="icon">🐦</div>
-        <h2>Twitter / X</h2>
-        <p>Threads & virality</p>
-    </a>
+            <h2 class="text-3xl font-bold mb-2 group-hover:text-pink-400 transition">
+                {{ name }}
+            </h2>
 
-    <a href="/platform/facebook" class="platform-card platform-accent-facebook">
-        <div class="icon">👥</div>
-        <h2>Facebook</h2>
-        <p>Communities & pages</p>
-    </a>
+            <p class="text-gray-400 text-lg">
+                {{ desc }}
+            </p>
+        </a>
+        {% endfor %}
 
-    <a href="/platform/snapchat" class="platform-card platform-accent-snapchat">
-        <div class="icon">👻</div>
-        <h2>Snapchat</h2>
-        <p>Stories & AR</p>
-    </a>
-
-    <a href="/platform/linkedin" class="platform-card platform-accent-linkedin">
-        <div class="icon">💼</div>
-        <h2>LinkedIn</h2>
-        <p>Professional growth</p>
-    </a>
-
-    <a href="/platform/pinterest" class="platform-card platform-accent-pinterest">
-        <div class="icon">📌</div>
-        <h2>Pinterest</h2>
-        <p>Discovery & traffic</p>
-    </a>
-
-    <a href="/platform/reddit" class="platform-card platform-accent-reddit">
-        <div class="icon">👽</div>
-        <h2>Reddit</h2>
-        <p>Authority & upvotes</p>
-    </a>
-
-    <a href="/platform/twitch" class="platform-card platform-accent-twitch">
-        <div class="icon">🎮</div>
-        <h2>Twitch</h2>
-        <p>Streaming tools</p>
-    </a>
-
-    <a href="/platform/discord" class="platform-card platform-accent-discord">
-        <div class="icon">💬</div>
-        <h2>Discord</h2>
-        <p>Servers & engagement</p>
-    </a>
-
-    <a href="/platform/monetization" class="platform-card platform-accent-monetization">
-        <div class="icon">💰</div>
-        <h2>Monetization</h2>
-        <p>Turn content into income</p>
-    </a>
-
-</div>
+    </div>
+</section>
 
 {% endblock %}
