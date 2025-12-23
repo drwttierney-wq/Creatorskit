@@ -1,60 +1,196 @@
-body {
+/* =========================
+   GLOBAL RESET
+========================= */
+* {
+  box-sizing: border-box;
   margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: #0f172a;
-  color: #e5e7eb;
+  padding: 0;
 }
 
+/* =========================
+   BODY
+========================= */
+body {
+  font-family: "Inter", Arial, Helvetica, sans-serif;
+  background: linear-gradient(180deg, #020617, #000000);
+  color: #e5e7eb;
+  min-height: 100vh;
+}
+
+/* =========================
+   LAYOUT
+========================= */
+main {
+  max-width: 1400px;
+  margin: auto;
+  padding: 40px 20px;
+}
+
+/* =========================
+   HEADER + NAV
+========================= */
 header {
-  padding: 20px;
-  background: #020617;
+  background: rgba(2, 6, 23, 0.95);
   border-bottom: 1px solid #1e293b;
+  padding: 24px 40px;
 }
 
 header h1 {
-  margin: 0;
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
 }
 
 nav {
-  padding: 10px 20px;
-  background: #020617;
+  margin-top: 16px;
 }
 
 nav a {
   color: #38bdf8;
-  margin-right: 15px;
+  margin-right: 20px;
+  font-weight: 600;
   text-decoration: none;
-  font-weight: bold;
 }
 
 nav a:hover {
-  text-decoration: underline;
+  color: #f472b6;
 }
 
-main {
-  padding: 30px;
+/* =========================
+   BUTTONS
+========================= */
+.btn-primary {
+  display: inline-block;
+  background: linear-gradient(135deg, #ec4899, #8b5cf6);
+  color: white;
+  padding: 16px 32px;
+  border-radius: 999px;
+  font-size: 18px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 20px 40px rgba(236,72,153,0.35);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 30px 60px rgba(236,72,153,0.5);
+}
+
+.btn-secondary {
+  background: #1e293b;
+  padding: 14px 26px;
+  border-radius: 14px;
+  font-weight: 700;
+  color: #e5e7eb;
+  text-decoration: none;
+}
+
+/* =========================
+   DASHBOARD GRID
+========================= */
 .dashboard {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-  margin-top: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 32px;
+  margin-top: 50px;
 }
 
-.card {
-  background: #020617;
-  padding: 20px;
-  border-radius: 10px;
+/* =========================
+   PLATFORM CARDS
+========================= */
+.platform-card {
+  background: linear-gradient(135deg, #020617, #020617);
+  border: 2px solid #1e293b;
+  border-radius: 28px;
+  padding: 40px 30px;
+  text-align: center;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 0.35s ease;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+}
+
+.platform-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  border-color: #ec4899;
+  box-shadow: 0 0 50px rgba(236,72,153,0.5);
+}
+
+.platform-card .icon {
+  font-size: 64px;
+  margin-bottom: 18px;
+}
+
+.platform-card h2 {
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.platform-card p {
+  font-size: 16px;
+  opacity: 0.85;
+  margin-top: 10px;
+}
+
+/* =========================
+   FEED / POSTS
+========================= */
+.post-card {
+  background: linear-gradient(135deg, #020617, #020617);
   border: 1px solid #1e293b;
+  padding: 30px;
+  border-radius: 24px;
+  margin-bottom: 30px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
 }
 
-.card a {
-  color: #38bdf8;
-  text-decoration: none;
-  font-size: 18px;
+/* =========================
+   FORMS
+========================= */
+input, textarea {
+  width: 100%;
+  padding: 16px;
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 14px;
+  color: #e5e7eb;
+  font-size: 16px;
 }
 
-.card a:hover {
-  text-decoration: underline;
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #ec4899;
+}
+
+/* =========================
+   MESSAGES
+========================= */
+.chat-bubble {
+  padding: 16px 20px;
+  border-radius: 20px;
+  max-width: 70%;
+  margin-bottom: 14px;
+}
+
+.chat-bubble.sent {
+  background: linear-gradient(135deg, #ec4899, #8b5cf6);
+  margin-left: auto;
+}
+
+.chat-bubble.received {
+  background: #1e293b;
+  margin-right: auto;
+}
+
+/* =========================
+   FOOTER (OPTIONAL)
+========================= */
+footer {
+  text-align: center;
+  padding: 40px 20px;
+  color: #64748b;
+  font-size: 14px;
 }
