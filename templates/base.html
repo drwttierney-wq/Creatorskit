@@ -3,14 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <title>Creators Kit</title>
+
     <style>
-        body { font-family: Arial, sans-serif; background: #0f172a; color: #fff; margin: 0; }
-        .btn-primary { background: #ec4899; padding: 15px 30px; border-radius: 10px; color: #fff; text-decoration: none; font-weight: bold; display: inline-block; }
-        .max-w-md { max-width: 500px; margin: 0 auto; }
-        input { width: 100%; padding: 15px; margin-bottom: 15px; border-radius: 10px; border: none; }
+        body {
+            margin: 0;
+            font-family: Inter, Arial, sans-serif;
+            background: radial-gradient(circle at top, #1e1b4b, #020617);
+            color: #e5e7eb;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 40px;
+            background: rgba(2,6,23,0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid #1e293b;
+        }
+
+        nav a {
+            color: #f472b6;
+            text-decoration: none;
+            font-weight: 700;
+            margin-left: 20px;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: auto;
+            padding: 60px 30px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            padding: 16px 36px;
+            border-radius: 999px;
+            color: white;
+            font-weight: 800;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 20px 50px rgba(236,72,153,.35);
+            transition: transform .25s ease;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+        }
+
+        /* DASHBOARD GRID */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: linear-gradient(180deg, #020617, #020617);
+            border: 1px solid #1e293b;
+            border-radius: 22px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all .35s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: #ec4899;
+            box-shadow: 0 40px 80px rgba(236,72,153,.25);
+        }
+
+        .card h2 {
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            opacity: .75;
+        }
     </style>
 </head>
+
 <body>
+
+<nav>
+    <div style="font-size:24px;font-weight:900;">Creators Kit</div>
+    <div>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+    </div>
+</nav>
+
+<div class="container">
     {% block content %}{% endblock %}
+</div>
+
 </body>
 </html>
