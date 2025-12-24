@@ -1,37 +1,18 @@
 import os
 from flask import (
     Flask, render_template, request, redirect,
-    url_for, session, send_from_directory, jsonify, flash, abort
+    url_for, session, send_from_directory, jsonify, abort
 )
-from database import db, Post  # Import Post model
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production-please")
 
-# IMPORTANT: Disable debug in production
 app.debug = False
 
-# Uploads folder
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# Database setup - better for Render persistence
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-INSTANCE_DIR = os.path.join(BASE_DIR, "instance")
-os.makedirs(INSTANCE_DIR, exist_ok=True)
-DATABASE_PATH = os.path.join(INSTANCE_DIR, "database.db")
-app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DATABASE_PATH}"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-db.init_app(app)
-
-with app.app_context():
-    db.create_all()  # Creates tables including Post
-
-# --------------------
-# Helper: Login Required
-# --------------------
 def login_required(f):
     from functools import wraps
     @wraps(f)
@@ -41,9 +22,6 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated
 
-# --------------------
-# Routes
-# --------------------
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -55,7 +33,6 @@ def login():
         if username:
             session["user"] = username
             return redirect(url_for("dashboard"))
-        return render_template("login.html", error="Username required")
     return render_template("login.html")
 
 @app.route("/logout")
@@ -68,7 +45,6 @@ def logout():
 def dashboard():
     return render_template("dashboard.html")
 
-# Platform routes
 PLATFORMS = {
     "tiktok": "tiktok.html",
     "youtube": "youtube.html",
@@ -94,46 +70,21 @@ def platform(name):
         return render_template(template)
     abort(404)
 
-# Community Feed - Real posts
 @app.route("/community")
 @login_required
 def community():
-    posts = Post.query.order_by(Post.timestamp.desc()).all()
-    return render_template("community.html", posts=posts)
+    return render_template("community.html")
 
-# Create Post page
 @app.route("/post")
 @login_required
 def post_page():
     return render_template("post.html")
 
-# Handle new post
-@app.route("/create_post", methods=["POST"])
-@login_required
-def create_post():
-    content = request.form.get("content")
-    if content and content.strip():
-        new_post = Post(user=session["user"], content=content.strip())
-        db.session.add(new_post)
-        db.session.commit()
-    return redirect("/community")
-
-# Like a post
-@app.route("/like/<int:post_id>", methods=["POST"])
-@login_required
-def like_post(post_id):
-    post = Post.query.get_or_404(post_id)
-    post.likes += 1
-    db.session.commit()
-    return redirect("/community")
-
-# Messages (placeholder)
 @app.route("/messages")
 @login_required
 def messages():
     return render_template("messages_inbox.html")
 
-# Use tool (AI generation)
 @app.route("/use_tool", methods=["POST"])
 @login_required
 def use_tool():
@@ -172,9 +123,6 @@ def use_tool():
 def uploaded_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
-# --------------------
-# Error Handling
-# --------------------
 @app.errorhandler(404)
 def not_found(e):
     return render_template("404.html"), 404
@@ -183,9 +131,6 @@ def not_found(e):
 def internal_error(e):
     return render_template("404.html"), 500
 
-# --------------------
-# Run
-# --------------------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
