@@ -1,14 +1,107 @@
 {% extends 'base.html' %}
-{% set platform = "twitter" %}
-{% set tools = ["Thread Writer","Tweet Generator","Reply Ideas","Poll Creator","Quote Tweet","Viral Hook"] %}
 {% block content %}
-<h1 class="text-5xl font-bold mb-10 twitter-accent">{{ platform|capitalize }} Toolkit</h1>
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-    {% for tool in tools %}
-    <div class="tool-btn" onclick="useTool('{{ platform }}', '{{ tool }}')">
-        <h3 class="text-2xl font-semibold">{{ tool }}</h3>
-        <div id="result-{{ platform }}-{{ tool.replace(' ', '') }}" class="result-box"></div>
+
+<h1 class="page-title">🐦 Twitter / X Toolkit</h1>
+<p class="subtitle">Threads, reach & engagement tools</p>
+
+<div class="tools-grid">
+
+    <!-- 1. Tweet Generator -->
+    <div class="tool-card">
+        <h3>✍️ Tweet Generator</h3>
+        <p>Viral tweets with hooks & CTAs</p>
+        <form class="tool-form" data-tool="tweet">
+            <input type="text" placeholder="Topic or idea" required>
+            <button type="submit" class="generate-btn">Generate Tweet</button>
+        </form>
+        <div class="output-box"></div>
     </div>
-    {% endfor %}
+
+    <!-- 2. Thread Planner -->
+    <div class="tool-card">
+        <h3>🧵 Thread Planner</h3>
+        <p>Full thread outline (5-15 tweets)</p>
+        <form class="tool-form" data-tool="thread">
+            <input type="text" placeholder="Main topic or story" required>
+            <button type="submit" class="generate-btn">Plan Thread</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 3. Hashtag Optimizer -->
+    <div class="tool-card">
+        <h3>🔖 Hashtag Optimizer</h3>
+        <p>Trending + niche hashtags</p>
+        <form class="tool-form" data-tool="hashtag">
+            <input type="text" placeholder="Tweet topic" required>
+            <button type="submit" class="generate-btn">Optimize Hashtags</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 4. Engagement Booster -->
+    <div class="tool-card">
+        <h3>💬 Engagement Booster</h3>
+        <p>Smart reply ideas to spark conversations</p>
+        <form class="tool-form" data-tool="reply">
+            <input type="text" placeholder="Common comment or goal" required>
+            <button type="submit" class="generate-btn">Boost Replies</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 5. Bio Enhancer -->
+    <div class="tool-card">
+        <h3>📝 Bio Enhancer</h3>
+        <p>Click-worthy bio with emojis & links</p>
+        <form class="tool-form" data-tool="bio">
+            <input type="text" placeholder="Your niche + vibe" required>
+            <button type="submit" class="generate-btn">Enhance Bio</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 6. Trend Analyzer -->
+    <div class="tool-card">
+        <h3>📊 Trend Analyzer</h3>
+        <p>Current hot topics & conversations</p>
+        <form class="tool-form" data-tool="trend">
+            <input type="text" placeholder="Niche (optional)" >
+            <button type="submit" class="generate-btn">Analyze Trends</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 7. DM Script Creator -->
+    <div class="tool-card">
+        <h3>✉️ DM Script Creator</h3>
+        <p>Personalized outreach & collab messages</p>
+        <form class="tool-form" data-tool="dm">
+            <input type="text" placeholder="Goal (e.g. collab, networking)" required>
+            <button type="submit" class="generate-btn">Create DM</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
 </div>
-{% endblock %}
+
+<script>
+    document.querySelectorAll('.tool-form').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = form.querySelector('input').value;
+            const tool = form.dataset.tool;
+            const output = form.nextElementSibling;
+            output.innerHTML = '<p style="color:#aaa;">Generating...</p>';
+
+            const res = await fetch('/use_tool', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({tool, input})
+            });
+            const data = await res.json();
+
+            if (data.status === 'success') {
+                const text = data.result.text || data.result.hashtags?.join(' ') || JSON.stringify(data.result, null, 2);
+                output.innerHTML = `<pre style="white-space: pre-wrap;">${text}</pre>
+                    <button
