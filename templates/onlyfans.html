@@ -1,62 +1,123 @@
-{% extends "base.html" %}
-
+{% extends 'base.html' %}
 {% block content %}
-<h1 class="text-5xl font-bold mb-10 onlyfans-accent">
-    OnlyFans Toolkit
-</h1>
 
-<div class="space-y-5 max-w-4xl">
-    {% set tools = [
-        "Post Caption",
-        "Promo Tweet",
-        "PPV Message",
-        "Welcome Message",
-        "Content Calendar",
-        "Tip Menu",
-        "Story Teaser"
-    ] %}
+<h1 class="page-title">🔒 OnlyFans Toolkit</h1>
+<p class="subtitle">Creator monetization & fan growth</p>
 
-    {% for tool in tools %}
-    <div class="tool-btn" onclick="useTool('onlyfans', '{{ tool }}')">
-        <h3 class="text-2xl font-semibold">{{ tool }}</h3>
-        <div id="result-onlyfans-{{ tool.replace(' ', '') }}" class="result-box"></div>
+<div class="tools-grid">
+
+    <!-- 1. Teaser Caption Generator -->
+    <div class="tool-card">
+        <h3>✍️ Teaser Caption Generator</h3>
+        <p>Enticing teasers that drive subscriptions</p>
+        <form class="tool-form" data-tool="of_teaser">
+            <input type="text" placeholder="Content type or vibe" required>
+            <button type="submit" class="generate-btn">Generate Teaser</button>
+        </form>
+        <div class="output-box"></div>
     </div>
-    {% endfor %}
+
+    <!-- 2. Promo Post Creator -->
+    <div class="tool-card">
+        <h3>📢 Promo Post Creator</h3>
+        <p>Full promo posts for socials</p>
+        <form class="tool-form" data-tool="of_promo">
+            <input type="text" placeholder="Offer or new content" required>
+            <button type="submit" class="generate-btn">Create Promo</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 3. Pricing Strategy Tips -->
+    <div class="tool-card">
+        <h3>💰 Pricing Strategy Tips</h3>
+        <p>Optimal sub & PPV prices</p>
+        <form class="tool-form" data-tool="of_pricing">
+            <input type="text" placeholder="Your niche + current rates" required>
+            <button type="submit" class="generate-btn">Get Pricing Tips</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 4. Thumbnail Idea Generator -->
+    <div class="tool-card">
+        <h3>🖼️ Thumbnail Idea Generator</h3>
+        <p>High-conversion thumbnail concepts</p>
+        <form class="tool-form" data-tool="thumbnail">
+            <input type="text" placeholder="Content theme" required>
+            <button type="submit" class="generate-btn">Generate Ideas</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 5. PPV Message Templates -->
+    <div class="tool-card">
+        <h3>📩 PPV Message Templates</h3>
+        <p>Personalized pay-per-view messages</p>
+        <form class="tool-form" data-tool="of_ppv">
+            <input type="text" placeholder="Content type + price" required>
+            <button type="submit" class="generate-btn">Create PPV Message</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 6. Fan Engagement Scripts -->
+    <div class="tool-card">
+        <h3>💬 Fan Engagement Scripts</h3>
+        <p>DM replies & custom requests</p>
+        <form class="tool-form" data-tool="of_engagement">
+            <input type="text" placeholder="Fan message type" required>
+            <button type="submit" class="generate-btn">Generate Replies</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 7. Content Calendar Planner -->
+    <div class="tool-card">
+        <h3>📅 Content Calendar Planner</h3>
+        <p>Weekly posting schedule ideas</p>
+        <form class="tool-form" data-tool="of_calendar">
+            <input type="text" placeholder="Your posting frequency" required>
+            <button type="submit" class="generate-btn">Plan Calendar</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
 </div>
-{% endblock %}
 
-{% block scripts %}
 <script>
-function useTool(platform, tool) {
-    const content = tool + " generated content here 💡";
+    document.querySelectorAll('.tool-form').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = form.querySelector('input').value;
+            const tool = form.dataset.tool;
+            const output = form.nextElementSibling;
+            output.innerHTML = '<p style="color:#aaa;">Generating...</p>';
 
-    const resultDiv = document.getElementById(
-        `result-${platform}-${tool.replace(/ /g,'')}`
-    );
+            const res = await fetch('/use_tool', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({tool, input})
+            });
+            const data = await res.json();
 
-    if (resultDiv) {
-        resultDiv.innerText = content;
-    }
-
-    if (confirm("Save this content to your profile/feed?")) {
-        fetch("/use_tool", {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({
-                platform: platform,
-                tool: tool,
-                content: content,
-                save: true
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "success") {
-                alert("Saved!");
+            if (data.status === 'success') {
+                const text = data.result.text || data.result.hashtags?.join(' ') || JSON.stringify(data.result, null, 2);
+                output.innerHTML = `<pre style="white-space: pre-wrap;">${text}</pre>
+                    <button onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText)">Copy All</button>`;
+            } else {
+                output.innerHTML = `<p style="color:red;">${data.message}</p>`;
             }
-        })
-        .catch(err => console.error(err));
-    }
-}
+        });
+    });
 </script>
+
+<style>
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin: 30px 0; }
+    .tool-card { background: rgba(80,50,140,0.2); padding: 28px; border-radius: 20px; border: 1px solid rgba(200,150,255,0.3); backdrop-filter: blur(10px); }
+    .tool-form input { width: 100%; padding: 14px; margin: 12px 0; background: rgba(10,10,40,0.6); border: 1px solid #666; color: white; border-radius: 10px; }
+    .generate-btn { background: linear-gradient(90deg, #9d4edd, #c77dff); width: 100%; padding: 16px; border: none; color: white; font-weight: bold; border-radius: 12px; cursor: pointer; box-shadow: 0 6px 25px rgba(157,78,221,0.4); }
+    .output-box { min-height: 120px; margin-top: 20px; padding: 20px; background: rgba(0,0,30,0.7); border-radius: 14px; border: 1px solid #555; }
+</style>
+
 {% endblock %}
