@@ -148,3 +148,16 @@ def internal_error(e):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+@app.route("/post")
+@login_required
+def post_page():
+    return render_template("post.html")
+
+@app.route("/create_post", methods=["POST"])
+@login_required
+def create_post():
+    content = request.form.get("content")
+    # Later: save to DB
+    # For now: flash message
+    flash("Post shared to community! (dummy for now)")
+    return redirect("/community")
