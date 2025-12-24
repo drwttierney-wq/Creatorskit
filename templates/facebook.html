@@ -1,14 +1,123 @@
 {% extends 'base.html' %}
-{% set platform = "facebook" %}
-{% set tools = ["Group Post Ideas","Page Content Planner","Event Scheduler","Ad Copy Generator","Community Poll","Story Idea","Engagement Boost Tips"] %}
 {% block content %}
-<h1 class="text-5xl font-bold mb-10 facebook-accent">{{ platform|capitalize }} Toolkit</h1>
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-    {% for tool in tools %}
-    <div class="tool-btn" onclick="useTool('{{ platform }}', '{{ tool }}')">
-        <h3 class="text-2xl font-semibold">{{ tool }}</h3>
-        <div id="result-{{ platform }}-{{ tool.replace(' ', '') }}" class="result-box"></div>
+
+<h1 class="page-title">👥 Facebook Toolkit</h1>
+<p class="subtitle">Groups, engagement & ad tools</p>
+
+<div class="tools-grid">
+
+    <!-- 1. Post Caption Generator -->
+    <div class="tool-card">
+        <h3>✍️ Post Caption Generator</h3>
+        <p>Engaging captions for posts & groups</p>
+        <form class="tool-form" data-tool="facebook_caption">
+            <input type="text" placeholder="Post topic or image description" required>
+            <button type="submit" class="generate-btn">Generate Caption</button>
+        </form>
+        <div class="output-box"></div>
     </div>
-    {% endfor %}
+
+    <!-- 2. Group Post Ideas -->
+    <div class="tool-card">
+        <h3>💡 Group Post Ideas</h3>
+        <p>Discussion starters & polls</p>
+        <form class="tool-form" data-tool="group_idea">
+            <input type="text" placeholder="Group niche or theme" required>
+            <button type="submit" class="generate-btn">Get Post Ideas</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 3. Hashtag Optimizer -->
+    <div class="tool-card">
+        <h3>🔖 Hashtag Optimizer</h3>
+        <p>Best hashtags for reach</p>
+        <form class="tool-form" data-tool="hashtag">
+            <input type="text" placeholder="Post topic" required>
+            <button type="submit" class="generate-btn">Optimize Hashtags</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 4. Engagement Booster -->
+    <div class="tool-card">
+        <h3>💬 Engagement Booster</h3>
+        <p>Reply templates to spark comments</p>
+        <form class="tool-form" data-tool="engagement">
+            <input type="text" placeholder="Common comment type" required>
+            <button type="submit" class="generate-btn">Boost Engagement</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 5. Ad Copy Generator -->
+    <div class="tool-card">
+        <h3>📢 Ad Copy Generator</h3>
+        <p>Compelling Facebook ad text</p>
+        <form class="tool-form" data-tool="ad_copy">
+            <input type="text" placeholder="Product/service + target audience" required>
+            <button type="submit" class="generate-btn">Generate Ad Copy</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 6. Bio/Page Enhancer -->
+    <div class="tool-card">
+        <h3>📝 Bio/Page Enhancer</h3>
+        <p>Professional page bio & about section</p>
+        <form class="tool-form" data-tool="bio">
+            <input type="text" placeholder="Page niche + goals" required>
+            <button type="submit" class="generate-btn">Enhance Bio</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 7. Messenger Script Creator -->
+    <div class="tool-card">
+        <h3>✉️ Messenger Script Creator</h3>
+        <p>Auto-reply & customer scripts</p>
+        <form class="tool-form" data-tool="messenger">
+            <input type="text" placeholder="Common inquiry or goal" required>
+            <button type="submit" class="generate-btn">Create Script</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
 </div>
+
+<script>
+    document.querySelectorAll('.tool-form').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = form.querySelector('input').value;
+            const tool = form.dataset.tool;
+            const output = form.nextElementSibling;
+            output.innerHTML = '<p style="color:#aaa;">Generating...</p>';
+
+            const res = await fetch('/use_tool', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({tool, input})
+            });
+            const data = await res.json();
+
+            if (data.status === 'success') {
+                const text = data.result.text || data.result.hashtags?.join(' ') || JSON.stringify(data.result, null, 2);
+                output.innerHTML = `<pre style="white-space: pre-wrap;">${text}</pre>
+                    <button onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText)">Copy All</button>`;
+            } else {
+                output.innerHTML = `<p style="color:red;">${data.message}</p>`;
+            }
+        });
+    });
+</script>
+
+<style>
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin: 30px 0; }
+    .tool-card { background: rgba(70,50,130,0.2); padding: 28px; border-radius: 20px; border: 1px solid rgba(180,120,255,0.3); backdrop-filter: blur(8px); }
+    .tool-form input { width: 100%; padding: 14px; margin: 12px 0; background: rgba(10,10,30,0.6); border: 1px solid #666; color: white; border-radius: 10px; }
+    .generate-btn { background: linear-gradient(90deg, #a78bfa, #c084fc); width: 100%; padding: 16px; border: none; color: white; font-weight: bold; border-radius: 12px; cursor: pointer; box-shadow: 0 6px 25px rgba(167,139,250,0.3); }
+    .output-box { min-height: 120px; margin-top: 20px; padding: 20px; background: rgba(0,0,20,0.7); border-radius: 14px; border: 1px solid #555; }
+</style>
+
 {% endblock %}
