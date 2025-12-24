@@ -1,62 +1,123 @@
-{% extends "base.html" %}
-
+{% extends 'base.html' %}
 {% block content %}
-<h1 class="text-5xl font-bold mb-10 threads-accent">
-    Threads Toolkit
-</h1>
 
-<div class="space-y-5 max-w-4xl">
-    {% set tools = [
-        "Thread Starter",
-        "Full Thread Builder",
-        "Reply Generator",
-        "Poll Idea",
-        "Quote Post",
-        "Viral Hook",
-        "Conversation Extender"
-    ] %}
+<h1 class="page-title">🧵 Threads Toolkit</h1>
+<p class="subtitle">Conversation starters & reach</p>
 
-    {% for tool in tools %}
-    <div class="tool-btn" onclick="useTool('threads', '{{ tool }}')">
-        <h3 class="text-2xl font-semibold">{{ tool }}</h3>
-        <div id="result-threads-{{ tool.replace(' ', '') }}" class="result-box"></div>
+<div class="tools-grid">
+
+    <!-- 1. Conversation Starter -->
+    <div class="tool-card">
+        <h3>💬 Conversation Starter</h3>
+        <p>Engaging openers to spark threads</p>
+        <form class="tool-form" data-tool="threads_starter">
+            <input type="text" placeholder="Topic or question idea" required>
+            <button type="submit" class="generate-btn">Start Conversation</button>
+        </form>
+        <div class="output-box"></div>
     </div>
-    {% endfor %}
+
+    <!-- 2. Thread Planner -->
+    <div class="tool-card">
+        <h3>🧵 Thread Planner</h3>
+        <p>Multi-post thread outlines</p>
+        <form class="tool-form" data-tool="thread">
+            <input type="text" placeholder="Main topic or story" required>
+            <button type="submit" class="generate-btn">Plan Thread</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 3. Reply Generator -->
+    <div class="tool-card">
+        <h3>↩️ Reply Generator</h3>
+        <p>Smart replies to keep conversations going</p>
+        <form class="tool-form" data-tool="reply">
+            <input type="text" placeholder="Original post or comment" required>
+            <button type="submit" class="generate-btn">Generate Reply</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 4. Hashtag Optimizer -->
+    <div class="tool-card">
+        <h3>🔖 Hashtag Optimizer</h3>
+        <p>Trending hashtags for visibility</p>
+        <form class="tool-form" data-tool="hashtag">
+            <input type="text" placeholder="Thread topic" required>
+            <button type="submit" class="generate-btn">Optimize Hashtags</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 5. Engagement Booster -->
+    <div class="tool-card">
+        <h3>🚀 Engagement Booster</h3>
+        <p>Questions & polls to boost interactions</p>
+        <form class="tool-form" data-tool="engagement">
+            <input type="text" placeholder="Thread goal" required>
+            <button type="submit" class="generate-btn">Boost Engagement</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 6. Bio Enhancer -->
+    <div class="tool-card">
+        <h3>📝 Bio Enhancer</h3>
+        <p>Compelling bio with emojis & links</p>
+        <form class="tool-form" data-tool="bio">
+            <input type="text" placeholder="Your niche + personality" required>
+            <button type="submit" class="generate-btn">Enhance Bio</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 7. Trend Analyzer -->
+    <div class="tool-card">
+        <h3>📊 Trend Analyzer</h3>
+        <p>Current hot topics on Threads</p>
+        <form class="tool-form" data-tool="trend">
+            <input type="text" placeholder="Niche (optional)" >
+            <button type="submit" class="generate-btn">Analyze Trends</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
 </div>
-{% endblock %}
 
-{% block scripts %}
 <script>
-function useTool(platform, tool) {
-    const content = tool + " generated content here 💡";
+    document.querySelectorAll('.tool-form').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = form.querySelector('input').value;
+            const tool = form.dataset.tool;
+            const output = form.nextElementSibling;
+            output.innerHTML = '<p style="color:#aaa;">Generating...</p>';
 
-    const resultDiv = document.getElementById(
-        `result-${platform}-${tool.replace(/ /g,'')}`
-    );
+            const res = await fetch('/use_tool', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({tool, input})
+            });
+            const data = await res.json();
 
-    if (resultDiv) {
-        resultDiv.innerText = content;
-    }
-
-    if (confirm("Save this content to your profile/feed?")) {
-        fetch("/use_tool", {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({
-                platform: platform,
-                tool: tool,
-                content: content,
-                save: true
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "success") {
-                alert("Saved!");
+            if (data.status === 'success') {
+                const text = data.result.text || data.result.hashtags?.join(' ') || JSON.stringify(data.result, null, 2);
+                output.innerHTML = `<pre style="white-space: pre-wrap;">${text}</pre>
+                    <button onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText)">Copy All</button>`;
+            } else {
+                output.innerHTML = `<p style="color:red;">${data.message}</p>`;
             }
-        })
-        .catch(err => console.error(err));
-    }
-}
+        });
+    });
 </script>
+
+<style>
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin: 30px 0; }
+    .tool-card { background: rgba(80,50,140,0.2); padding: 28px; border-radius: 20px; border: 1px solid rgba(200,150,255,0.3); backdrop-filter: blur(10px); }
+    .tool-form input { width: 100%; padding: 14px; margin: 12px 0; background: rgba(10,10,40,0.6); border: 1px solid #666; color: white; border-radius: 10px; }
+    .generate-btn { background: linear-gradient(90deg, #9d4edd, #c77dff); width: 100%; padding: 16px; border: none; color: white; font-weight: bold; border-radius: 12px; cursor: pointer; box-shadow: 0 6px 25px rgba(157,78,221,0.4); }
+    .output-box { min-height: 120px; margin-top: 20px; padding: 20px; background: rgba(0,0,30,0.7); border-radius: 14px; border: 1px solid #555; }
+</style>
+
 {% endblock %}
