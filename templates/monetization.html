@@ -1,50 +1,123 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<h1 class="text-5xl font-bold mb-10 monetization-accent">
-    Monetization Toolkit 💰
-</h1>
 
-<div class="space-y-5 max-w-4xl">
-    {% set tools = [
-        "Revenue Strategy Planner",
-        "Pricing Calculator",
-        "Sponsorship Pitch Script",
-        "Product Idea Generator",
-        "Upsell & Funnel Builder",
-        "Affiliate Program Suggestions",
-        "Tax & Finance Tips"
-    ] %}
-    
-    {% for tool in tools %}
-    <div class="tool-btn" onclick="useTool('monetization', '{{ tool }}')">
-        <h3 class="text-2xl font-semibold">{{ tool }}</h3>
-        <div id="result-monetization-{{ tool.replace(' ', '') }}" class="result-box"></div>
+<h1 class="page-title">💰 Monetization Toolkit</h1>
+<p class="subtitle">Revenue streams, strategy & earnings growth</p>
+
+<div class="tools-grid">
+
+    <!-- 1. Pricing Strategy Optimizer -->
+    <div class="tool-card">
+        <h3>💲 Pricing Strategy Optimizer</h3>
+        <p>Best prices for subs, PPV, tips</p>
+        <form class="tool-form" data-tool="monet_pricing">
+            <input type="text" placeholder="Your niche + current rates" required>
+            <button type="submit" class="generate-btn">Optimize Pricing</button>
+        </form>
+        <div class="output-box"></div>
     </div>
-    {% endfor %}
+
+    <!-- 2. Sponsor Pitch Generator -->
+    <div class="tool-card">
+        <h3>📧 Sponsor Pitch Generator</h3>
+        <p>Professional brand outreach emails</p>
+        <form class="tool-form" data-tool="monet_sponsor">
+            <input type="text" placeholder="Your audience size + niche" required>
+            <button type="submit" class="generate-btn">Generate Pitch</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 3. Affiliate Link Ideas -->
+    <div class="tool-card">
+        <h3>🔗 Affiliate Link Ideas</h3>
+        <p>Products that match your content</p>
+        <form class="tool-form" data-tool="monet_affiliate">
+            <input type="text" placeholder="Your niche (e.g. fitness, tech)" required>
+            <button type="submit" class="generate-btn">Suggest Affiliates</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 4. Tip/Donation Message Creator -->
+    <div class="tool-card">
+        <h3>☕ Tip/Donation Message Creator</h3>
+        <p>Grateful & encouraging messages</p>
+        <form class="tool-form" data-tool="monet_tip">
+            <input type="text" placeholder="Platform (e.g. stream, post)" required>
+            <button type="submit" class="generate-btn">Create Message</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 5. Product Bundle Suggestions -->
+    <div class="tool-card">
+        <h3>📦 Product Bundle Suggestions</h3>
+        <p>High-value bundles for fans</p>
+        <form class="tool-form" data-tool="monet_bundle">
+            <input type="text" placeholder="Your content type" required>
+            <button type="submit" class="generate-btn">Suggest Bundles</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 6. Earnings Predictor -->
+    <div class="tool-card">
+        <h3>📈 Earnings Predictor</h3>
+        <p>Projected income based on growth</p>
+        <form class="tool-form" data-tool="monet_predict">
+            <input type="text" placeholder="Current subs/followers + growth rate" required>
+            <button type="submit" class="generate-btn">Predict Earnings</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 7. Tax & Payout Planner -->
+    <div class="tool-card">
+        <h3>🧾 Tax & Payout Planner</h3>
+        <p>Tips for taxes, payouts & savings</p>
+        <form class="tool-form" data-tool="monet_tax">
+            <input type="text" placeholder="Your country + income level" required>
+            <button type="submit" class="generate-btn">Get Planning Tips</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
 </div>
-{% endblock %}
 
-{% block scripts %}
 <script>
-function useTool(platform, tool) {
-    const content = tool + " generated content 💡";
-    const safeTool = tool.replace(/ /g, "");
-    const resultBox = document.getElementById(`result-${platform}-${safeTool}`);
+    document.querySelectorAll('.tool-form').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = form.querySelector('input').value;
+            const tool = form.dataset.tool;
+            const output = form.nextElementSibling;
+            output.innerHTML = '<p style="color:#aaa;">Generating...</p>';
 
-    if (resultBox) {
-        resultBox.innerText = content;
-    }
+            const res = await fetch('/use_tool', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({tool, input})
+            });
+            const data = await res.json();
 
-    fetch("/use_tool", {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({platform, tool, content, save: true})
-    })
-    .then(res => res.json())
-    .then(data => {
-        if(data.status === "success") console.log("Saved");
+            if (data.status === 'success') {
+                const text = data.result.text || data.result.hashtags?.join(' ') || JSON.stringify(data.result, null, 2);
+                output.innerHTML = `<pre style="white-space: pre-wrap;">${text}</pre>
+                    <button onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText)">Copy All</button>`;
+            } else {
+                output.innerHTML = `<p style="color:red;">${data.message}</p>`;
+            }
+        });
     });
-}
 </script>
+
+<style>
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin: 30px 0; }
+    .tool-card { background: rgba(80,50,140,0.2); padding: 28px; border-radius: 20px; border: 1px solid rgba(200,150,255,0.3); backdrop-filter: blur(10px); }
+    .tool-form input { width: 100%; padding: 14px; margin: 12px 0; background: rgba(10,10,40,0.6); border: 1px solid #666; color: white; border-radius: 10px; }
+    .generate-btn { background: linear-gradient(90deg, #9d4edd, #c77dff); width: 100%; padding: 16px; border: none; color: white; font-weight: bold; border-radius: 12px; cursor: pointer; box-shadow: 0 6px 25px rgba(157,78,221,0.4); }
+    .output-box { min-height: 120px; margin-top: 20px; padding: 20px; background: rgba(0,0,30,0.7); border-radius: 14px; border: 1px solid #555; }
+</style>
+
 {% endblock %}
