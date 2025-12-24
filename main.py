@@ -16,18 +16,18 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# Database setup - persistent on Render
+# Database setup - better for Render persistence
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-INSTANCE_DIR = os.path.join('/data' if os.path.exists('/data') else BASE_DIR, 'instance')
+INSTANCE_DIR = os.path.join(BASE_DIR, "instance")
 os.makedirs(INSTANCE_DIR, exist_ok=True)
-DATABASE_PATH = os.path.join(INSTANCE_DIR, 'database.db')
+DATABASE_PATH = os.path.join(INSTANCE_DIR, "database.db")
 app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DATABASE_PATH}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
 
 with app.app_context():
-    db.create_all()  # Creates Post table if not exists
+    db.create_all()  # Creates tables including Post
 
 # --------------------
 # Helper: Login Required
