@@ -1,64 +1,74 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<h1 class="text-4xl font-bold mb-8">Community Live Chat</h1>
 
-<!-- Chat Container -->
-<div id="chat" class="h-96 overflow-y-auto p-6 mb-6 bg-gray-800 rounded-xl">
-    <p class="text-gray-500 italic">Welcome! Send a message to start chatting with other creators.</p>
+<h1 class="page-title">🌐 Community Feed</h1>
+<p class="subtitle">Share your creations, get feedback & connect</p>
+
+<div class="feed-tabs">
+    <button class="tab active">For You</button>
+    <button class="tab">Following</button>
+    <button class="tab">Trending</button>
 </div>
 
-<!-- Message Input -->
-<div class="flex gap-0 max-w-2xl">
-    <input 
-        id="msg" 
-        type="text" 
-        placeholder="Type your message..." 
-        class="flex-1 bg-gray-800 p-4 rounded-l-xl text-lg"
-    >
-    <button 
-        onclick="sendMsg()" 
-        class="bg-gradient-to-r from-pink-600 to-purple-600 px-8 rounded-r-xl text-lg font-bold"
-    >
-        Send
-    </button>
+<div class="feed-container">
+
+    <!-- Dummy Post 1 -->
+    <div class="post-card">
+        <div class="post-header">
+            <img src="/static/images/avatar1.jpg" alt="Avatar" class="avatar"> <!-- Add dummy avatars in static -->
+            <div>
+                <h4>@alexcreator</h4>
+                <span class="timestamp">2 hours ago • Generated with Hashtag Tool</span>
+            </div>
+        </div>
+        <p>Just used the TikTok Hashtag Generator — these are fire! 🔥 #fyp #viral #tiktokdance #trending #dancechallenge</p>
+        <div class="post-actions">
+            <button>❤️ 42</button>
+            <button>💬 18</button>
+            <button>🔄 Share</button>
+        </div>
+    </div>
+
+    <!-- Dummy Post 2 -->
+    <div class="post-card">
+        <div class="post-header">
+            <img src="/static/images/avatar2.jpg" alt="Avatar" class="avatar">
+            <div>
+                <h4>@sarahvibes</h4>
+                <span class="timestamp">5 hours ago • Generated with Caption Creator</span>
+            </div>
+        </div>
+        <p>"Chasing sunsets and good vibes only 🌅 Who's with me?" — loving this caption from the Instagram tool!</p>
+        <img src="/static/images/sample-post.jpg" alt="Post image" class="post-image">
+        <div class="post-actions">
+            <button>❤️ 89</button>
+            <button>💬 31</button>
+            <button>🔄 Share</button>
+        </div>
+    </div>
+
+    <!-- Add more dummy posts -->
+
+    <div class="new-post-btn">
+        <a href="/post">+</a>
+    </div>
+
 </div>
-{% endblock %}
 
-{% block scripts %}
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-<script>
-    const socket = io();
+<style>
+    .feed-tabs { display: flex; gap: 20px; margin: 20px 0; }
+    .tab { background: none; border: none; color: #aaa; font-size: 18px; padding: 10px; border-bottom: 3px solid transparent; }
+    .tab.active { color: white; border-bottom: 3px solid #c77dff; }
+    .feed-container { max-width: 700px; margin: 0 auto; }
+    .post-card { background: rgba(80,50,140,0.15); padding: 20px; border-radius: 18px; margin-bottom: 25px; border: 1px solid rgba(200,150,255,0.2); }
+    .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+    .avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+    .timestamp { font-size: 14px; color: #999; }
+    .post-image { width: 100%; border-radius: 12px; margin: 15px 0; }
+    .post-actions { display: flex; gap: 30px; margin-top: 15px; }
+    .post-actions button { background: none; border: none; color: #c77dff; font-size: 20px; cursor: pointer; }
+    .new-post-btn { position: fixed; bottom: 30px; right: 30px; background: linear-gradient(90deg, #9d4edd, #c77dff); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; color: white; box-shadow: 0 8px 30px rgba(157,78,221,0.6); }
+    .new-post-btn a { color: white; text-decoration: none; }
+</style>
 
-    // Join community room
-    socket.emit('join_community');
-
-    // Listen for new messages
-    socket.on('new_message', data => {
-        const chat = document.getElementById('chat');
-        const msgEl = document.createElement('p');
-        msgEl.classList.add('mb-3');
-        msgEl.innerHTML = `<strong class="text-pink-400">${data.user}:</strong> ${data.msg}`;
-        chat.appendChild(msgEl);
-        chat.scrollTop = chat.scrollHeight;
-    });
-
-    // Send message function
-    function sendMsg() {
-        const msgInput = document.getElementById('msg');
-        const msg = msgInput.value.trim();
-        if (msg) {
-            socket.emit('send_message', { msg });
-            msgInput.value = '';
-        }
-    }
-
-    // Enter key to send
-    document.getElementById('msg').addEventListener('keypress', e => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            sendMsg();
-        }
-    });
-</script>
 {% endblock %}
