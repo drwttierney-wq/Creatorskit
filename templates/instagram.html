@@ -1,62 +1,124 @@
-{% extends "base.html" %}
-
+{% extends 'base.html' %}
 {% block content %}
-<h1 class="text-5xl font-bold mb-10 instagram-accent">
-    Instagram Toolkit
-</h1>
 
-<div class="space-y-5 max-w-4xl">
-    {% set tools = [
-        "Caption Creator",
-        "Hashtag Set",
-        "Reels Idea",
-        "Story Ideas",
-        "Bio Optimizer",
-        "Carousel Post",
-        "Highlight Covers"
-    ] %}
+<h1 class="page-title">📸 Instagram Toolkit</h1>
+<p class="subtitle">Reels, aesthetics & engagement tools</p>
 
-    {% for tool in tools %}
-    <div class="tool-btn" onclick="useTool('instagram', '{{ tool }}')">
-        <h3 class="text-2xl font-semibold">{{ tool }}</h3>
-        <div id="result-instagram-{{ tool.replace(' ', '') }}" class="result-box"></div>
+<div class="tools-grid">
+
+    <!-- 1. Caption Creator -->
+    <div class="tool-card">
+        <h3>✍️ Caption Creator</h3>
+        <p>Engaging captions with emojis, hooks & CTAs</p>
+        <form class="tool-form" data-tool="instagram_caption">
+            <input type="text" placeholder="Describe your post/Reel" required>
+            <button type="submit" class="generate-btn">Create Caption</button>
+        </form>
+        <div class="output-box"></div>
     </div>
-    {% endfor %}
+
+    <!-- 2. Hashtag Generator -->
+    <div class="tool-card">
+        <h3>🔖 Hashtag Generator</h3>
+        <p>30 niche + trending hashtags</p>
+        <form class="tool-form" data-tool="hashtag">
+            <input type="text" placeholder="Post topic or niche" required>
+            <button type="submit" class="generate-btn">Generate Hashtags</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 3. Reel Idea Generator -->
+    <div class="tool-card">
+        <h3>🎬 Reel Idea Generator</h3>
+        <p>Viral Reel concepts & trends</p>
+        <form class="tool-form" data-tool="reel_idea">
+            <input type="text" placeholder="Your niche (e.g. fashion, fitness, travel)" required>
+            <button type="submit" class="generate-btn">Generate Ideas</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 4. Story Ideas -->
+    <div class="tool-card">
+        <h3>📖 Story Ideas</h3>
+        <p>Interactive polls, questions & daily stories</p>
+        <form class="tool-form" data-tool="story_idea">
+            <input type="text" placeholder="Your brand or daily theme" required>
+            <button type="submit" class="generate-btn">Get Story Ideas</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 5. Aesthetic Filter Suggestions -->
+    <div class="tool-card">
+        <h3>🌈 Aesthetic Filter Suggestions</h3>
+        <p>Color palettes, edits & vibe matches</p>
+        <form class="tool-form" data-tool="aesthetic">
+            <input type="text" placeholder="Mood (e.g. vintage, minimal, vibrant)" required>
+            <button type="submit" class="generate-btn">Suggest Filters</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 6. Engagement Booster -->
+    <div class="tool-card">
+        <h3>💬 Engagement Booster</h3>
+        <p>Comment replies & DM scripts</p>
+        <form class="tool-form" data-tool="engagement">
+            <input type="text" placeholder="Common comment type or goal" required>
+            <button type="submit" class="generate-btn">Boost Engagement</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 7. Bio Optimizer -->
+    <div class="tool-card">
+        <h3>📝 Bio Optimizer</h3>
+        <p>Clickable, conversion-focused bio</p>
+        <form class="tool-form" data-tool="bio">
+            <input type="text" placeholder="Your niche + link goal" required>
+            <button type="submit" class="generate-btn">Optimize Bio</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
 </div>
-{% endblock %}
 
-{% block scripts %}
+<!-- Reusable JS from previous toolkits -->
 <script>
-function useTool(platform, tool) {
-    const content = tool + " generated content here 💡";
+    document.querySelectorAll('.tool-form').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = form.querySelector('input').value;
+            const tool = form.dataset.tool;
+            const output = form.nextElementSibling;
+            output.innerHTML = '<p style="color:#aaa;">Generating...</p>';
 
-    const resultDiv = document.getElementById(
-        `result-${platform}-${tool.replace(/ /g,'')}`
-    );
+            const res = await fetch('/use_tool', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({tool, input})
+            });
+            const data = await res.json();
 
-    if (resultDiv) {
-        resultDiv.innerText = content;
-    }
-
-    if (confirm("Save this content to your profile/feed?")) {
-        fetch("/use_tool", {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({
-                platform: platform,
-                tool: tool,
-                content: content,
-                save: true
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "success") {
-                alert("Saved!");
+            if (data.status === 'success') {
+                const text = data.result.text || data.result.hashtags?.join(' ') || JSON.stringify(data.result, null, 2);
+                output.innerHTML = `<pre style="white-space: pre-wrap;">${text}</pre>
+                    <button onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText)">Copy All</button>`;
+            } else {
+                output.innerHTML = `<p style="color:red;">${data.message}</p>`;
             }
-        })
-        .catch(err => console.error(err));
-    }
-}
+        });
+    });
 </script>
+
+<style>
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin: 30px 0; }
+    .tool-card { background: rgba(100,50,150,0.15); backdrop-filter: blur(10px); padding: 25px; border-radius: 20px; border: 1px solid rgba(200,100,255,0.2); }
+    .tool-form input { width: 100%; padding: 14px; margin: 12px 0; background: rgba(0,0,0,0.4); border: 1px solid #666; color: white; border-radius: 10px; }
+    .generate-btn { background: linear-gradient(90deg, #b388ff, #e040fb); width: 100%; padding: 16px; border: none; color: white; font-weight: bold; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 15px rgba(180,100,255,0.3); }
+    .output-box { min-height: 120px; margin-top: 20px; padding: 20px; background: rgba(0,0,0,0.5); border-radius: 14px; border: 1px solid #555; }
+</style>
+
 {% endblock %}
