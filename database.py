@@ -1,3 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user = db.Column(db.String(100), nullable=False)  # username
+    content = db.Column(db.Text, nullable=False)
+    timestamp = db.Column(db.DateTime, default=db.func.now())
+    likes = db.Column(db.Integer, default=0)
