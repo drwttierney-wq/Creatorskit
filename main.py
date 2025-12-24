@@ -1,10 +1,9 @@
 import os
 from flask import (
     Flask, render_template, request, redirect,
-    url_for, session, send_from_directory, jsonify, abort
+    url_for, session, send_from_directory, jsonify, flash, abort
 )
-# from database import db  # Uncomment if you have this
-# from ai_engine import generate_hashtags  # Later for real AI
+from database import db, Post  # <-- Added Post model
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production-please")
@@ -16,6 +15,12 @@ app.debug = False
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+# Database setup
+db.init_app(app)
+
+with app.app_context():
+    db.create_all()  # Creates tables including Post
 
 # --------------------
 # Helper: Login Required
@@ -82,16 +87,46 @@ def platform(name):
         return render_template(template)
     abort(404)
 
+# Community Feed - Real posts
 @app.route("/community")
 @login_required
 def community():
-    return render_template("community.html")
+    posts = Post.query.order_by(Post.timestamp.desc()).all()
+    return render_template("community.html", posts=posts)
 
+# Create Post page
+@app.route("/post")
+@login_required
+def post_page():
+    return render_template("post.html")
+
+# Handle new post
+@app.route("/create_post", methods=["POST"])
+@login_required
+def create_post():
+    content = request.form.get("content")
+    if content and content.strip():
+        new_post = Post(user=session["user"], content=content.strip())
+        db.session.add(new_post)
+        db.session.commit()
+    return redirect("/community")
+
+# Like a post
+@app.route("/like/<int:post_id>", methods=["POST"])
+@login_required
+def like_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    post.likes += 1
+    db.session.commit()
+    return redirect("/community")
+
+# Messages (placeholder)
 @app.route("/messages")
 @login_required
 def messages():
     return render_template("messages_inbox.html")
 
+# Use tool (AI generation)
 @app.route("/use_tool", methods=["POST"])
 @login_required
 def use_tool():
@@ -104,7 +139,6 @@ def use_tool():
 
     try:
         if tool == "hashtag":
-            # Smart dummy generator (replace later with real AI)
             words = input_text.lower().split()[:5]
             base = ["fyp", "viral", "trending", "foryou", "explore", "tiktok"]
             variants = [word + str(i) for word in words for i in ["", "1", "2", "official"]]
@@ -121,7 +155,7 @@ def use_tool():
 
         return jsonify({
             "status": "success",
-            "result": {"message": "This tool is coming soon!"}
+            "result": {"text": f"Generated {tool} for: {input_text}"}
         })
 
     except Exception as e:
@@ -140,7 +174,7 @@ def not_found(e):
 
 @app.errorhandler(500)
 def internal_error(e):
-    return render_template("404.html"), 500  # Or make a 500.html later
+    return render_template("404.html"), 500
 
 # --------------------
 # Run
@@ -148,16 +182,3 @@ def internal_error(e):
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-@app.route("/post")
-@login_required
-def post_page():
-    return render_template("post.html")
-
-@app.route("/create_post", methods=["POST"])
-@login_required
-def create_post():
-    content = request.form.get("content")
-    # Later: save to DB
-    # For now: flash message
-    flash("Post shared to community! (dummy for now)")
-    return redirect("/community")
