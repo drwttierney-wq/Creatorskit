@@ -1,62 +1,123 @@
-{% extends "base.html" %}
-
+{% extends 'base.html' %}
 {% block content %}
-<h1 class="text-5xl font-bold mb-10 snapchat-accent">
-    Snapchat Toolkit
-</h1>
 
-<div class="space-y-5 max-w-4xl">
-    {% set tools = [
-        "Story Idea Generator",
-        "Spotlight Video Concept",
-        "AR Lens Prompt",
-        "Caption & Sticker Ideas",
-        "Trend Challenge",
-        "Bitmoji Outfit Suggestion",
-        "Memories Compilation"
-    ] %}
+<h1 class="page-title">👻 Snapchat Toolkit</h1>
+<p class="subtitle">Stories, Spotlight & fun content tools</p>
 
-    {% for tool in tools %}
-    <div class="tool-btn" onclick="useTool('snapchat', '{{ tool }}')">
-        <h3 class="text-2xl font-semibold">{{ tool }}</h3>
-        <div id="result-snapchat-{{ tool.replace(' ', '') }}" class="result-box"></div>
+<div class="tools-grid">
+
+    <!-- 1. Snap Story Generator -->
+    <div class="tool-card">
+        <h3>📖 Snap Story Generator</h3>
+        <p>Daily story ideas & sequences</p>
+        <form class="tool-form" data-tool="snap_story">
+            <input type="text" placeholder="Your vibe or daily theme" required>
+            <button type="submit" class="generate-btn">Generate Story</button>
+        </form>
+        <div class="output-box"></div>
     </div>
-    {% endfor %}
+
+    <!-- 2. Filter Effect Suggestions -->
+    <div class="tool-card">
+        <h3>🌟 Filter Effect Suggestions</h3>
+        <p>Custom filter ideas & AR concepts</p>
+        <form class="tool-form" data-tool="filter">
+            <input type="text" placeholder="Mood or theme (e.g. funny, spooky)" required>
+            <button type="submit" class="generate-btn">Suggest Filters</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 3. Caption Creator -->
+    <div class="tool-card">
+        <h3>✍️ Caption Creator</h3>
+        <p>Fun captions with emojis & streaks</p>
+        <form class="tool-form" data-tool="caption">
+            <input type="text" placeholder="Snap description" required>
+            <button type="submit" class="generate-btn">Create Caption</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 4. Hashtag Optimizer -->
+    <div class="tool-card">
+        <h3>🔖 Hashtag Optimizer</h3>
+        <p>Trending hashtags for Spotlight</p>
+        <form class="tool-form" data-tool="hashtag">
+            <input type="text" placeholder="Snap topic" required>
+            <button type="submit" class="generate-btn">Optimize Hashtags</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 5. Engagement Booster -->
+    <div class="tool-card">
+        <h3>💬 Engagement Booster</h3>
+        <p>Reply ideas & streak maintainers</p>
+        <form class="tool-form" data-tool="engagement">
+            <input type="text" placeholder="Common chat type" required>
+            <button type="submit" class="generate-btn">Boost Engagement</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 6. Trend Analyzer -->
+    <div class="tool-card">
+        <h3>📊 Trend Analyzer</h3>
+        <p>Current viral sounds & challenges</p>
+        <form class="tool-form" data-tool="trend">
+            <input type="text" placeholder="Niche (optional)" >
+            <button type="submit" class="generate-btn">Analyze Trends</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 7. Chat Script Creator -->
+    <div class="tool-card">
+        <h3>💬 Chat Script Creator</h3>
+        <p>Fun chat openers & responses</p>
+        <form class="tool-form" data-tool="chat_script">
+            <input type="text" placeholder="Goal (e.g. funny, flirty)" required>
+            <button type="submit" class="generate-btn">Create Script</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
 </div>
-{% endblock %}
 
-{% block scripts %}
 <script>
-function useTool(platform, tool) {
-    const content = tool + " generated content here 💡";
+    document.querySelectorAll('.tool-form').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = form.querySelector('input').value;
+            const tool = form.dataset.tool;
+            const output = form.nextElementSibling;
+            output.innerHTML = '<p style="color:#aaa;">Generating...</p>';
 
-    const resultDiv = document.getElementById(
-        `result-${platform}-${tool.replace(/ /g,'')}`
-    );
+            const res = await fetch('/use_tool', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({tool, input})
+            });
+            const data = await res.json();
 
-    if (resultDiv) {
-        resultDiv.innerText = content;
-    }
-
-    if (confirm("Save this content to your profile/feed?")) {
-        fetch("/use_tool", {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({
-                platform: platform,
-                tool: tool,
-                content: content,
-                save: true
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "success") {
-                alert("Saved!");
+            if (data.status === 'success') {
+                const text = data.result.text || data.result.hashtags?.join(' ') || JSON.stringify(data.result, null, 2);
+                output.innerHTML = `<pre style="white-space: pre-wrap;">${text}</pre>
+                    <button onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText)">Copy All</button>`;
+            } else {
+                output.innerHTML = `<p style="color:red;">${data.message}</p>`;
             }
-        })
-        .catch(err => console.error(err));
-    }
-}
+        });
+    });
 </script>
+
+<style>
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin: 30px 0; }
+    .tool-card { background: rgba(80,50,140,0.2); padding: 28px; border-radius: 20px; border: 1px solid rgba(200,150,255,0.3); backdrop-filter: blur(10px); }
+    .tool-form input { width: 100%; padding: 14px; margin: 12px 0; background: rgba(10,10,40,0.6); border: 1px solid #666; color: white; border-radius: 10px; }
+    .generate-btn { background: linear-gradient(90deg, #9d4edd, #c77dff); width: 100%; padding: 16px; border: none; color: white; font-weight: bold; border-radius: 12px; cursor: pointer; box-shadow: 0 6px 25px rgba(157,78,221,0.4); }
+    .output-box { min-height: 120px; margin-top: 20px; padding: 20px; background: rgba(0,0,30,0.7); border-radius: 14px; border: 1px solid #555; }
+</style>
+
 {% endblock %}
