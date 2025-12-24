@@ -1,62 +1,123 @@
-{% extends "base.html" %}
-
+{% extends 'base.html' %}
 {% block content %}
-<h1 class="text-5xl font-bold mb-10 discord-accent">
-    Discord Toolkit
-</h1>
 
-<div class="space-y-5 max-w-4xl">
-    {% set tools = [
-        "Server Intro",
-        "Role Suggestions",
-        "Channel Structure",
-        "Bot Commands",
-        "Event Announcement",
-        "Rules Text",
-        "Emoji Pack"
-    ] %}
+<h1 class="page-title">💬 Discord Toolkit</h1>
+<p class="subtitle">Community building & server management</p>
 
-    {% for tool in tools %}
-    <div class="tool-btn" onclick="useTool('discord', '{{ tool }}')">
-        <h3 class="text-2xl font-semibold">{{ tool }}</h3>
-        <div id="result-discord-{{ tool.replace(' ', '') }}" class="result-box"></div>
+<div class="tools-grid">
+
+    <!-- 1. Server Welcome Message -->
+    <div class="tool-card">
+        <h3>👋 Server Welcome Message</h3>
+        <p>Engaging rules & intro message</p>
+        <form class="tool-form" data-tool="discord_welcome">
+            <input type="text" placeholder="Server theme or niche" required>
+            <button type="submit" class="generate-btn">Generate Welcome</button>
+        </form>
+        <div class="output-box"></div>
     </div>
-    {% endfor %}
+
+    <!-- 2. Channel Setup Ideas -->
+    <div class="tool-card">
+        <h3>📂 Channel Setup Ideas</h3>
+        <p>Optimal channel categories & names</p>
+        <form class="tool-form" data-tool="channel">
+            <input type="text" placeholder="Community focus" required>
+            <button type="submit" class="generate-btn">Suggest Channels</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 3. Role & Permission Suggestions -->
+    <div class="tool-card">
+        <h3>🎭 Role & Permission Suggestions</h3>
+        <p>Custom roles for moderation & perks</p>
+        <form class="tool-form" data-tool="role">
+            <input type="text" placeholder="Server size or type" required>
+            <button type="submit" class="generate-btn">Suggest Roles</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 4. Bot Command Creator -->
+    <div class="tool-card">
+        <h3>🤖 Bot Command Creator</h3>
+        <p>Fun & useful custom commands</p>
+        <form class="tool-form" data-tool="command">
+            <input type="text" placeholder="Bot type or idea" required>
+            <button type="submit" class="generate-btn">Create Commands</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 5. Event Announcement Generator -->
+    <div class="tool-card">
+        <h3>📢 Event Announcement Generator</h3>
+        <p>Hype messages for AMAs, games, etc.</p>
+        <form class="tool-form" data-tool="event">
+            <input type="text" placeholder="Event details" required>
+            <button type="submit" class="generate-btn">Generate Announcement</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 6. Engagement Activity Ideas -->
+    <div class="tool-card">
+        <h3>🚀 Engagement Activity Ideas</h3>
+        <p>Games, Q&A & voice events</p>
+        <form class="tool-form" data-tool="activity">
+            <input type="text" placeholder="Community interests" required>
+            <button type="submit" class="generate-btn">Suggest Activities</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 7. Moderation Script Booster -->
+    <div class="tool-card">
+        <h3>🛡️ Moderation Script Booster</h3>
+        <p>Auto-mod rules & warning templates</p>
+        <form class="tool-form" data-tool="moderation">
+            <input type="text" placeholder="Common issues" required>
+            <button type="submit" class="generate-btn">Boost Moderation</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
 </div>
-{% endblock %}
 
-{% block scripts %}
 <script>
-function useTool(platform, tool) {
-    const content = tool + " generated content here 💡";
+    document.querySelectorAll('.tool-form').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = form.querySelector('input').value;
+            const tool = form.dataset.tool;
+            const output = form.nextElementSibling;
+            output.innerHTML = '<p style="color:#aaa;">Generating...</p>';
 
-    const resultDiv = document.getElementById(
-        `result-${platform}-${tool.replace(/ /g,'')}`
-    );
+            const res = await fetch('/use_tool', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({tool, input})
+            });
+            const data = await res.json();
 
-    if (resultDiv) {
-        resultDiv.innerText = content;
-    }
-
-    if (confirm("Save this content to your profile/feed?")) {
-        fetch("/use_tool", {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({
-                platform: platform,
-                tool: tool,
-                content: content,
-                save: true
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "success") {
-                alert("Saved!");
+            if (data.status === 'success') {
+                const text = data.result.text || data.result.hashtags?.join(' ') || JSON.stringify(data.result, null, 2);
+                output.innerHTML = `<pre style="white-space: pre-wrap;">${text}</pre>
+                    <button onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText)">Copy All</button>`;
+            } else {
+                output.innerHTML = `<p style="color:red;">${data.message}</p>`;
             }
-        })
-        .catch(err => console.error(err));
-    }
-}
+        });
+    });
 </script>
+
+<style>
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin: 30px 0; }
+    .tool-card { background: rgba(80,50,140,0.2); padding: 28px; border-radius: 20px; border: 1px solid rgba(200,150,255,0.3); backdrop-filter: blur(10px); }
+    .tool-form input { width: 100%; padding: 14px; margin: 12px 0; background: rgba(10,10,40,0.6); border: 1px solid #666; color: white; border-radius: 10px; }
+    .generate-btn { background: linear-gradient(90deg, #9d4edd, #c77dff); width: 100%; padding: 16px; border: none; color: white; font-weight: bold; border-radius: 12px; cursor: pointer; box-shadow: 0 6px 25px rgba(157,78,221,0.4); }
+    .output-box { min-height: 120px; margin-top: 20px; padding: 20px; background: rgba(0,0,30,0.7); border-radius: 14px; border: 1px solid #555; }
+</style>
+
 {% endblock %}
