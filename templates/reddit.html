@@ -1,62 +1,117 @@
-{% extends "base.html" %}
-
+{% extends 'base.html' %}
 {% block content %}
-<h1 class="text-5xl font-bold mb-10 reddit-accent">
-    Reddit Toolkit
-</h1>
 
-<div class="space-y-5 max-w-4xl">
-    {% set tools = [
-        "Post Title Generator",
-        "Post Body Writer",
-        "Comment Ideas",
-        "AMA Planner",
-        "Subreddit Fit",
-        "Meme Caption",
-        "Self-Promotion Text"
-    ] %}
+<h1 class="page-title">👽 Reddit Toolkit</h1>
+<p class="subtitle">Upvotes, discussions & subreddit growth</p>
 
-    {% for tool in tools %}
-    <div class="tool-btn" onclick="useTool('reddit', '{{ tool }}')">
-        <h3 class="text-2xl font-semibold">{{ tool }}</h3>
-        <div id="result-reddit-{{ tool.replace(' ', '') }}" class="result-box"></div>
+<div class="tools-grid">
+
+    <!-- 1. Post Title Generator -->
+    <div class="tool-card">
+        <h3>🔤 Post Title Generator</h3>
+        <p>Click-worthy titles that get upvotes</p>
+        <form class="tool-form" data-tool="reddit_title">
+            <input type="text" placeholder="Post topic or idea" required>
+            <button type="submit" class="generate-btn">Generate Title</button>
+        </form>
+        <div class="output-box"></div>
     </div>
-    {% endfor %}
+
+    <!-- 2. Post Body Writer -->
+    <div class="tool-card">
+        <h3>📝 Post Body Writer</h3>
+        <p>Full detailed post with formatting</p>
+        <form class="tool-form" data-tool="reddit_body">
+            <input type="text" placeholder="Main points or story" required>
+            <button type="submit" class="generate-btn">Write Post</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 3. Comment Booster -->
+    <div class="tool-card">
+        <h3>💬 Comment Booster</h3>
+        <p>Smart replies to spark discussions</p>
+        <form class="tool-form" data-tool="comment">
+            <input type="text" placeholder="Post topic or comment goal" required>
+            <button type="submit" class="generate-btn">Boost Comments</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 4. Subreddit Analyzer -->
+    <div class="tool-card">
+        <h3>🔍 Subreddit Analyzer</h3>
+        <p>Best posting times & content types</p>
+        <form class="tool-form" data-tool="subreddit">
+            <input type="text" placeholder="Subreddit name (e.g. r/fitness)" required>
+            <button type="submit" class="generate-btn">Analyze Subreddit</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 5. Hashtag/Flair Optimizer -->
+    <div class="tool-card">
+        <h3>🏷️ Flair & Tag Optimizer</h3>
+        <p>Best flairs and tags for visibility</p>
+        <form class="tool-form" data-tool="flair">
+            <input type="text" placeholder="Post topic" required>
+            <button type="submit" class="generate-btn">Optimize Flairs</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 6. Engagement Tracker -->
+    <div class="tool-card">
+        <h3>📊 Engagement Tracker</h3>
+        <p>Predict upvotes & comment potential</p>
+        <form class="tool-form" data-tool="engagement">
+            <input type="text" placeholder="Draft title or post" required>
+            <button type="submit" class="generate-btn">Predict Engagement</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
+    <!-- 7. Trend Spotter -->
+    <div class="tool-card">
+        <h3>🔥 Trend Spotter</h3>
+        <p>Hot topics in your subreddits</p>
+        <form class="tool-form" data-tool="trend">
+            <input type="text" placeholder="Niche or subreddit" required>
+            <button type="submit" class="generate-btn">Spot Trends</button>
+        </form>
+        <div class="output-box"></div>
+    </div>
+
 </div>
-{% endblock %}
 
-{% block scripts %}
 <script>
-function useTool(platform, tool) {
-    const content = tool + " generated content here 💡";
+    document.querySelectorAll('.tool-form').forEach(form => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = form.querySelector('input').value;
+            const tool = form.dataset.tool;
+            const output = form.nextElementSibling;
+            output.innerHTML = '<p style="color:#aaa;">Generating...</p>';
 
-    const resultDiv = document.getElementById(
-        `result-${platform}-${tool.replace(/ /g,'')}`
-    );
+            const res = await fetch('/use_tool', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({tool, input})
+            });
+            const data = await res.json();
 
-    if (resultDiv) {
-        resultDiv.innerText = content;
-    }
-
-    if (confirm("Save this content to your profile/feed?")) {
-        fetch("/use_tool", {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({
-                platform: platform,
-                tool: tool,
-                content: content,
-                save: true
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "success") {
-                alert("Saved!");
+            if (data.status === 'success') {
+                const text = data.result.text || data.result.hashtags?.join(' ') || JSON.stringify(data.result, null, 2);
+                output.innerHTML = `<pre style="white-space: pre-wrap;">${text}</pre>
+                    <button onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText)">Copy All</button>`;
+            } else {
+                output.innerHTML = `<p style="color:red;">${data.message}</p>`;
             }
-        })
-        .catch(err => console.error(err));
-    }
-}
+        });
+    });
 </script>
-{% endblock %}
+
+<style>
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin: 30px 0; }
+    .tool-card { background: rgba(80,50,140,0.2); padding: 28px; border-radius: 20px; border: 1px solid rgba(200,150
