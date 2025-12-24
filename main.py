@@ -1,40 +1,24 @@
 import os
 from flask import (
     Flask, render_template, request, redirect,
-    url_for, session, send_from_directory, jsonify
+    url_for, session, send_from_directory, jsonify, abort
 )
-from database import db  # Assuming you have models/init in database.py
+# from database import db  # Uncomment if you have this
+# from ai_engine import generate_hashtags  # Later for real AI
 
-# --------------------
-# Flask app setup
-# --------------------
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key-change-this-in-prod")
+app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production-please")
 
-# --------------------
-# Database setup
-# --------------------
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-INSTANCE_DIR = os.path.join(BASE_DIR, "instance")
-os.makedirs(INSTANCE_DIR, exist_ok=True)
+# IMPORTANT: Disable debug in production
+app.debug = False
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(INSTANCE_DIR, "database.db")
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-db.init_app(app)
-
-with app.app_context():
-    db.create_all()
-
-# --------------------
-# Uploads
-# --------------------
-UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
+# Uploads folder
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 # --------------------
-# Helpers
+# Helper: Login Required
 # --------------------
 def login_required(f):
     from functools import wraps
@@ -59,93 +43,104 @@ def login():
         if username:
             session["user"] = username
             return redirect(url_for("dashboard"))
+        return render_template("login.html", error="Username required")
     return render_template("login.html")
 
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        username = request.form.get("username")
-        if username:
-            session["user"] = username
-            return redirect(url_for("dashboard"))
-    return render_template("register.html")
+@app.route("/logout")
+def logout():
+    session.pop("user", None)
+    return redirect(url_for("index"))
 
 @app.route("/dashboard")
 @login_required
 def dashboard():
     return render_template("dashboard.html")
 
-# Platform toolkits (add all your templates here)
+# Platform routes
 PLATFORMS = {
-    "tiktok": "tiktok.html",  # Add if you have it, or create
-    "instagram": "instagram.html",
+    "tiktok": "tiktok.html",
     "youtube": "youtube.html",
+    "instagram": "instagram.html",
     "twitter": "twitter.html",
     "facebook": "facebook.html",
-    "discord": "discord.html",
+    "snapchat": "snapchat.html",
+    "reddit": "reddit.html",
+    "threads": "threads.html",
+    "twitch": "twitch.html",
+    "pinterest": "pinterest.html",
     "linkedin": "linkedin.html",
+    "discord": "discord.html",
     "onlyfans": "onlyfans.html",
-    # Add more as you create templates
+    "monetization": "monetization.html",
 }
 
-@app.route("/platform/<platform_name>")
+@app.route("/platform/<name>")
 @login_required
-def platform(platform_name):
-    template = PLATFORMS.get(platform_name.lower())
-    if not template:
-        return render_template("404.html"), 404
-    return render_template(template)
+def platform(name):
+    template = PLATFORMS.get(name.lower())
+    if template and os.path.exists(os.path.join("templates", template)):
+        return render_template(template)
+    abort(404)
 
 @app.route("/community")
 @login_required
 def community():
     return render_template("community.html")
 
-@app.route("/feed")
-@login_required
-def feed():
-    return render_template("feed.html")
-
 @app.route("/messages")
 @login_required
 def messages():
-    # Later: pull real users/conversations from DB
-    return render_template("messages_inbox.html", users=[])
-
-@app.route("/chat")  # Or /chat/<user_id> later
-@login_required
-def chat():
-    return render_template("chat.html")
-
-@app.route("/monetization")
-@login_required
-def monetization():
-    return render_template("monetization.html")
-
-@app.route("/post")
-@login_required
-def post():
-    return render_template("post.html")
-
-@app.route("/uploads/<filename>")
-def uploaded_file(filename):
-    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+    return render_template("messages_inbox.html")
 
 @app.route("/use_tool", methods=["POST"])
 @login_required
 def use_tool():
     data = request.get_json() or {}
-    # Later: call ai_engine.py here with data['prompt'] etc.
-    # For now, echo back for testing
-    result = {"generated": f"Echo: {data.get('input', 'No input')}"}
-    return jsonify({"status": "success", "result": result})
+    tool = data.get("tool")
+    input_text = data.get("input", "").strip()
+
+    if not input_text:
+        return jsonify({"status": "error", "message": "No input provided"})
+
+    try:
+        if tool == "hashtag":
+            # Smart dummy generator (replace later with real AI)
+            words = input_text.lower().split()[:5]
+            base = ["fyp", "viral", "trending", "foryou", "explore", "tiktok"]
+            variants = [word + str(i) for word in words for i in ["", "1", "2", "official"]]
+            all_tags = base + words + variants + [input_text.replace(" ", "")]
+            unique = []
+            for tag in all_tags:
+                if tag not in unique:
+                    unique.append(tag)
+            hashtags = [f"#{tag}" for tag in unique[:30]]
+            return jsonify({
+                "status": "success",
+                "result": {"hashtags": hashtags}
+            })
+
+        return jsonify({
+            "status": "success",
+            "result": {"message": "This tool is coming soon!"}
+        })
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": "Something went wrong"})
+
+@app.route("/uploads/<filename>")
+def uploaded_file(filename):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 # --------------------
-# Errors
+# Error Handling
 # --------------------
 @app.errorhandler(404)
 def not_found(e):
     return render_template("404.html"), 404
+
+@app.errorhandler(500)
+def internal_error(e):
+    return render_template("404.html"), 500  # Or make a 500.html later
 
 # --------------------
 # Run
