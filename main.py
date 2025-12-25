@@ -3,7 +3,7 @@ from flask import (
     Flask, render_template, request, redirect,
     url_for, session, send_from_directory, jsonify, abort
 )
-from database import db, Post  # Import Post
+from database import db, Post
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production-please")
@@ -14,7 +14,7 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# Database setup - persistent on Render
+# Database setup - persistent
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 INSTANCE_DIR = os.path.join(BASE_DIR, "instance")
 os.makedirs(INSTANCE_DIR, exist_ok=True)
@@ -24,7 +24,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
 
 with app.app_context():
-    db.create_all()  # Creates the Post table
+    db.create_all()
 
 def login_required(f):
     from functools import wraps
