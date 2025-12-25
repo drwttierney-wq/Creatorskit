@@ -6,9 +6,9 @@
 
 <form action="/create_post" method="POST">
     <textarea name="content" placeholder="What's on your mind? Paste your generated caption, hashtags, script..." required style="width:100%; height:200px; background:#111; color:white; border:1px solid #555; border-radius:12px; padding:15px;"></textarea>
-    <button type="submit" class="generate-btn" style="margin-top:20px; width:100%; padding:16px;">Post to Community</button>
+    <button type="submit" style="margin-top:20px; width:100%; padding:16px; background: linear-gradient(90deg, #9d4edd, #c77dff); border: none; color: white; font-weight: bold; border-radius:12px; cursor:pointer;">Post to Community</button>
 </form>
 
-<a href="/community">← Back to Feed</a>
+<a href="/community" style="display:block; margin-top:20px; color:#c77dff;">← Back to Feed</a>
 
 {% endblock %}
