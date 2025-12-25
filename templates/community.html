@@ -12,56 +12,27 @@
 
 <div class="feed-container">
 
-    <!-- Dummy Post 1 -->
+    {% for post in posts %}
     <div class="post-card">
         <div class="post-header">
-            <div class="avatar-placeholder">A</div>
+            <div class="avatar-placeholder">{{ post.user[0] | upper }}</div>
             <div>
-                <h4>@alexcreator</h4>
-                <span class="timestamp">2 hours ago</span>
+                <h4>@{{ post.user }}</h4>
+                <span class="timestamp">{{ post.timestamp.strftime('%b %d · %I:%M %p') }}</span>
             </div>
         </div>
-        <p>Just generated these hashtags for my next TikTok — what do you think? 🔥 #fyp #viral #dance #trending</p>
+        <p style="white-space: pre-wrap;">{{ post.content }}</p>
         <div class="post-actions">
-            <button>❤️ 42</button>
-            <button>💬 18</button>
+            <form action="/like/{{ post.id }}" method="POST" style="display:inline;">
+                <button type="submit">❤️ {{ post.likes }}</button>
+            </form>
+            <button>💬 0</button>
             <button>🔄 Share</button>
         </div>
     </div>
-
-    <!-- Dummy Post 2 -->
-    <div class="post-card">
-        <div class="post-header">
-            <div class="avatar-placeholder">S</div>
-            <div>
-                <h4>@sarahvibes</h4>
-                <span class="timestamp">5 hours ago</span>
-            </div>
-        </div>
-        <p>Loving the Instagram Caption Creator — this one is perfect for my next Reel! 🌅</p>
-        <div class="post-actions">
-            <button>❤️ 89</button>
-            <button>💬 31</button>
-            <button>🔄 Share</button>
-        </div>
-    </div>
-
-    <!-- Dummy Post 3 -->
-    <div class="post-card">
-        <div class="post-header">
-            <div class="avatar-placeholder">J</div>
-            <div>
-                <h4>@jamiepro</h4>
-                <span class="timestamp">1 day ago</span>
-            </div>
-        </div>
-        <p>Monetization tips from the new hub are gold — just set up my first affiliate link! 💰</p>
-        <div class="post-actions">
-            <button>❤️ 156</button>
-            <button>💬 45</button>
-            <button>🔄 Share</button>
-        </div>
-    </div>
+    {% else %}
+    <p style="text-align:center; color:#aaa; margin:50px 0;">No posts yet — be the first to share!</p>
+    {% endfor %}
 
     <div class="new-post-btn">
         <a href="/post">+</a>
