@@ -1,27 +1,87 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 class="page-title">🌐 Community Feed</h1>
+<p class="subtitle">Share your creations, get feedback & connect</p>
+
+<div class="feed-tabs">
+    <button class="tab active">For You</button>
+    <button class="tab">Following</button>
+    <button class="tab">Trending</button>
+</div>
+
 <div class="feed-container">
-    {% for post in posts %}
+
+    <!-- Dummy Post 1 -->
     <div class="post-card">
         <div class="post-header">
-            <div class="avatar-placeholder">{{ post.user[0] }}</div> <!-- First letter avatar -->
+            <div class="avatar-placeholder">A</div>
             <div>
-                <h4>@{{ post.user }}</h4>
-                <span class="timestamp">{{ post.timestamp.strftime('%b %d · %I:%M %p') }}</span>
+                <h4>@alexcreator</h4>
+                <span class="timestamp">2 hours ago</span>
             </div>
         </div>
-        <p style="white-space: pre-wrap;">{{ post.content }}</p>
+        <p>Just generated these hashtags for my next TikTok — what do you think? 🔥 #fyp #viral #dance #trending</p>
         <div class="post-actions">
-            <form action="/like/{{ post.id }}" method="POST" style="display:inline;">
-                <button type="submit">❤️ {{ post.likes }}</button>
-            </form>
-            <button>💬 0</button>
+            <button>❤️ 42</button>
+            <button>💬 18</button>
             <button>🔄 Share</button>
         </div>
     </div>
-    {% else %}
-    <p style="text-align:center; color:#aaa;">No posts yet — be the first!</p>
-    {% endfor %}
+
+    <!-- Dummy Post 2 -->
+    <div class="post-card">
+        <div class="post-header">
+            <div class="avatar-placeholder">S</div>
+            <div>
+                <h4>@sarahvibes</h4>
+                <span class="timestamp">5 hours ago</span>
+            </div>
+        </div>
+        <p>Loving the Instagram Caption Creator — this one is perfect for my next Reel! 🌅</p>
+        <div class="post-actions">
+            <button>❤️ 89</button>
+            <button>💬 31</button>
+            <button>🔄 Share</button>
+        </div>
+    </div>
+
+    <!-- Dummy Post 3 -->
+    <div class="post-card">
+        <div class="post-header">
+            <div class="avatar-placeholder">J</div>
+            <div>
+                <h4>@jamiepro</h4>
+                <span class="timestamp">1 day ago</span>
+            </div>
+        </div>
+        <p>Monetization tips from the new hub are gold — just set up my first affiliate link! 💰</p>
+        <div class="post-actions">
+            <button>❤️ 156</button>
+            <button>💬 45</button>
+            <button>🔄 Share</button>
+        </div>
+    </div>
 
     <div class="new-post-btn">
         <a href="/post">+</a>
     </div>
+
 </div>
+
+<style>
+    .feed-tabs { display: flex; gap: 20px; margin: 20px 0; }
+    .tab { background: none; border: none; color: #aaa; font-size: 18px; padding: 10px; border-bottom: 3px solid transparent; }
+    .tab.active { color: white; border-bottom: 3px solid #c77dff; }
+    .feed-container { max-width: 700px; margin: 0 auto; }
+    .post-card { background: rgba(80,50,140,0.15); padding: 20px; border-radius: 18px; margin-bottom: 25px; border: 1px solid rgba(200,150,255,0.2); }
+    .post-header { display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
+    .avatar-placeholder { width: 50px; height: 50px; border-radius: 50%; background: #c77dff; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 20px; }
+    .timestamp { font-size: 14px; color: #999; }
+    .post-actions { display: flex; gap: 30px; margin-top: 15px; }
+    .post-actions button { background: none; border: none; color: #c77dff; font-size: 20px; cursor: pointer; }
+    .new-post-btn { position: fixed; bottom: 30px; right: 30px; background: linear-gradient(90deg, #9d4edd, #c77dff); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; color: white; box-shadow: 0 8px 30px rgba(157,78,221,0.6); }
+    .new-post-btn a { color: white; text-decoration: none; }
+</style>
+
+{% endblock %}
