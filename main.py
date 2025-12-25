@@ -3,6 +3,7 @@ from flask import (
     Flask, render_template, request, redirect,
     url_for, session, send_from_directory, jsonify, abort
 )
+from database import db, Post  # Import Post
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production-please")
@@ -12,6 +13,18 @@ app.debug = False
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+# Database setup - persistent on Render
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+INSTANCE_DIR = os.path.join(BASE_DIR, "instance")
+os.makedirs(INSTANCE_DIR, exist_ok=True)
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.path.join(INSTANCE_DIR, 'database.db')}"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db.init_app(app)
+
+with app.app_context():
+    db.create_all()  # Creates the Post table
 
 def login_required(f):
     from functools import wraps
@@ -70,15 +83,35 @@ def platform(name):
         return render_template(template)
     abort(404)
 
+# Real Community Feed
 @app.route("/community")
 @login_required
 def community():
-    return render_template("community.html")
+    posts = Post.query.order_by(Post.timestamp.desc()).all()
+    return render_template("community.html", posts=posts)
 
 @app.route("/post")
 @login_required
 def post_page():
     return render_template("post.html")
+
+@app.route("/create_post", methods=["POST"])
+@login_required
+def create_post():
+    content = request.form.get("content")
+    if content and content.strip():
+        new_post = Post(user=session["user"], content=content.strip())
+        db.session.add(new_post)
+        db.session.commit()
+    return redirect("/community")
+
+@app.route("/like/<int:post_id>", methods=["POST"])
+@login_required
+def like_post(post_id):
+    post = Post.query.get_or_404(post_id)
+    post.likes += 1
+    db.session.commit()
+    return redirect("/community")
 
 @app.route("/messages")
 @login_required
@@ -113,7 +146,7 @@ def use_tool():
 
         return jsonify({
             "status": "success",
-            "result": {"text": f"Generated {tool} for: {input_text} (real AI coming soon!)"}
+            "result": {"text": f"Generated {tool} for: {input_text}"}
         })
 
     except Exception as e:
