@@ -4,15 +4,21 @@ from flask import (
     url_for, session, send_from_directory, jsonify, abort
 )
 from database import db, Post
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production-please")
 
 app.debug = False
 
+# Uploads folder
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Database setup
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -99,8 +105,17 @@ def post_page():
 @login_required
 def create_post():
     content = request.form.get("content")
+    image_path = None
+
+    if 'image' in request.files:
+        file = request.files['image']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            image_path = filename
+
     if content and content.strip():
-        new_post = Post(user=session["user"], content=content.strip())
+        new_post = Post(user=session["user"], content=content.strip(), image_path=image_path)
         db.session.add(new_post)
         db.session.commit()
     return redirect("/community")
