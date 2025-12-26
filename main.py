@@ -42,7 +42,15 @@ def login_required(f):
 @app.route("/")
 def index():
     return render_template("index.html")
+@app.route("/chat/<username>")
+@login_required
+def chat(username):
+    return render_template("chat.html")
 
+@app.route("/messages")
+@login_required
+def messages():
+    return render_template("messages_inbox.html")
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
