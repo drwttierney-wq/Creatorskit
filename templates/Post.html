@@ -4,8 +4,9 @@
 <h1 class="page-title">Create Post</h1>
 <p class="subtitle">Share your tool output or thoughts with the community</p>
 
-<form action="/create_post" method="POST">
+<form action="/create_post" method="POST" enctype="multipart/form-data">  <!-- Added enctype for files -->
     <textarea name="content" placeholder="Paste your generated hashtags, caption, script, or just say hi..." required style="width:100%; height:300px; background:#111; color:white; border:1px solid #555; border-radius:12px; padding:15px; font-size:16px;"></textarea>
+    <input type="file" name="image" accept="image/*" style="margin-top:15px; width:100%; padding:14px; background:#111; color:white; border:1px solid #555; border-radius:12px;">
     <button type="submit" class="generate-btn" style="margin-top:20px; width:100%; padding:16px;">Share Post</button>
 </form>
 
