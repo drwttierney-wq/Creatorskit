@@ -1,52 +1,36 @@
 {% extends 'base.html' %}
-
 {% block content %}
-<h1 class="text-4xl font-bold mb-8">Chat with {{ other_user.username }}</h1>
 
-<!-- Chat Messages Container -->
-<div id="chat-messages" class="space-y-4 mb-8 h-96 overflow-y-auto bg-gray-800 p-6 rounded-xl">
-    {% for msg in messages %}
-        <div class="flex {% if msg.sender_id == current_user.id %}justify-end{% else %}justify-start{% endif %}">
-            <div class="{% if msg.sender_id == current_user.id %}bg-pink-600{% else %}bg-gray-700{% endif %} p-4 rounded-xl max-w-md break-words">
-                
-                <!-- Optional Image -->
-                {% if msg.image %}
-                <img src="{{ url_for('uploaded_file', filename=msg.image) }}" class="max-w-full rounded mb-2">
-                {% endif %}
-                
-                <!-- Text Content -->
-                {% if msg.content %}
-                <p>{{ msg.content }}</p>
-                {% endif %}
-                
-                <!-- Timestamp -->
-                <p class="text-xs text-gray-400 mt-2">{{ msg.timestamp.strftime('%H:%M') }}</p>
-            </div>
-        </div>
-    {% endfor %}
+<h1 class="page-title">Chat with @alexcreator</h1>
+
+<div class="chat-container">
+
+    <!-- Dummy Message 1 (from them) -->
+    <div class="message received">
+        <p>Hey! Saw your TikTok hashtags — they're fire! Want to collab on a video?</p>
+        <span class="time">2h ago</span>
+    </div>
+
+    <!-- Dummy Message 2 (from you) -->
+    <div class="message sent">
+        <p>Thanks! Yeah I'd love to — what idea you thinking?</p>
+        <span class="time">1h ago</span>
+    </div>
+
 </div>
 
-<!-- Chat Form -->
-<form method="POST" enctype="multipart/form-data" class="space-y-4 max-w-2xl">
-    <textarea 
-        name="content" 
-        placeholder="Type a message..." 
-        class="w-full p-4 bg-gray-800 rounded-xl text-lg"
-        required
-    ></textarea>
-    <input type="file" name="image" accept="image/*" class="block text-gray-400">
-    <button type="submit" class="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 px-8 py-4 rounded-xl text-xl font-bold">
-        Send
-    </button>
+<form class="send-message">
+    <input type="text" placeholder="Type a message..." style="width:80%; padding:15px; background:#111; border:1px solid #555; color:white; border-radius:12px;">
+    <button type="submit" style="padding:15px 20px; background:#c77dff; border:none; color:white; border-radius:12px;">Send</button>
 </form>
-{% endblock %}
 
-{% block scripts %}
-<script>
-    // Scroll chat to bottom on page load
-    const chatContainer = document.getElementById("chat-messages");
-    if(chatContainer) {
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-</script>
+<style>
+    .chat-container { max-width: 700px; margin: 0 auto; padding-bottom: 80px; }
+    .message { max-width: 70%; padding: 15px; border-radius: 18px; margin: 10px 0; position: relative; }
+    .received { background: rgba(80,50,140,0.3); align-self: flex-start; border-bottom-left-radius: 5px; }
+    .sent { background: linear-gradient(90deg, #9d4edd, #c77dff); align-self: flex-end; margin-left: auto; border-bottom-right-radius: 5px; }
+    .time { font-size: 12px; color: #aaa; margin-top: 5px; }
+    .send-message { position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; background: #000; display: flex; gap: 10px; justify-content: center; }
+</style>
+
 {% endblock %}
