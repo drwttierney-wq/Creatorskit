@@ -10,22 +10,25 @@ app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production-please"
 
 app.debug = False
 
+# Uploads folder
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# Database setup
+# Database setup - fixed path for Render reliability
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 INSTANCE_DIR = os.path.join(BASE_DIR, "instance")
 os.makedirs(INSTANCE_DIR, exist_ok=True)
-app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.path.join(INSTANCE_DIR, 'database.db')}"
+DATABASE_PATH = os.path.join(INSTANCE_DIR, "database.db")
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DATABASE_PATH}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
 
 with app.app_context():
-    db.create_all()
+    db.create_all()  # Creates the Post table
 
+# Login required decorator
 def login_required(f):
     from functools import wraps
     @wraps(f)
@@ -35,6 +38,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated
 
+# Routes
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -58,6 +62,7 @@ def logout():
 def dashboard():
     return render_template("dashboard.html")
 
+# Platform toolkits
 PLATFORMS = {
     "tiktok": "tiktok.html",
     "youtube": "youtube.html",
@@ -83,17 +88,20 @@ def platform(name):
         return render_template(template)
     abort(404)
 
+# Community Feed - real posts
 @app.route("/community")
 @login_required
 def community():
     posts = Post.query.order_by(Post.timestamp.desc()).all()
     return render_template("community.html", posts=posts)
 
+# Create post page
 @app.route("/post")
 @login_required
 def post_page():
     return render_template("post.html")
 
+# Save new post
 @app.route("/create_post", methods=["POST"])
 @login_required
 def create_post():
@@ -109,6 +117,7 @@ def create_post():
 def messages():
     return render_template("messages_inbox.html")
 
+# AI tool generation
 @app.route("/use_tool", methods=["POST"])
 @login_required
 def use_tool():
@@ -125,11 +134,8 @@ def use_tool():
             base = ["fyp", "viral", "trending", "foryou", "explore", "tiktok"]
             variants = [word + str(i) for word in words for i in ["", "1", "2", "official"]]
             all_tags = base + words + variants + [input_text.replace(" ", "")]
-            unique = []
-            for tag in all_tags:
-                if tag not in unique:
-                    unique.append(tag)
-            hashtags = [f"#{tag}" for tag in unique[:30]]
+            unique = list(dict.fromkeys(all_tags))[:30]
+            hashtags = [f"#{tag}" for tag in unique]
             return jsonify({
                 "status": "success",
                 "result": {"hashtags": hashtags}
@@ -147,6 +153,7 @@ def use_tool():
 def uploaded_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
+# Error handlers
 @app.errorhandler(404)
 def not_found(e):
     return render_template("404.html"), 404
@@ -155,6 +162,7 @@ def not_found(e):
 def internal_error(e):
     return render_template("404.html"), 500
 
+# Run app
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
