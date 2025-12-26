@@ -10,12 +10,11 @@ app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production-please"
 
 app.debug = False
 
-# Uploads folder
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# Database setup - fixed path for Render reliability
+# Database setup - reliable path
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 INSTANCE_DIR = os.path.join(BASE_DIR, "instance")
 os.makedirs(INSTANCE_DIR, exist_ok=True)
@@ -26,9 +25,8 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
 
 with app.app_context():
-    db.create_all()  # Creates the Post table
+    db.create_all()
 
-# Login required decorator
 def login_required(f):
     from functools import wraps
     @wraps(f)
@@ -38,19 +36,10 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated
 
-# Routes
 @app.route("/")
 def index():
     return render_template("index.html")
-@app.route("/chat/<username>")
-@login_required
-def chat(username):
-    return render_template("chat.html")
 
-@app.route("/messages")
-@login_required
-def messages():
-    return render_template("messages_inbox.html")
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -70,7 +59,6 @@ def logout():
 def dashboard():
     return render_template("dashboard.html")
 
-# Platform toolkits
 PLATFORMS = {
     "tiktok": "tiktok.html",
     "youtube": "youtube.html",
@@ -96,20 +84,17 @@ def platform(name):
         return render_template(template)
     abort(404)
 
-# Community Feed - real posts
 @app.route("/community")
 @login_required
 def community():
     posts = Post.query.order_by(Post.timestamp.desc()).all()
     return render_template("community.html", posts=posts)
 
-# Create post page
 @app.route("/post")
 @login_required
 def post_page():
     return render_template("post.html")
 
-# Save new post
 @app.route("/create_post", methods=["POST"])
 @login_required
 def create_post():
@@ -120,12 +105,17 @@ def create_post():
         db.session.commit()
     return redirect("/community")
 
+# Messaging routes added here
 @app.route("/messages")
 @login_required
 def messages():
     return render_template("messages_inbox.html")
 
-# AI tool generation
+@app.route("/chat/<username>")
+@login_required
+def chat(username):
+    return render_template("chat.html")
+
 @app.route("/use_tool", methods=["POST"])
 @login_required
 def use_tool():
@@ -161,7 +151,6 @@ def use_tool():
 def uploaded_file(filename):
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
-# Error handlers
 @app.errorhandler(404)
 def not_found(e):
     return render_template("404.html"), 404
@@ -170,7 +159,6 @@ def not_found(e):
 def internal_error(e):
     return render_template("404.html"), 500
 
-# Run app
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
