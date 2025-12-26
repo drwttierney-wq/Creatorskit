@@ -14,7 +14,7 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# Database setup - reliable path
+# Database setup
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 INSTANCE_DIR = os.path.join(BASE_DIR, "instance")
 os.makedirs(INSTANCE_DIR, exist_ok=True)
@@ -105,7 +105,6 @@ def create_post():
         db.session.commit()
     return redirect("/community")
 
-# Messaging routes added here
 @app.route("/messages")
 @login_required
 def messages():
