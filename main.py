@@ -11,7 +11,6 @@ app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production-please"
 
 app.debug = False
 
-# Uploads folder
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
