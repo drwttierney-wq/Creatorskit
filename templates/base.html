@@ -1,7 +1,51 @@
-<nav>
-  <a href="/">Home</a>
-  <a href="/community">Community</a>
-  <a href="/feed">Feed</a>
-  <a href="/chat">Chat</a>
-  <a href="/profile">Profile</a>
-</nav>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creators Kit</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #000814; color: white; font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header { text-align: center; padding: 30px 0; border-bottom: 1px solid #333; }
+        .page-title { font-size: 42px; font-weight: 900; margin-bottom: 10px; background: linear-gradient(90deg, #9d4edd, #c77dff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { font-size: 18px; color: #aaa; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 40px; }
+        .card { background: rgba(80,50,140,0.2); padding: 30px; border-radius: 20px; text-align: center; border: 1px solid rgba(200,150,255,0.3); backdrop-filter: blur(10px); transition: transform 0.3s; }
+        .card:hover { transform: translateY(-10px); }
+        .card h2 { font-size: 28px; margin-bottom: 10px; }
+        .card p { color: #ccc; }
+        .generate-btn { background: linear-gradient(90deg, #9d4edd, #c77dff); padding: 16px; border: none; color: white; font-weight: bold; border-radius: 12px; cursor: pointer; width: 100%; margin-top: 20px; box-shadow: 0 6px 25px rgba(157,78,221,0.4); }
+        a { text-decoration: none; color: inherit; }
+        nav { text-align: center; margin: 20px 0; }
+        nav a { color: #c77dff; margin: 0 15px; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Creators Kit</h1>
+            {% if session.user %}
+            <nav>
+                <a href="/dashboard">Home</a>
+                <a href="/community">Community Feed</a>
+                <a href="/messages">Chat</a>
+                <a href="/profile">Profile</a>
+                <a href="/logout">Logout (@{{ session.user }})</a>
+            </nav>
+            {% else %}
+            <nav>
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            </nav>
+            {% endif %}
+        </div>
+    </header>
+
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>
