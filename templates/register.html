@@ -1,14 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="text-center py-32">
-    <h1 class="text-8xl font-bold mb-8 bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
-        Creators Kit
-    </h1>
-    <p class="text-3xl mb-12 text-gray-300 max-w-5xl mx-auto">
-        The ultimate creator social platform — AI tools, community feed, messaging, live streams, monetization, all in one.
-    </p>
-    <a href="{{ url_for('register') }}" class="btn-primary">
-        Get Started Free
-    </a>
-</div>
+
+<h1 class="page-title">Register</h1>
+<p class="subtitle">Create your account</p>
+
+<form action="/register" method="POST">
+    <input type="text" name="username" placeholder="Username" required style="width:100%; padding:16px; background:#111; color:white; border:1px solid #555; border-radius:12px; margin-bottom:20px; font-size:18px;">
+    <input type="password" name="password" placeholder="Password" required style="width:100%; padding:16px; background:#111; color:white; border:1px solid #555; border-radius:12px; margin-bottom:20px; font-size:18px;">
+    <button type="submit" style="width:100%; padding:16px; background: linear-gradient(90deg, #9d4edd, #c77dff); border: none; color: white; font-weight: bold; border-radius:12px; cursor:pointer;">Register</button>
+</form>
+
+<a href="/login" style="display:block; margin-top:20px; color:#c77dff; text-align:center;">Already have an account? Login</a>
+
 {% endblock %}
