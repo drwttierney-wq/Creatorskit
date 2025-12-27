@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 class="page-title">💬 Messages</h1>
+<p class="subtitle">Chat with creators for collabs & feedback</p>
+
+<div class="inbox-list">
+    {% for conv in conversations %}
+    <a href="/chat/{{ conv.username }}" class="conversation-card">
+        <div class="avatar-placeholder">{{ conv.username[0] | upper }}</div>
+        <div>
+            <h4>@{{ conv.username }}</h4>
+            <p>Last message: ... · 1h ago</p>  <!-- Add real last message later -->
+        </div>
+        <span class="unread">1</span>
+    </a>
+    {% else %}
+    <p style="text-align:center; color:#aaa; margin:50px 0;">No messages yet — start a conversation!</p>
+    {% endfor %}
+</div>
+
+<style>
+    .inbox-list { max-width: 700px; margin: 0 auto; }
+    .conversation-card { display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(80,50,140,0.15); border-radius: 16px; margin-bottom: 15px; border: 1px solid rgba(200,150,255,0.2); text-decoration: none; color: white; }
+    .avatar-placeholder { width: 60px; height: 60px; border-radius: 50%; background: #c77dff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 24px; }
+    .unread { background: #c77dff; color: white; padding: 5px 10px; border-radius: 20px; font-size: 14px; }
+</style>
+
+{% endblock %}
