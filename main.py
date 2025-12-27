@@ -1,89 +1,97 @@
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify, abort
-from database import db, Post  # your existing database logic if you had it
+import os
+from flask import (
+    Flask, render_template, request, redirect,
+    url_for, session, send_from_directory, jsonify, abort
+)
 
 app = Flask(__name__)
-app.secret_key = "creators-kit-secret"
+app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production-please")
 
-# --------------------
-# CORE ROUTES
-# --------------------
+app.debug = False
+
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+def login_required(f):
+    from functools import wraps
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if "user" not in session:
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
-@app.route("/dashboard")
-def dashboard():
-    return render_template("dashboard.html")
-
-@app.route("/community")
-def community():
-    # This fixes your previous 404 issue
-    # You can later add dynamic posts using your database
-    return render_template("community.html")
-
-@app.route("/feed")
-def feed():
-    return render_template("feed.html")
-
-@app.route("/post", methods=["GET", "POST"])
-def post():
-    if request.method == "POST":
-        # Example: saving post to database
-        title = request.form.get("title")
-        content = request.form.get("content")
-        if title and content:
-            new_post = Post(title=title, content=content)
-            db.session.add(new_post)
-            db.session.commit()
-            return redirect(url_for("community"))
-    return render_template("Post.html")
-
-@app.route("/chat")
-def chat():
-    return render_template("chat.html")
-
-@app.route("/profile")
-def profile():
-    return render_template("profile.html")
-
-# --------------------
-# AUTH ROUTES
-# --------------------
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        session["user"] = request.form.get("username", "user")
-        return redirect(url_for("dashboard"))
+        username = request.form.get("username")
+        if username:
+            session["user"] = username
+            return redirect(url_for("dashboard"))
     return render_template("login.html")
 
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        session["user"] = request.form.get("username", "user")
-        return redirect(url_for("dashboard"))
-    return render_template("register.html")
+@app.route("/logout")
+def logout():
+    session.pop("user", None)
+    return redirect(url_for("index"))
 
-# --------------------
-# HEALTH CHECK
-# --------------------
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    return render_template("dashboard.html")
 
-@app.route("/health")
-def health():
-    return "OK"
+PLATFORMS = {
+    "tiktok": "tiktok.html",
+    "youtube": "youtube.html",
+    "instagram": "instagram.html",
+    "twitter": "twitter.html",
+    "facebook": "facebook.html",
+    "snapchat": "snapchat.html",
+    "reddit": "reddit.html",
+    "threads": "threads.html",
+    "twitch": "twitch.html",
+    "pinterest": "pinterest.html",
+    "linkedin": "linkedin.html",
+    "discord": "discord.html",
+    "onlyfans": "onlyfans.html",
+    "monetization": "monetization.html",
+}
 
-# --------------------
-# 404 ERROR PAGE
-# --------------------
+@app.route("/platform/<name>")
+@login_required
+def platform(name):
+    template = PLATFORMS.get(name.lower())
+    if template and os.path.exists(os.path.join("templates", template)):
+        return render_template(template)
+    abort(404)
+
+@app.route("/community")
+@login_required
+def community():
+    return render_template("community.html")
+
+@app.route("/messages")
+@login_required
+def messages():
+    return render_template("messages_inbox.html")
+
+@app.route("/uploads/<filename>")
+def uploaded_file(filename):
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 @app.errorhandler(404)
 def not_found(e):
     return render_template("404.html"), 404
 
-# --------------------
-# ONLY LOCAL DEBUG (Render ignores this)
-# --------------------
+@app.errorhandler(500)
+def internal_error(e):
+    return render_template("404.html"), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
