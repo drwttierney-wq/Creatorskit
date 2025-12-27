@@ -3,15 +3,32 @@ from flask import (
     Flask, render_template, request, redirect,
     url_for, session, send_from_directory, jsonify, abort
 )
+from database import db, Post
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production-please")
 
 app.debug = False
 
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
+# Persistent uploads on disk
+UPLOAD_FOLDER = "/data/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Persistent DB on disk
+DATABASE_PATH = "/data/database.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DATABASE_PATH}"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+db.init_app(app)
+
+with app.app_context():
+    db.create_all()
 
 def login_required(f):
     from functools import wraps
@@ -73,12 +90,79 @@ def platform(name):
 @app.route("/community")
 @login_required
 def community():
-    return render_template("community.html")
+    posts = Post.query.order_by(Post.timestamp.desc()).all()
+    return render_template("community.html", posts=posts)
+
+@app.route("/post")
+@login_required
+def post_page():
+    return render_template("post.html")
+
+@app.route("/create_post", methods=["POST"])
+@login_required
+def create_post():
+    content = request.form.get("content")
+    image_path = None
+
+    if 'image' in request.files:
+        file = request.files['image']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            image_path = filename
+
+    if content and content.strip():
+        new_post = Post(user=session["user"], content=content.strip(), image_path=image_path)
+        db.session.add(new_post)
+        db.session.commit()
+    return redirect("/community")
 
 @app.route("/messages")
 @login_required
 def messages():
     return render_template("messages_inbox.html")
+
+@app.route("/chat/<username>")
+@login_required
+def chat(username):
+    return render_template("chat.html")
+
+@app.route("/profile")
+@login_required
+def profile():
+    # Dummy profile for now — add real data later
+    return render_template("profile.html")
+
+@app.route("/use_tool", methods=["POST"])
+@login_required
+def use_tool():
+    data = request.get_json() or {}
+    tool = data.get("tool")
+    input_text = data.get("input", "").strip()
+
+    if not input_text:
+        return jsonify({"status": "error", "message": "No input provided"})
+
+    try:
+        if tool == "hashtag":
+            words = input_text.lower().split()[:5]
+            base = ["fyp", "viral", "trending", "foryou", "explore", "tiktok"]
+            variants = [word + str(i) for word in words for i in ["", "1", "2", "official"]]
+            all_tags = base + words + variants + [input_text.replace(" ", "")]
+            unique = list(dict.fromkeys(all_tags))[:30]
+            hashtags = [f"#{tag}" for tag in unique]
+            return jsonify({
+                "status": "success",
+                "result": {"hashtags": hashtags}
+            })
+
+        return jsonify({
+            "status": "success",
+            "result": {"text": f"Generated {tool} for: {input_text}"}
+        })
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": "Something went wrong"})
 
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
