@@ -11,7 +11,7 @@ app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production-please"
 
 app.debug = False
 
-# Persistent uploads on disk
+# Persistent uploads on /data disk
 UPLOAD_FOLDER = "/data/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
@@ -20,7 +20,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Persistent DB on disk
+# Persistent DB on /data disk
 DATABASE_PATH = "/data/database.db"
 app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DATABASE_PATH}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -28,7 +28,7 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
 
 with app.app_context():
-    db.create_all()
+    db.create_all()  # Creates tables on persistent disk
 
 def login_required(f):
     from functools import wraps
