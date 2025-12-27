@@ -1,27 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1 class="page-title">Chat with @alexcreator</h1>
+<h1 class="page-title">Chat with @{{ other_user.username }}</h1>
 
 <div class="chat-container">
-
-    <!-- Dummy Message 1 (from them) -->
-    <div class="message received">
-        <p>Hey! Saw your TikTok hashtags — they're fire! Want to collab on a video?</p>
-        <span class="time">2h ago</span>
+    {% for msg in messages %}
+    <div class="message {{ 'sent' if msg.sender_id == session.user_id else 'received' }}">
+        <p>{{ msg.content }}</p>
+        <span class="time">{{ msg.timestamp.strftime('%I:%M %p') }}</span>
     </div>
-
-    <!-- Dummy Message 2 (from you) -->
-    <div class="message sent">
-        <p>Thanks! Yeah I'd love to — what idea you thinking?</p>
-        <span class="time">1h ago</span>
-    </div>
-
+    {% endfor %}
 </div>
 
-<form class="send-message">
-    <input type="text" placeholder="Type a message..." style="width:80%; padding:15px; background:#111; border:1px solid #555; color:white; border-radius:12px;">
-    <button type="submit" style="padding:15px 20px; background:#c77dff; border:none; color:white; border-radius:12px;">Send</button>
+<form action="/send_message" method="POST" style="position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; background: #111; display: flex; gap: 10px; justify-content: center; border-top: 1px solid #333;">
+    <input type="hidden" name="receiver" value="{{ other_user.username }}">
+    <input type="text" name="content" placeholder="Type a message..." style="flex: 1; padding:15px; background:#222; color:white; border:1px solid #555; border-radius:12px;">
+    <button type="submit" style="padding:15px 20px; background: linear-gradient(90deg, #9d4edd, #c77dff); border:none; color:white; border-radius:12px;">Send</button>
 </form>
 
 <style>
@@ -30,7 +24,6 @@
     .received { background: rgba(80,50,140,0.3); align-self: flex-start; border-bottom-left-radius: 5px; }
     .sent { background: linear-gradient(90deg, #9d4edd, #c77dff); align-self: flex-end; margin-left: auto; border-bottom-right-radius: 5px; }
     .time { font-size: 12px; color: #aaa; margin-top: 5px; }
-    .send-message { position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; background: #000; display: flex; gap: 10px; justify-content: center; }
 </style>
 
 {% endblock %}
