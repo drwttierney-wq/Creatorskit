@@ -1,32 +1,34 @@
 import os
-import json
 from flask import (
     Flask, render_template, request, redirect,
     url_for, session, send_from_directory, jsonify, abort
 )
-from datetime import datetime
+from database import db, Post
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production-please")
 
 app.debug = False
 
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), "uploads")
+# Persistent uploads folder on disk
+UPLOAD_FOLDER = "/data/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 
-POSTS_FILE = os.path.join(os.path.dirname(__file__), "posts.json")
-if not os.path.exists(POSTS_FILE):
-    with open(POSTS_FILE, 'w') as f:
-        json.dump([], f)
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def load_posts():
-    with open(POSTS_FILE, 'r') as f:
-        return json.load(f)
+# Persistent database on disk
+DATABASE_PATH = "/data/database.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DATABASE_PATH}"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-def save_posts(posts):
-    with open(POSTS_FILE, 'w') as f:
-        json.dump(posts, f)
+db.init_app(app)
+
+with app.app_context():
+    db.create_all()  # Creates/updates tables
 
 def login_required(f):
     from functools import wraps
@@ -88,7 +90,7 @@ def platform(name):
 @app.route("/community")
 @login_required
 def community():
-    posts = load_posts()
+    posts = Post.query.order_by(Post.timestamp.desc()).all()
     return render_template("community.html", posts=posts)
 
 @app.route("/post")
@@ -100,16 +102,19 @@ def post_page():
 @login_required
 def create_post():
     content = request.form.get("content")
+    image_path = None
+
+    if 'image' in request.files:
+        file = request.files['image']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(UPLOAD_FOLDER, filename))
+            image_path = filename
+
     if content and content.strip():
-        posts = load_posts()
-        new_post = {
-            "user": session["user"],
-            "content": content.strip(),
-            "timestamp": datetime.now().strftime('%b %d · %I:%M %p'),
-            "likes": 0
-        }
-        posts.append(new_post)
-        save_posts(posts)
+        new_post = Post(user=session["user"], content=content.strip(), image_path=image_path)
+        db.session.add(new_post)
+        db.session.commit()
     return redirect("/community")
 
 @app.route("/messages")
@@ -155,7 +160,7 @@ def use_tool():
 
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
-    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+    return send_from_directory(UPLOAD_FOLDER, filename)
 
 @app.errorhandler(404)
 def not_found(e):
