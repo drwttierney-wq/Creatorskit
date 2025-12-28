@@ -40,14 +40,7 @@ def index():
         return redirect(url_for("dashboard"))
     return render_template("index.html")
 
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        username = request.form.get("username")
-        if username:
-            session["user"] = username
-            return redirect(url_for("dashboard"))
-    return render_template("login.html")
+
 
 @app.route("/logout")
 def logout():
@@ -62,7 +55,18 @@ def dashboard():
 @app.route("/platform/<name>")
 @login_required
 def platform(name):
-    platforms = ["tiktok", "youtube", "instagram", "twitter", "facebook", "snapchat", "reddit", "threads", "twitch", "pinterest", "linkedin", "discord", "onlyfans", "monetization"]
+    platforms = [@app.route("/login", methods=["GET", "POST"])
+def login():
+    if "user" in session:
+        return redirect(url_for("dashboard"))
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        if username:
+            session["user"] = username
+            return redirect(url_for("dashboard"))
+
+    return render_template("login.html")"tiktok", "youtube", "instagram", "twitter", "facebook", "snapchat", "reddit", "threads", "twitch", "pinterest", "linkedin", "discord", "onlyfans", "monetization"]
     if name.lower() in platforms:
         return render_template(f"{name.lower()}.html")
     abort(404)
