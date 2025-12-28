@@ -4,50 +4,231 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Creators Kit</title>
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #000; color: white; font-family: 'Segoe UI', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
-        .header { padding: 20px; text-align: center; }
-        .logo { font-size: 48px; font-weight: 900; background: linear-gradient(90deg, #9d4edd, #c77dff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .content { flex: 1; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .landing-title { font-size: 64px; font-weight: 900; margin-bottom: 20px; }
-        .landing-subtitle { font-size: 24px; color: #aaa; margin-bottom: 50px; max-width: 600px; }
-        .get-started { background: linear-gradient(90deg, #9d4edd, #c77dff); padding: 20px 50px; border-radius: 50px; font-size: 24px; font-weight: bold; box-shadow: 0 10px 30px rgba(157,78,221,0.4); text-decoration: none; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(17,17,17,0.9); display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #333; backdrop-filter: blur(10px); }
-        .bottom-nav a { color: #c77dff; font-size: 28px; text-decoration: none; }
-        .fab { position: fixed; bottom: 80px; right: 20px; background: linear-gradient(90deg, #9d4edd, #c77dff); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 8px 30px rgba(157,78,221,0.6); z-index: 100; }
-        .fab a { color: white; text-decoration: none; }
-        /* Hide bottom nav and fab on landing (not logged in) */
-        {% if not session.user %}
-        .bottom-nav, .fab { display: none; }
-        {% endif %}
-        @media (min-width: 768px) {
-            .bottom-nav, .fab { display: none; }
+        :root {
+            --bg: #0b0b0f;
+            --panel: #121218;
+            --border: #2a2a35;
+            --text: #ffffff;
+            --muted: #a1a1b3;
+            --accent1: #9d4edd;
+            --accent2: #c77dff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Segoe UI", system-ui, sans-serif;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* ---------------------
+           SIDEBAR (DESKTOP)
+        --------------------- */
+        .sidebar {
+            display: none;
+        }
+
+        @media (min-width: 900px) {
+            .sidebar {
+                display: flex;
+                flex-direction: column;
+                width: 260px;
+                background: var(--panel);
+                border-right: 1px solid var(--border);
+                padding: 30px 25px;
+            }
+
+            .sidebar .logo {
+                font-size: 30px;
+                font-weight: 800;
+                margin-bottom: 40px;
+                background: linear-gradient(90deg, var(--accent1), var(--accent2));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            .sidebar nav a {
+                display: block;
+                padding: 12px 15px;
+                margin-bottom: 10px;
+                border-radius: 12px;
+                color: var(--muted);
+                font-size: 18px;
+                transition: 0.2s;
+            }
+
+            .sidebar nav a:hover {
+                background: rgba(199,125,255,0.15);
+                color: white;
+            }
+        }
+
+        /* ---------------------
+           MAIN AREA
+        --------------------- */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header (mobile) */
+        header {
+            background: var(--panel);
+            border-bottom: 1px solid var(--border);
+            padding: 15px;
+            text-align: center;
+        }
+
+        header .logo {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--accent1), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @media (min-width: 900px) {
+            header {
+                display: none;
+            }
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        @media (min-width: 900px) {
+            .content {
+                padding: 40px;
+                padding-bottom: 40px;
+            }
+        }
+
+        /* ---------------------
+           BOTTOM NAV (MOBILE)
+        --------------------- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: var(--panel);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .bottom-nav a {
+            font-size: 24px;
+            color: var(--muted);
+        }
+
+        .bottom-nav a:hover {
+            color: white;
+        }
+
+        @media (min-width: 900px) {
+            .bottom-nav {
+                display: none;
+            }
+        }
+
+        /* ---------------------
+           FLOATING POST BUTTON
+        --------------------- */
+        .fab {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent1), var(--accent2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 10px 30px rgba(157,78,221,0.5);
+            z-index: 101;
+        }
+
+        .fab:hover {
+            transform: scale(1.05);
+        }
+
+        .fab a {
+            color: white;
+        }
+
+        @media (min-width: 900px) {
+            .fab {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1 class="logo">Creators Kit</h1>
+
+    <!-- DESKTOP SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo">Creators Kit</div>
+        <nav>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/community">Community</a>
+            <a href="/messages">Messages</a>
+            <a href="/profile">Profile</a>
+            <a href="/settings">Settings</a>
+            <a href="/logout">Logout</a>
+        </nav>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+        <header>
+            <div class="logo">Creators Kit</div>
+        </header>
+
+        <main class="content">
+            {% block content %}
+            {% endblock %}
+        </main>
     </div>
 
-    <div class="content">
-        {% block content %}
-        {% endblock %}
-    </div>
-
-    {% if session.user %}
-    <div class="bottom-nav">
+    <!-- MOBILE NAV -->
+    <nav class="bottom-nav">
         <a href="/dashboard">🏠</a>
         <a href="/community">🌐</a>
-        <a href="/post">+</a>
+        <a href="/post">➕</a>
         <a href="/messages">💬</a>
         <a href="/profile">👤</a>
-    </div>
+    </nav>
 
+    <!-- FAB -->
     <div class="fab">
         <a href="/post">+</a>
     </div>
-    {% endif %}
+
 </body>
 </html>
