@@ -1,36 +1,34 @@
-{% extends "base_app.html" %}
-{% block title %}Community{% endblock %}
-
+{% extends 'base.html' %}
 {% block content %}
-<h1 class="page-title">Community</h1>
 
-{% if posts %}
-<div class="feed">
+<h1 class="page-title">Community Feed</h1>
+<p class="subtitle">Share creations, get feedback & connect</p>
+
+<div class="feed-container">
     {% for post in posts %}
     <div class="post-card">
-        <strong>@{{ post.user }}</strong>
+        <div class="post-header">
+            <div class="avatar">{{ post.author.username[0]|upper }}</div>
+            <div>
+                <h4>@{{ post.author.username }}</h4>
+                <span class="timestamp">{{ post.timestamp.strftime('%b %d · %I:%M %p') }}</span>
+            </div>
+        </div>
         <p>{{ post.content }}</p>
         {% if post.image_path %}
-        <img src="/uploads/{{ post.image_path }}" class="post-image">
+        <img src="/uploads/{{ post.image_path }}" alt="Post image" style="width:100%; border-radius:12px; margin:15px 0;">
         {% endif %}
+        <div class="post-actions">
+            <form action="/like_post/{{ post.id }}" method="POST">
+                <button type="submit">❤️ {{ post.likes }}</button>
+            </form>
+            <button>💬 0</button>
+            <button>🔄 Share</button>
+        </div>
     </div>
+    {% else %}
+    <p style="text-align:center; color:#aaa; margin:50px 0;">No posts yet — be the first!</p>
     {% endfor %}
 </div>
-{% else %}
-<p style="color:#888;margin-top:40px;">No posts yet. Be the first to post!</p>
-{% endif %}
 
-<style>
-.page-title { font-size:32px; font-weight:700; margin-bottom:25px; }
-.feed { display:flex; flex-direction:column; gap:18px; }
-.post-card {
-    background:#121218;
-    border-radius:18px;
-    padding:20px;
-    border:1px solid #1f1f2b;
-}
-.post-card strong { display:block; margin-bottom:6px; }
-.post-card p { margin:0; color:#ccc; }
-.post-image { width:100%; border-radius:14px; margin-top:12px; }
-</style>
 {% endblock %}
