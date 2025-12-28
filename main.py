@@ -1,9 +1,8 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory, abort
-from database import db, User, Post
+from database import db, Post
 from werkzeug.utils import secure_filename
 from functools import wraps
-from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production-please")
@@ -37,56 +36,35 @@ def login_required(f):
 
 @app.route("/")
 def index():
-    if "user" in session:
-        return redirect(url_for("dashboard"))
     return render_template("index.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username")
-        password = request.form.get("password")
-        user = User.query.filter_by(username=username, password=password).first()
-        if user:
+        if username:
             session["user"] = username
             return redirect(url_for("dashboard"))
-        return "Invalid credentials", 401
     return render_template("login.html")
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
         username = request.form.get("username")
-        password = request.form.get("password")
-        if User.query.filter_by(username=username).first():
-            return "User exists", 400
-        new_user = User(username=username, password=password)
-        db.session.add(new_user)
-        db.session.commit()
-        session["user"] = username
-        return redirect(url_for("dashboard"))
+        if username:
+            session["user"] = username
+            return redirect(url_for("dashboard"))
     return render_template("signup.html")
+
+@app.route("/logout")
+def logout():
+    session.pop("user", None)
+    return redirect(url_for("index"))
 
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    tools = [
-        {"name": "TikTok", "emoji": "🎵", "route": "tiktok", "desc": "Viral videos & trends"},
-        {"name": "YouTube", "emoji": "📺", "route": "youtube", "desc": "Growth & monetization"},
-        {"name": "Instagram", "emoji": "📸", "route": "instagram", "desc": "Reels & aesthetics"},
-        {"name": "Twitter / X", "emoji": "🐦", "route": "twitter", "desc": "Threads & reach"},
-        {"name": "Facebook", "emoji": "👥", "route": "facebook", "desc": "Groups & engagement"},
-        {"name": "Snapchat", "emoji": "👻", "route": "snapchat", "desc": "Stories & Spotlight"},
-        {"name": "Reddit", "emoji": "👽", "route": "reddit", "desc": "Upvotes & discussions"},
-        {"name": "Threads", "emoji": "🧵", "route": "threads", "desc": "Conversation starters"},
-        {"name": "Twitch", "emoji": "🎮", "route": "twitch", "desc": "Streaming growth"},
-        {"name": "Pinterest", "emoji": "📌", "route": "pinterest", "desc": "Discovery & traffic"},
-        {"name": "LinkedIn", "emoji": "💼", "route": "linkedin", "desc": "Professional reach"},
-        {"name": "Discord", "emoji": "💬", "route": "discord", "desc": "Community building"},
-        {"name": "OnlyFans", "emoji": "🔒", "route": "onlyfans", "desc": "Creator monetization"},
-        {"name": "Monetization", "emoji": "💰", "route": "monetization", "desc": "Revenue & strategy"}
-    ]
-    return render_template("dashboard.html", tools=tools)
+    return render_template("dashboard.html")
 
 @app.route("/community")
 @login_required
@@ -129,24 +107,17 @@ def uploaded_file(filename):
 @app.route("/platform/<name>")
 @login_required
 def platform(name):
-    valid_platforms = [t["route"] for t in [
-        {"route": "tiktok"}, {"route": "youtube"}, {"route": "instagram"}, {"route": "twitter"},
-        {"route": "facebook"}, {"route": "snapchat"}, {"route": "reddit"}, {"route": "threads"},
-        {"route": "twitch"}, {"route": "pinterest"}, {"route": "linkedin"}, {"route": "discord"},
-        {"route": "onlyfans"}, {"route": "monetization"}
-    ]]
-    if name.lower() in valid_platforms:
+    platforms = ["tiktok","youtube","instagram","twitter","facebook","snapchat",
+                 "reddit","threads","twitch","pinterest","linkedin","discord",
+                 "onlyfans","monetization"]
+    if name.lower() in platforms:
         return render_template(f"{name.lower()}.html")
     abort(404)
-
-@app.route("/logout")
-def logout():
-    session.pop("user", None)
-    return redirect(url_for("login"))
 
 @app.errorhandler(404)
 def not_found(e):
     return render_template("404.html"), 404
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
