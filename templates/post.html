@@ -2,14 +2,14 @@
 {% block content %}
 
 <h1 class="page-title">Create Post</h1>
-<p class="subtitle">Share your tool output or thoughts with the community</p>
+<p class="subtitle">Share with the community</p>
 
 <form action="/create_post" method="POST" enctype="multipart/form-data">
-    <textarea name="content" placeholder="Paste your generated hashtags, caption, script, or just say hi..." required style="width:100%; height:300px; background:#111; color:white; border:1px solid #555; border-radius:12px; padding:15px; font-size:16px;"></textarea>
-    <input type="file" name="image" accept="image/*" style="margin-top:15px; width:100%; padding:14px; background:#111; color: white; border:1px solid #555; border-radius:10px;">
-    <button type="submit" class="generate-btn" style="margin-top:20px; width:100%; padding:16px; background: linear-gradient(90deg, #9d4edd, #c77dff); border: none; color: white; font-weight: bold; border-radius:12px; cursor:pointer;">Share Post</button>
+    <textarea name="content" placeholder="What's on your mind?" required style="width:100%; height:250px; background:#111; color:white; border:1px solid #555; border-radius:12px; padding:15px; font-size:16px; margin-bottom:15px;"></textarea>
+    <input type="file" name="image" accept="image/*" style="width:100%; padding:14px; background:#111; color:white; border:1px solid #555; border-radius:12px; margin-bottom:20px;">
+    <button type="submit" style="width:100%; padding:16px; background: linear-gradient(90deg, #9d4edd, #c77dff); border:none; color:white; font-weight:bold; border-radius:12px; cursor:pointer;">Share Post</button>
 </form>
 
-<a href="/community" style="display:block; margin-top:20px; color:#c77dff;">← Back to Feed</a>
+<a href="/community" style="display:block; margin-top:20px; color:#c77dff; text-align:center;">← Back</a>
 
 {% endblock %}
