@@ -3,17 +3,14 @@ from flask import (
     Flask, render_template, request, redirect,
     url_for, session, send_from_directory, jsonify, abort
 )
-from database import db, User, Post, Message
+from database import db, Post
 from werkzeug.utils import secure_filename
-from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production-please")
 
 app.debug = False
 
-# Persistent uploads on disk
 UPLOAD_FOLDER = "/data/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
@@ -22,7 +19,6 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Persistent DB on disk
 DATABASE_PATH = "/data/database.db"
 app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DATABASE_PATH}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -36,7 +32,7 @@ def login_required(f):
     from functools import wraps
     @wraps(f)
     def decorated(*args, **kwargs):
-        if "user_id" not in session:
+        if "user" not in session:
             return redirect(url_for("login"))
         return f(*args, **kwargs)
     return decorated
@@ -45,45 +41,24 @@ def login_required(f):
 def index():
     return render_template("index.html")
 
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-        if username and password:
-            hashed = generate_password_hash(password)
-            new_user = User(username=username, password=hashed)
-            db.session.add(new_user)
-            db.session.commit()
-            return redirect(url_for("login"))
-    return render_template("register.html")
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username")
-        password = request.form.get("password")
-        user = User.query.filter_by(username=username).first()
-        if user and check_password_hash(user.password, password):
-            session["user_id"] = user.id
-            session["user"] = user.username
+        if username:
+            session["user"] = username
             return redirect(url_for("dashboard"))
     return render_template("login.html")
 
 @app.route("/logout")
 def logout():
-    session.clear()
+    session.pop("user", None)
     return redirect(url_for("index"))
 
 @app.route("/dashboard")
 @login_required
 def dashboard():
     return render_template("dashboard.html")
-
-@app.route("/tools")
-@login_required
-def tools():
-    return render_template("tools.html")
 
 PLATFORMS = {
     "tiktok": "platforms/tiktok.html",
@@ -137,65 +112,36 @@ def post_page():
             return redirect("/community")
     return render_template("post.html")
 
-@app.route("/messages")
+@app.route("/use_tool", methods=["POST"])
 @login_required
-def messages():
-    conversations = db.session.query(User).join(Message, User.id == Message.sender_id).filter(Message.receiver_id == session["user_id"]).group_by(User.id).all()
-    return render_template("messages_inbox.html", conversations=conversations)
+def use_tool():
+    data = request.get_json() or {}
+    tool = data.get("tool")
+    input_text = data.get("input", "").strip()
 
-@app.route("/chat/<username>")
-@login_required
-def chat(username):
-    other_user = User.query.filter_by(username=username).first()
-    if not other_user:
-        abort(404)
-    messages = Message.query.filter(
-        ((Message.sender_id == session["user_id"]) & (Message.receiver_id == other_user.id)) |
-        ((Message.sender_id == other_user.id) & (Message.receiver_id == session["user_id"]))
-    ).order_by(Message.timestamp.asc()).all()
-    return render_template("chat.html", other_user=other_user, messages=messages)
+    if not input_text:
+        return jsonify({"status": "error", "message": "No input provided"})
 
-@app.route("/send_message", methods=["POST"])
-@login_required
-def send_message():
-    receiver_username = request.form.get("receiver")
-    content = request.form.get("content")
-    other_user = User.query.filter_by(username=receiver_username).first()
-    if other_user and content.strip():
-        new_message = Message(sender_id=session["user_id"], receiver_id=other_user.id, content=content.strip())
-        db.session.add(new_message)
-        db.session.commit()
-    return redirect(url_for("chat", username=receiver_username))
+    try:
+        if tool == "hashtag":
+            words = input_text.lower().split()[:5]
+            base = ["fyp", "viral", "trending", "foryou", "explore", "tiktok"]
+            variants = [word + str(i) for word in words for i in ["", "1", "2", "official"]]
+            all_tags = base + words + variants + [input_text.replace(" ", "")]
+            unique = list(dict.fromkeys(all_tags))[:30]
+            hashtags = [f"#{tag}" for tag in unique]
+            return jsonify({
+                "status": "success",
+                "result": {"hashtags": hashtags}
+            })
 
-@app.route("/profile/<username>")
-@login_required
-def profile(username):
-    user = User.query.filter_by(username=username).first()
-    if not user:
-        abort(404)
-    posts = Post.query.filter_by(user_id=user.id).order_by(Post.timestamp.desc()).all()
-    is_following = current_user.followed.filter_by(id=user.id).first() is not None
-    return render_template("profile.html", user=user, posts=posts, is_following=is_following)
+        return jsonify({
+            "status": "success",
+            "result": {"text": f"Generated {tool} for: {input_text}"}
+        })
 
-@app.route("/follow/<username>")
-@login_required
-def follow(username):
-    user = User.query.filter_by(username=username).first()
-    if user and user.id != session["user_id"]:
-        current_user = User.query.get(session["user_id"])
-        current_user.followed.append(user)
-        db.session.commit()
-    return redirect(url_for("profile", username=username))
-
-@app.route("/unfollow/<username>")
-@login_required
-def unfollow(username):
-    user = User.query.filter_by(username=username).first()
-    if user:
-        current_user = User.query.get(session["user_id"])
-        current_user.followed.remove(user)
-        db.session.commit()
-    return redirect(url_for("profile", username=username))
+    except Exception as e:
+        return jsonify({"status": "error", "message": "Something went wrong"})
 
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
