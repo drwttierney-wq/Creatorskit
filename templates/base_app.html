@@ -2,26 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Creators Kit{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creators Kit</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #000; color: white; font-family: 'Segoe UI', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+        .header { padding: 20px; text-align: center; background: #111; border-bottom: 1px solid #333; }
+        .logo { font-size: 36px; font-weight: 900; background: linear-gradient(90deg, #9d4edd, #c77dff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .content { flex: 1; padding: 20px; padding-bottom: 80px; overflow-y: auto; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(17,17,17,0.95); display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #333; backdrop-filter: blur(10px); z-index: 100; }
+        .bottom-nav a { color: #c77dff; font-size: 28px; text-decoration: none; }
+        .fab { position: fixed; bottom: 80px; right: 20px; background: linear-gradient(90deg, #9d4edd, #c77dff); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 8px 30px rgba(157,78,221,0.6); z-index: 100; }
+        .fab a { color: white; text-decoration: none; }
+    </style>
 </head>
 <body>
-    <header>
-        <h1><a href="{{ url_for('index') }}">Creators Kit</a></h1>
-    </header>
+    <div class="header">
+        <h1 class="logo">Creators Kit</h1>
+    </div>
 
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
 
-    {% if session.user %}
-    <nav class="bottom-nav">
-        <a href="{{ url_for('dashboard') }}">🏠</a>
-        <a href="/platform">🌐</a>
-        <a class="fab" href="#">+</a>
-        <a href="{{ url_for('community') }}">💬</a>
+    <div class="bottom-nav">
+        <a href="/dashboard">🏠</a>
+        <a href="/community">🌐</a>
+        <a href="/post">+</a>
+        <a href="/messages">💬</a>
         <a href="/profile">👤</a>
-    </nav>
-    {% endif %}
+    </div>
+
+    <div class="fab">
+        <a href="/post">+</a>
+    </div>
 </body>
 </html>
