@@ -1,139 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Creators Kit{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <style>
-        :root {
-            --bg: #0b0b0f;
-            --panel: #121218;
-            --border: #1f1f2b;
-            --accent: #9d4edd;
-            --text: #ffffff;
-            --muted: #9ca3af;
-        }
-
-        * { box-sizing: border-box; }
-
-        body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--text);
-            font-family: Inter, system-ui, sans-serif;
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* SIDEBAR (DESKTOP) */
-        .sidebar {
-            width: 240px;
-            background: var(--panel);
-            border-right: 1px solid var(--border);
-            padding: 24px;
-            display: none;
-        }
-
-        .logo {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--accent);
-            margin-bottom: 40px;
-        }
-
-        .nav a {
-            display: block;
-            padding: 12px;
-            margin-bottom: 6px;
-            border-radius: 10px;
-            color: var(--muted);
-            text-decoration: none;
-        }
-
-        .nav a:hover {
-            background: #1a1a25;
-            color: white;
-        }
-
-        /* MAIN */
-        .main {
-            flex: 1;
-            padding: 24px;
-            padding-bottom: 100px;
-        }
-
-        /* MOBILE BOTTOM NAV */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--panel);
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-around;
-            padding: 14px 0;
-        }
-
-        .bottom-nav a {
-            color: var(--muted);
-            font-size: 22px;
-            text-decoration: none;
-        }
-
-        .fab {
-            position: fixed;
-            right: 20px;
-            bottom: 90px;
-            width: 58px;
-            height: 58px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #9d4edd, #c77dff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            color: white;
-            text-decoration: none;
-            box-shadow: 0 10px 30px rgba(157,78,221,.4);
-        }
-
-        @media (min-width: 900px) {
-            .sidebar { display: block; }
-            .bottom-nav, .fab { display: none; }
-            .main { padding: 40px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}App{% endblock %}</title>
+<link rel="stylesheet" href="/static/style.css">
 </head>
-
 <body>
+<header>
+    <h1>Creators Kit</h1>
+    {% if session.user %}
+    <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a> |
+        <a href="{{ url_for('community') }}">Community</a> |
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+    {% else %}
+    <nav>
+        <a href="{{ url_for('login') }}">Login / Sign Up</a>
+    </nav>
+    {% endif %}
+</header>
 
-<div class="sidebar">
-    <div class="logo">Creators Kit</div>
-    <div class="nav">
-        <a href="/dashboard">Dashboard</a>
-        <a href="/community">Community</a>
-        <a href="/messages">Messages</a>
-        <a href="/profile">Profile</a>
-        <a href="/settings">Settings</a>
-        <a href="/logout">Logout</a>
-    </div>
-</div>
+<main>
+{% block content %}{% endblock %}
+</main>
 
-<div class="main">
-    {% block content %}{% endblock %}
-</div>
-
-<!-- MOBILE NAV -->
-<div class="bottom-nav">
-    <a href="/dashboard">🏠</a>
-    <a href="/community">🌐</a>
-    <a href="/messages">💬</a>
-    <a href="/profile">👤</a>
-</div>
-
-<a class="fab" href="/post">+</a>
+{% if session.user %}
+<!-- Bottom nav & FAB for logged-in users -->
+<nav class="bottom-nav">
+  <a href="{{ url_for('dashboard') }}">🏠</a>
+  <a href="/platform">🌐</a>
+  <a class="fab" href="#">+</a>
+  <a href="{{ url_for('community') }}">💬</a>
+  <a href="/profile">👤</a>
+</nav>
+{% endif %}
 
 </body>
 </html>
