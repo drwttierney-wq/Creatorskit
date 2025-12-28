@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1 class="page-title">Settings</h1>
+<p class="subtitle">Customize your experience</p>
+
+<div class="settings-grid">
+    <div class="setting-card">
+        <h2>Theme</h2>
+        <p>Dark (default)</p>
+    </div>
+
+    <div class="setting-card">
+        <h2>Privacy</h2>
+        <p>Public profile</p>
+    </div>
+
+    <div class="setting-card">
+        <h2>Notifications</h2
+        <p>Enabled for likes, comments, messages</p>
+    </div>
+
+    <div class="setting-card">
+        <h2>Account</h2>
+        <p>Delete account</p>
+    </div>
+</div>
+
+<style>
+    .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+    .setting-card { background: rgba(80,50,140,0.2); padding: 25px; border-radius: 16px; border: 1px solid rgba(200,150,255,0.3); }
+    .setting-card h2 { font-size: 24px; margin-bottom: 10px; }
+    .setting-card p { color: #ccc; }
+</style>
+
+{% endblock %}
