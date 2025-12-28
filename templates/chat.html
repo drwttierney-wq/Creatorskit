@@ -7,26 +7,24 @@
     {% for msg in messages %}
     <div class="message {{ 'sent' if msg.sender_id == session.user_id else 'received' }}">
         <p>{{ msg.content }}</p>
-        <span class="time">{{ msg.timestamp.strftime('%I:%M %p') }}</span>
+        <span class="timestamp">{{ msg.timestamp.strftime('%I:%M %p') }}</span>
     </div>
     {% endfor %}
 </div>
 
-<form action="/send_message" method="POST" class="chat-form">
-    <input type="hidden" name="receiver" value="{{ other_user.username }}">
+<form action="{{ url_for('chat', username=other_user.username) }}" method="POST" class="chat-form">
     <input type="text" name="content" placeholder="Type a message..." required>
     <button type="submit">Send</button>
 </form>
 
 <style>
-    .page-title { text-align: center; margin: 30px 0; }
-    .chat-container { max-width: 700px; margin: 0 auto; padding: 20px; padding-bottom: 80px; }
-    .message { max-width: 70%; padding: 12px 16px; border-radius: 18px; margin: 10px 0; }
-    .received { background: rgba(80,50,140,0.3); align-self: flex-start; border-bottom-left-radius: 5px; }
-    .sent { background: linear-gradient(90deg, #9d4edd, #c77dff); align-self: flex-end; margin-left: auto; border-bottom-right-radius: 5px; }
-    .time { font-size: 12px; color: #aaa; display: block; margin-top: 5px; }
+    .chat-container { max-width: 700px; margin: 0 auto; padding-bottom: 100px; }
+    .message { max-width: 70%; padding: 15px; border-radius: 18px; margin: 10px 0; }
+    .received { background: rgba(80,50,140,0.3); }
+    .sent { background: linear-gradient(90deg, #9d4edd, #c77dff); margin-left: auto; }
+    .timestamp { font-size: 12px; color: #aaa; display: block; margin-top: 5px; }
     .chat-form { position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; background: #111; display: flex; gap: 10px; border-top: 1px solid #333; }
-    .chat-form input { flex: 1; padding: 15px; background: #222; color: white; border: 1px solid #555; border-radius: 12px; font-size: 16px; }
+    .chat-form input { flex: 1; padding: 15px; background: #222; color: white; border: 1px solid #555; border-radius: 12px; }
     .chat-form button { padding: 15px 25px; background: linear-gradient(90deg, #9d4edd, #c77dff); border: none; color: white; border-radius: 12px; font-weight: bold; cursor: pointer; }
 </style>
 
