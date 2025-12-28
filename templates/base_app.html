@@ -1,41 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{% block title %}App{% endblock %}</title>
-<link rel="stylesheet" href="/static/style.css">
+    <meta charset="UTF-8">
+    <title>{% block title %}Creators Kit{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-<header>
-    <h1>Creators Kit</h1>
+    <header>
+        <h1><a href="{{ url_for('index') }}">Creators Kit</a></h1>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
     {% if session.user %}
-    <nav>
-        <a href="{{ url_for('dashboard') }}">Dashboard</a> |
-        <a href="{{ url_for('community') }}">Community</a> |
-        <a href="{{ url_for('logout') }}">Logout</a>
-    </nav>
-    {% else %}
-    <nav>
-        <a href="{{ url_for('login') }}">Login / Sign Up</a>
+    <nav class="bottom-nav">
+        <a href="{{ url_for('dashboard') }}">🏠</a>
+        <a href="/platform">🌐</a>
+        <a class="fab" href="#">+</a>
+        <a href="{{ url_for('community') }}">💬</a>
+        <a href="/profile">👤</a>
     </nav>
     {% endif %}
-</header>
-
-<main>
-{% block content %}{% endblock %}
-</main>
-
-{% if session.user %}
-<!-- Bottom nav & FAB for logged-in users -->
-<nav class="bottom-nav">
-  <a href="{{ url_for('dashboard') }}">🏠</a>
-  <a href="/platform">🌐</a>
-  <a class="fab" href="#">+</a>
-  <a href="{{ url_for('community') }}">💬</a>
-  <a href="/profile">👤</a>
-</nav>
-{% endif %}
-
 </body>
 </html>
