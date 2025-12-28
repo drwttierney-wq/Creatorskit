@@ -1,86 +1,175 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
 body {
-    @apply bg-gradient-to-b from-gray-950 to-black text-gray-100 font-sans min-h-screen;
+    background: #000814;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
 }
 
-nav {
-    @apply bg-gray-900/80 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50 shadow-lg;
+.header {
+    text-align: center;
+    padding: 20px;
+    background: #111;
+    border-bottom: 1px solid #333;
 }
 
-/* PLATFORM CARDS */
-.platform-card {
-    @apply bg-gradient-to-br from-gray-900 to-gray-800
-    border-2 border-gray-700 rounded-3xl p-10
-    shadow-2xl text-center transition-all duration-500
-    transform hover:scale-105
-    hover:shadow-[0_0_40px_rgba(255,105,180,0.35)];
-    min-height: 300px;
+.logo {
+    font-size: 36px;
+    font-weight: 900;
+    background: linear-gradient(90deg, #9d4edd, #c77dff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+nav a {
+    color: #c77dff;
+    margin: 0 15px;
+    font-size: 18px;
+    text-decoration: none;
+}
+
+.content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-title {
+    font-size: 40px;
+    margin-bottom: 20px;
+    text-align: center;
+    background: linear-gradient(90deg, #9d4edd, #c77dff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    font-size: 18px;
+    color: #aaa;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: rgba(80,50,140,0.2);
+    padding: 25px;
+    border-radius: 16px;
+    text-align: center;
+    border: 1px solid rgba(200,150,255,0.3);
+    transition: 0.3s;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(157,78,221,0.3);
+}
+
+.card h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.card p {
+    color: #ccc;
+    font-size: 16px;
+}
+
+.feed-container {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.post-card {
+    background: rgba(80,50,140,0.15);
+    padding: 20px;
+    border-radius: 18px;
+    margin-bottom: 25px;
+    border: 1px solid rgba(200,150,255,0.2);
+}
+
+.post-header {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
 }
 
-.platform-card .icon {
-    @apply text-8xl mb-6;
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #c77dff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
 }
 
-.platform-card h2 {
-    @apply text-3xl font-bold tracking-tight;
+.timestamp {
+    font-size: 14px;
+    color: #999;
 }
 
-.platform-card p {
-    @apply text-xl mt-4 opacity-90;
+.post-actions {
+    display: flex;
+    gap: 30px;
+    margin-top: 15px;
 }
 
-/* TOOL BUTTONS */
-.tool-btn {
-    @apply w-full bg-gradient-to-br from-gray-900 to-gray-800
-    p-8 rounded-3xl mb-8
-    border border-gray-700
-    transition-all duration-300
-    cursor-pointer relative overflow-hidden
-    hover:border-pink-500
-    hover:shadow-[0_0_40px_rgba(255,105,180,0.25)];
+.post-actions button {
+    background: none;
+    border: none;
+    color: #c77dff;
+    font-size: 20px;
+    cursor: pointer;
 }
 
-/* TOOL RESULTS */
-.result-box {
-    @apply mt-6 p-6 bg-black/60 rounded-2xl
-    border border-pink-500/30
-    whitespace-pre-wrap text-base
-    shadow-inner backdrop-blur-sm;
+.new-post-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: linear-gradient(90deg, #9d4edd, #c77dff);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: white;
+    box-shadow: 0 8px 30px rgba(157,78,221,0.6);
 }
 
-/* BUTTONS */
-.btn-primary {
-    @apply bg-gradient-to-r from-pink-600 to-purple-600
-    hover:from-pink-700 hover:to-purple-700
-    px-10 py-5 rounded-full text-2xl font-bold
-    shadow-2xl transition-all duration-300;
+.new-post-btn a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.btn-secondary {
-    @apply bg-gray-700 hover:bg-gray-600
-    px-8 py-4 rounded-full font-bold
-    transition-all duration-300;
+@media (min-width: 768px) {
+    .grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+    }
+    .card {
+        padding: 40px;
+    }
 }
-
-/* PLATFORM ACCENTS */
-.platform-accent-tiktok { @apply border-pink-500; }
-.platform-accent-youtube { @apply border-red-600; }
-.platform-accent-instagram { @apply border-purple-500; }
-.platform-accent-twitter { @apply border-blue-400; }
-.platform-accent-facebook { @apply border-blue-600; }
-.platform-accent-snapchat { @apply border-yellow-400; }
-.platform-accent-linkedin { @apply border-blue-700; }
-.platform-accent-pinterest { @apply border-red-500; }
-.platform-accent-threads { @apply border-gray-300; }
-.platform-accent-reddit { @apply border-orange-500; }
-.platform-accent-twitch { @apply border-purple-600; }
-.platform-accent-onlyfans { @apply border-pink-600; }
-.platform-accent-discord { @apply border-indigo-500; }
-.platform-accent-monetization { @apply border-green-500; }
