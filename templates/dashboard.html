@@ -1,6 +1,7 @@
-{% extends 'base.html' %}
-{% block content %}
+{% extends "base_app.html" %}
+{% block title %}Dashboard{% endblock %}
 
+{% block content %}
 <h1 class="page-title">Dashboard</h1>
 <p class="subtitle">Your creator tools at a glance</p>
 
@@ -9,71 +10,83 @@
         <h2>🎵 TikTok</h2>
         <p>Viral videos & trends</p>
     </a>
-
     <a href="/platform/youtube" class="card">
         <h2>📺 YouTube</h2>
         <p>Growth & monetization</p>
     </a>
-
     <a href="/platform/instagram" class="card">
         <h2>📸 Instagram</h2>
         <p>Reels & aesthetics</p>
     </a>
-
     <a href="/platform/twitter" class="card">
         <h2>🐦 Twitter / X</h2>
         <p>Threads & reach</p>
     </a>
-
     <a href="/platform/facebook" class="card">
         <h2>👥 Facebook</h2>
         <p>Groups & engagement</p>
     </a>
-
     <a href="/platform/snapchat" class="card">
         <h2>👻 Snapchat</h2>
         <p>Stories & Spotlight</p>
     </a>
-
     <a href="/platform/reddit" class="card">
         <h2>👽 Reddit</h2>
         <p>Upvotes & discussions</p>
     </a>
-
     <a href="/platform/threads" class="card">
         <h2>🧵 Threads</h2>
         <p>Conversation starters</p>
     </a>
-
     <a href="/platform/twitch" class="card">
         <h2>🎮 Twitch</h2>
         <p>Streaming growth</p>
     </a>
-
     <a href="/platform/pinterest" class="card">
         <h2>📌 Pinterest</h2>
         <p>Discovery & traffic</p>
     </a>
-
     <a href="/platform/linkedin" class="card">
         <h2>💼 LinkedIn</h2>
         <p>Professional reach</p>
     </a>
-
     <a href="/platform/discord" class="card">
         <h2>💬 Discord</h2>
         <p>Community building</p>
     </a>
-
     <a href="/platform/onlyfans" class="card">
         <h2>🔒 OnlyFans</h2>
         <p>Creator monetization</p>
     </a>
-
     <a href="/platform/monetization" class="card">
         <h2>💰 Monetization</h2>
         <p>Revenue & strategy</p>
     </a>
 </div>
+
+<style>
+.page-title { font-size: 32px; font-weight:700; margin-bottom:6px; }
+.subtitle { color:#9ca3af; margin-bottom:25px; }
+.grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:18px;
+}
+.card {
+    background:#121218;
+    border-radius:18px;
+    padding:22px;
+    text-decoration:none;
+    color:white;
+    border:1px solid #1f1f2b;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(157,78,221,.25);
+}
+.card h2 { margin:0 0 6px; font-size:18px; }
+.card p { margin:0; color:#9ca3af; font-size:14px; }
+</style>
 
 {% endblock %}
