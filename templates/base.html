@@ -7,47 +7,36 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #000; color: white; font-family: 'Segoe UI', sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
-        header { background: #111; padding: 15px; text-align: center; border-bottom: 1px solid #333; }
-        .logo { font-size: 28px; font-weight: bold; background: linear-gradient(90deg, #9d4edd, #c77dff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .content { flex: 1; padding: 20px; overflow-y: auto; }
-        .page-title { font-size: 32px; margin-bottom: 20px; text-align: center; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #111; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #333; z-index: 100; }
-        .bottom-nav a { color: #c77dff; font-size: 24px; text-decoration: none; }
-        .bottom-nav a.active { color: white; }
-        .fab { position: fixed; bottom: 70px; right: 20px; background: linear-gradient(90deg, #9d4edd, #c77dff); width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 20px rgba(157,78,221,0.5); z-index: 100; }
+        .header { padding: 20px; text-align: center; }
+        .logo { font-size: 48px; font-weight: 900; background: linear-gradient(90deg, #9d4edd, #c77dff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .content { flex: 1; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .landing-title { font-size: 64px; font-weight: 900; margin-bottom: 20px; }
+        .landing-subtitle { font-size: 24px; color: #aaa; margin-bottom: 50px; max-width: 600px; }
+        .get-started { background: linear-gradient(90deg, #9d4edd, #c77dff); padding: 20px 50px; border-radius: 50px; font-size: 24px; font-weight: bold; box-shadow: 0 10px 30px rgba(157,78,221,0.4); text-decoration: none; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(17,17,17,0.9); display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #333; backdrop-filter: blur(10px); }
+        .bottom-nav a { color: #c77dff; font-size: 28px; text-decoration: none; }
+        .fab { position: fixed; bottom: 80px; right: 20px; background: linear-gradient(90deg, #9d4edd, #c77dff); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 8px 30px rgba(157,78,221,0.6); z-index: 100; }
         .fab a { color: white; text-decoration: none; }
+        /* Hide bottom nav and fab on landing (not logged in) */
+        {% if not session.user %}
+        .bottom-nav, .fab { display: none; }
+        {% endif %}
         @media (min-width: 768px) {
-            body { flex-direction: row; }
-            .sidebar { width: 250px; background: #111; padding: 30px; border-right: 1px solid #333; }
-            .sidebar .logo { font-size: 36px; margin-bottom: 50px; }
-            .sidebar nav a { display: block; color: #c77dff; margin: 20px 0; font-size: 20px; }
-            .content { padding: 40px; }
             .bottom-nav, .fab { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="sidebar">
+    <div class="header">
         <h1 class="logo">Creators Kit</h1>
-        <nav>
-            <a href="/dashboard">Dashboard</a>
-            <a href="/community">Community</a>
-            <a href="/messages">Messages</a>
-            <a href="/profile">Profile</a>
-            <a href="/settings">Settings</a>
-            <a href="/logout">Logout</a>
-        </nav>
     </div>
-
-    <header>
-        <h1 class="logo">Creators Kit</h1>
-    </header>
 
     <div class="content">
         {% block content %}
         {% endblock %}
     </div>
 
+    {% if session.user %}
     <div class="bottom-nav">
         <a href="/dashboard">🏠</a>
         <a href="/community">🌐</a>
@@ -59,5 +48,6 @@
     <div class="fab">
         <a href="/post">+</a>
     </div>
+    {% endif %}
 </body>
 </html>
