@@ -175,21 +175,11 @@
                 display: none;
             }
         }
-
-        /* FORCE HIDE NAV ON PUBLIC PAGES */
-        {% if not session.user %}
-        .bottom-nav, .fab, .sidebar, header {
-            display: none !important;
-        }
-        .content {
-            padding-bottom: 20px !important;
-        }
-        {% endif %}
     </style>
 </head>
 <body>
 
-    <!-- DESKTOP SIDEBAR -->
+    <!-- DESKTOP SIDEBAR - ONLY WHEN LOGGED IN -->
     {% if session.user %}
     <aside class="sidebar">
         <div class="logo">Creators Kit</div>
@@ -206,6 +196,7 @@
 
     <!-- MAIN -->
     <div class="main">
+        <!-- MOBILE HEADER - ONLY WHEN LOGGED IN -->
         {% if session.user %}
         <header>
             <div class="logo">Creators Kit</div>
@@ -218,7 +209,7 @@
         </main>
     </div>
 
-    <!-- MOBILE NAV & FAB -->
+    <!-- MOBILE NAV & FAB - ONLY WHEN LOGGED IN -->
     {% if session.user %}
     <nav class="bottom-nav">
         <a href="/dashboard">🏠</a>
