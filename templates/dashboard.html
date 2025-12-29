@@ -1,24 +1,82 @@
-{% extends "base_app.html" %}
-{% block title %}Dashboard{% endblock %}
-
+{% extends 'base.html' %}
 {% block content %}
-<h1>Dashboard</h1>
-<p class="subtitle">Your creator tools at a glance</p>
+
+<h1 class="page-title">Dashboard</h1>
+<p class="subtitle">Your creator tools at a glance — organized for 2026 efficiency</p>
 
 <div class="grid">
-    <a href="/platform/tiktok" class="card"><h2>🎵 TikTok</h2><p>Viral videos & trends</p></a>
-    <a href="/platform/youtube" class="card"><h2>📺 YouTube</h2><p>Growth & monetization</p></a>
-    <a href="/platform/instagram" class="card"><h2>📸 Instagram</h2><p>Reels & aesthetics</p></a>
-    <a href="/platform/twitter" class="card"><h2>🐦 Twitter / X</h2><p>Threads & reach</p></a>
-    <a href="/platform/facebook" class="card"><h2>👥 Facebook</h2><p>Groups & engagement</p></a>
-    <a href="/platform/snapchat" class="card"><h2>👻 Snapchat</h2><p>Stories & Spotlight</p></a>
-    <a href="/platform/reddit" class="card"><h2>👽 Reddit</h2><p>Upvotes & discussions</p></a>
-    <a href="/platform/threads" class="card"><h2>🧵 Threads</h2><p>Conversation starters</p></a>
-    <a href="/platform/twitch" class="card"><h2>🎮 Twitch</h2><p>Streaming growth</p></a>
-    <a href="/platform/pinterest" class="card"><h2>📌 Pinterest</h2><p>Discovery & traffic</p></a>
-    <a href="/platform/linkedin" class="card"><h2>💼 LinkedIn</h2><p>Professional reach</p></a>
-    <a href="/platform/discord" class="card"><h2>💬 Discord</h2><p>Community building</p></a>
-    <a href="/platform/onlyfans" class="card"><h2>🔒 OnlyFans</h2><p>Creator monetization</p></a>
-    <a href="/platform/monetization" class="card"><h2>💰 Monetization</h2><p>Revenue & strategy</p></a>
+    <div class="section">
+        <h3>Video Platforms</h3>
+        <a href="/platform/tiktok" class="card">
+            <h2>🎵 TikTok</h2>
+            <p>Viral videos & trends</p>
+        </a>
+        <a href="/platform/youtube" class="card">
+            <h2>📺 YouTube</h2>
+            <p>Growth & monetization</p>
+        </a>
+        <a href="/platform/instagram" class="card">
+            <h2>📸 Instagram</h2>
+            <p>Reels & aesthetics</p>
+        </a>
+        <a href="/platform/snapchat" class="card">
+            <h2>👻 Snapchat</h2>
+            <p>Stories & Spotlight</p>
+        </a>
+        <a href="/platform/twitch" class="card">
+            <h2>🎮 Twitch</h2>
+            <p>Streaming growth</p>
+        </a>
+    </div>
+
+    <div class="section">
+        <h3>Social Platforms</h3>
+        <a href="/platform/twitter" class="card">
+            <h2>🐦 Twitter / X</h2>
+            <p>Threads & reach</p>
+        </a>
+        <a href="/platform/facebook" class="card">
+            <h2>👥 Facebook</h2>
+            <p>Groups & engagement</p>
+        </a>
+        <a href="/platform/reddit" class="card">
+            <h2>👽 Reddit</h2>
+            <p>Upvotes & discussions</p>
+        </a>
+        <a href="/platform/threads" class="card">
+            <h2>🧵 Threads</h2>
+            <p>Conversation starters</p>
+        </a>
+        <a href="/platform/linkedin" class="card">
+            <h2>💼 LinkedIn</h2>
+            <p>Professional reach</p>
+        </a>
+        <a href="/platform/discord" class="card">
+            <h2>💬 Discord</h2>
+            <p>Community building</p>
+        </a>
+    </div>
+
+    <div class="section">
+        <h3>Monetization & Discovery</h3>
+        <a href="/platform/onlyfans" class="card">
+            <h2>🔒 OnlyFans</h2>
+            <p>Creator monetization</p>
+        </a>
+        <a href="/platform/pinterest" class="card">
+            <h2>📌 Pinterest</h2>
+            <p>Discovery & traffic</p>
+        </a>
+        <a href="/platform/monetization" class="card">
+            <h2>💰 Monetization</h2>
+            <p>Revenue & strategy</p>
+        </a>
+    </div>
 </div>
+
+<style>
+    .section { margin-bottom: 40px; }
+    .section h3 { font-size: 24px; margin-bottom: 20px; color: #c77dff; }
+</style>
+
 {% endblock %}
