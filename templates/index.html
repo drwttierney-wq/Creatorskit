@@ -1,12 +1,10 @@
-{% extends "base_app.html" %}
-{% block title %}Welcome{% endblock %}
-
+{% extends 'base.html' %}
 {% block content %}
-<div class="landing-container">
-    <h1>Creators Kit</h1>
-    <p>Build. Share. Grow.</p>
-    <h2>The ultimate platform for creators — tools, community, messaging, monetization.</h2>
 
-    <a href="{{ url_for('login') }}" class="btn-get-started">Get Started Free</a>
+<div class="landing">
+    <h1 class="landing-title">Creators Kit</h1>
+    <p class="landing-subtitle">The ultimate platform for creators — tools, community, messaging, monetization.</p>
+    <a href="/login" class="get-started">Get Started Free</a>
 </div>
+
 {% endblock %}
