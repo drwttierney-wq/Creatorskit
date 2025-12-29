@@ -1,125 +1,206 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1 class="page-title">📺 YouTube Toolkit</h1>
-<p class="subtitle">Growth, monetization & optimization tools</p>
+<div class="tool-wrapper">
 
-<div class="tools-grid">
+    <header class="tool-header">
+        <h1>📺 YouTube AI Toolkit</h1>
+        <p>Growth, monetization & optimization powered by AI</p>
+    </header>
 
-    <!-- 1. Title Optimizer -->
-    <div class="tool-card">
-        <h3>🔠 Title Optimizer</h3>
-        <p>Clickbait + SEO-friendly titles that get views</p>
-        <form class="tool-form" data-tool="youtube_title">
-            <input type="text" placeholder="Your video topic or draft title" required>
-            <button type="submit" class="generate-btn">Optimize Title</button>
-        </form>
-        <div class="output-box"></div>
+    <div class="tools-grid">
+
+        <!-- TOOL CARD -->
+        {% for tool in [
+            ('youtube_title','🔠','Title Optimizer','Click-optimized, SEO-friendly titles'),
+            ('youtube_description','📄','Description Writer','SEO descriptions with structure'),
+            ('thumbnail','🖼️','Thumbnail Ideas','High-CTR thumbnail concepts'),
+            ('hashtag','🏷️','SEO Tags & Hashtags','Discoverability-focused tags'),
+            ('script','📝','Script Outline','Hook → body → CTA'),
+            ('endscreen','🔚','End Screen Ideas','CTAs & engagement'),
+            ('monetization_tip','💰','Growth Predictor','Monetization & growth tips')
+        ] %}
+        <div class="tool-card">
+            <div class="tool-card-header">
+                <span class="tool-icon">{{ tool[1] }}</span>
+                <div>
+                    <h3>{{ tool[2] }}</h3>
+                    <p>{{ tool[3] }}</p>
+                </div>
+            </div>
+
+            <form class="tool-form" data-tool="{{ tool[0] }}">
+                <input type="text" placeholder="Enter your video idea…" required>
+                <button type="submit">✨ Generate with AI</button>
+            </form>
+
+            <div class="output-box"></div>
+        </div>
+        {% endfor %}
+
     </div>
-
-    <!-- 2. Description Writer -->
-    <div class="tool-card">
-        <h3>📄 Description Writer</h3>
-        <p>Full SEO-optimized description with timestamps & links</p>
-        <form class="tool-form" data-tool="youtube_description">
-            <input type="text" placeholder="Video topic + key points" required>
-            <button type="submit" class="generate-btn">Write Description</button>
-        </form>
-        <div class="output-box"></div>
-    </div>
-
-    <!-- 3. Thumbnail Idea Generator -->
-    <div class="tool-card">
-        <h3>🖼️ Thumbnail Ideas</h3>
-        <p>High-CTR thumbnail concepts & text overlays</p>
-        <form class="tool-form" data-tool="thumbnail">
-            <input type="text" placeholder="Video title or topic" required>
-            <button type="submit" class="generate-btn">Generate Ideas</button>
-        </form>
-        <div class="output-box"></div>
-    </div>
-
-    <!-- 4. SEO Tag Generator -->
-    <div class="tool-card">
-        <h3>🏷️ SEO Tags & Hashtags</h3>
-        <p>30+ relevant tags for discoverability</p>
-        <form class="tool-form" data-tool="hashtag">
-            <input type="text" placeholder="Video topic" required>
-            <button type="submit" class="generate-btn">Generate Tags</button>
-        </form>
-        <div class="output-box"></div>
-    </div>
-
-    <!-- 5. Script Outline Helper -->
-    <div class="tool-card">
-        <h3>📝 Script Outline</h3>
-        <p>Structured outline with hook, body & CTA</p>
-        <form class="tool-form" data-tool="script">
-            <input type="text" placeholder="Video topic or goal" required>
-            <button type="submit" class="generate-btn">Build Outline</button>
-        </form>
-        <div class="output-box"></div>
-    </div>
-
-    <!-- 6. End Screen & CTA Suggestions -->
-    <div class="tool-card">
-        <h3>🔚 End Screen Ideas</h3>
-        <p>Engaging CTAs, subscribe prompts, card placements</p>
-        <form class="tool-form" data-tool="endscreen">
-            <input type="text" placeholder="Your channel style or video type" required>
-            <button type="submit" class="generate-btn">Get Ideas</button>
-        </form>
-        <div class="output-box"></div>
-    </div>
-
-    <!-- 7. Monetization & Analytics Tips -->
-    <div class="tool-card">
-        <h3>💰 Growth Predictor</h3>
-        <p>Monetization strategy + view prediction tips</p>
-        <form class="tool-form" data-tool="monetization_tip">
-            <input type="text" placeholder="Current subs or niche" required>
-            <button type="submit" class="generate-btn">Analyze Growth</button>
-        </form>
-        <div class="output-box"></div>
-    </div>
-
 </div>
 
-<!-- Same JS as TikTok (copy from there or keep in base.html) -->
 <script>
-    document.querySelectorAll('.tool-form').forEach(form => {
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const input = form.querySelector('input').value;
-            const tool = form.dataset.tool;
-            const output = form.nextElementSibling;
-            output.innerHTML = '<p style="color:#aaa;">Generating...</p>';
+document.querySelectorAll('.tool-form').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-            const res = await fetch('/use_tool', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({tool, input})
-            });
-            const data = await res.json();
+        const input = form.querySelector('input').value;
+        const tool = form.dataset.tool;
+        const output = form.nextElementSibling;
 
-            if (data.status === 'success') {
-                const text = data.result.text || data.result.hashtags?.join(' ') || JSON.stringify(data.result, null, 2);
-                output.innerHTML = `<pre style="white-space: pre-wrap;">${text}</pre>
-                    <button onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText)">Copy All</button>`;
-            } else {
-                output.innerHTML = `<p style="color:red;">${data.message}</p>`;
-            }
+        output.innerHTML = '<p class="loading">🤖 Generating...</p>';
+
+        const res = await fetch('/use_tool', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ tool, input })
         });
+
+        const data = await res.json();
+
+        if (data.status === 'success') {
+            const text =
+                data.result.text ||
+                data.result.hashtags?.join(' ') ||
+                JSON.stringify(data.result, null, 2);
+
+            output.innerHTML = `
+                <pre>${text}</pre>
+                <button class="copy-btn"
+                    onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText)">
+                    Copy
+                </button>
+            `;
+        } else {
+            output.innerHTML = `<p class="error">${data.message}</p>`;
+        }
     });
+});
 </script>
 
 <style>
-    /* Reuse your dark purple styles */
-    .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin: 30px 0; }
-    .tool-card { background: rgba(80,40,120,0.2); padding: 25px; border-radius: 18px; border: 1px solid #444; }
-    .tool-form input { width: 100%; padding: 14px; margin: 12px 0; background: #111; border: 1px solid #555; color: white; border-radius: 8px; }
-    .generate-btn { background: linear-gradient(90deg, #c084fc, #ec4899); width: 100%; padding: 14px; border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; }
-    .output-box { min-height: 100px; margin-top: 15px; padding: 15px; background: #000; border-radius: 12px; border: 1px solid #333; }
+/* ---------- PAGE ---------- */
+.tool-wrapper {
+    max-width: 1200px;
+    margin: auto;
+    padding: 40px 20px;
+}
+
+.tool-header h1 {
+    font-size: 40px;
+    font-weight: 700;
+}
+
+.tool-header p {
+    color: #9aa0aa;
+    margin-top: 6px;
+}
+
+/* ---------- GRID ---------- */
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+    gap: 26px;
+    margin-top: 35px;
+}
+
+/* ---------- TOOL CARD ---------- */
+.tool-card {
+    background: rgba(20,20,30,0.8);
+    border-radius: 20px;
+    padding: 24px;
+    border: 1px solid rgba(199,125,255,0.2);
+    backdrop-filter: blur(12px);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.tool-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 30px rgba(199,125,255,0.25);
+}
+
+/* ---------- HEADER ---------- */
+.tool-card-header {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.tool-icon {
+    font-size: 28px;
+    padding: 12px;
+    border-radius: 14px;
+    background: linear-gradient(135deg,#9d4edd,#c77dff);
+}
+
+.tool-card h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.tool-card p {
+    font-size: 13px;
+    color: #9aa0aa;
+}
+
+/* ---------- FORM ---------- */
+.tool-form input {
+    width: 100%;
+    padding: 14px;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(199,125,255,0.3);
+    border-radius: 12px;
+    color: white;
+    margin-bottom: 12px;
+}
+
+.tool-form input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(199,125,255,.25);
+}
+
+/* ---------- BUTTON ---------- */
+.tool-form button,
+.copy-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg,#9d4edd,#c77dff);
+}
+
+.copy-btn {
+    margin-top: 12px;
+}
+
+/* ---------- OUTPUT ---------- */
+.output-box {
+    margin-top: 16px;
+    padding: 14px;
+    min-height: 110px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 14px;
+    border: 1px solid #333;
+    font-size: 14px;
+}
+
+.output-box pre {
+    white-space: pre-wrap;
+}
+
+.loading {
+    color: #aaa;
+}
+
+.error {
+    color: #ff6b6b;
+}
 </style>
 
 {% endblock %}
