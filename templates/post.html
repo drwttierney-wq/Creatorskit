@@ -79,15 +79,18 @@
 
     </form>
 </div>
+{% endif %}
 
 <script>
 /* Character Counter */
 const textarea = document.getElementById("postContent");
 const charCount = document.getElementById("charCount");
 
-textarea.addEventListener("input", () => {
-    charCount.textContent = `${textarea.value.length} / 2000`;
-});
+if (textarea) {
+    textarea.addEventListener("input", () => {
+        charCount.textContent = `${textarea.value.length} / 2000`;
+    });
+}
 
 /* Image Preview */
 function previewImage(event) {
@@ -104,8 +107,10 @@ function removeImage() {
 
 /* Emoji Insert */
 function addEmoji(emoji) {
-    textarea.value += emoji;
-    textarea.dispatchEvent(new Event('input'));
+    if (textarea) {
+        textarea.value += emoji;
+        textarea.dispatchEvent(new Event('input'));
+    }
 }
 </script>
 
@@ -272,7 +277,5 @@ select {
     opacity: .9;
 }
 </style>
-
-{% endif %}
 
 {% endblock %}
