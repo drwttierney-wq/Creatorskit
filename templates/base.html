@@ -87,7 +87,6 @@
             min-height: 100vh;
         }
 
-        /* Header (mobile only) */
         header {
             background: var(--panel);
             border-bottom: 1px solid var(--border);
@@ -109,11 +108,10 @@
             }
         }
 
-        /* Content */
         .content {
             flex: 1;
             padding: 20px;
-            padding-bottom: 100px; /* space for bottom nav */
+            padding-bottom: 100px;
         }
 
         @media (min-width: 900px) {
@@ -187,19 +185,12 @@
                 display: none;
             }
         }
-
-        /* Hide nav elements on public pages */
-        {% if not session.user %}
-        .bottom-nav, .fab {
-            display: none;
-        }
-        {% endif %}
     </style>
 </head>
 <body>
 
     <!-- DESKTOP SIDEBAR -->
-    {% if session.user %}
+    {% if session.get('user') %}
     <aside class="sidebar">
         <div class="logo">Creators Kit</div>
         <nav>
@@ -215,20 +206,19 @@
 
     <!-- MAIN -->
     <div class="main">
-        {% if session.user %}
+        {% if session.get('user') %}
         <header>
             <div class="logo">Creators Kit</div>
         </header>
         {% endif %}
 
         <main class="content">
-            {% block content %}
-            {% endblock %}
+            {% block content %}{% endblock %}
         </main>
     </div>
 
-    <!-- MOBILE NAV & FAB (only when logged in) -->
-    {% if session.user %}
+    <!-- MOBILE NAV & FAB -->
+    {% if session.get('user') %}
     <nav class="bottom-nav">
         <a href="/dashboard">🏠</a>
         <a href="/community">🌐</a>
