@@ -1,123 +1,287 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1 class="page-title">🎮 Twitch Toolkit</h1>
-<p class="subtitle">Streaming growth & viewer engagement</p>
+<div class="tool-wrapper">
 
-<div class="tools-grid">
+    <!-- HEADER -->
+    <header class="tool-header twitch-header">
+        <div class="twitch-logo">
+            <span class="twitch-icon">🎮</span>
+            <span class="twitch-text">Twitch</span>
+        </div>
 
-    <!-- 1. Stream Title Generator -->
-    <div class="tool-card">
-        <h3>🔤 Stream Title Generator</h3>
-        <p>Click-worthy titles for more viewers</p>
-        <form class="tool-form" data-tool="twitch_title">
-            <input type="text" placeholder="Game + vibe (e.g. chill Minecraft, competitive Valorant)" required>
-            <button type="submit" class="generate-btn">Generate Title</button>
-        </form>
-        <div class="output-box"></div>
+        <h1 class="twitch-title">
+            <span class="twitch-main">AI</span>
+            <span class="twitch-sub">Toolkit</span>
+        </h1>
+
+        <p class="twitch-subtitle">
+            Streaming growth & viewer engagement
+        </p>
+    </header>
+
+    <!-- TOOLS GRID -->
+    <div class="tools-grid">
+
+        {% for tool in [
+            ('twitch_title','🔤','Stream Title Generator','Click-worthy titles for more viewers'),
+            ('overlay','🖼️','Overlay & Panel Ideas','Custom overlay concepts & layouts'),
+            ('emote','😎','Emote Suggestions','Ideas for custom emotes'),
+            ('schedule','📅','Schedule Planner','Optimal streaming times & announcements'),
+            ('command','🤖','Chat Command Creator','Fun !commands for Nightbot/Streamlabs'),
+            ('clip','🎬','Clip Highlight Ideas','Captions & thumbnails for viral clips'),
+            ('engagement','🚀','Engagement Booster','Chat games, polls & viewer challenges')
+        ] %}
+
+        <div class="tool-card">
+            <div class="tool-card-header">
+                <span class="tool-icon">{{ tool[1] }}</span>
+                <div>
+                    <h3>{{ tool[2] }}</h3>
+                    <p>{{ tool[3] }}</p>
+                </div>
+            </div>
+
+            <form class="tool-form" data-tool="{{ tool[0] }}">
+                <input type="text" placeholder="Enter details…" required>
+                <button type="submit">✨ Generate with AI</button>
+            </form>
+
+            <div class="output-box"></div>
+        </div>
+
+        {% endfor %}
+
     </div>
-
-    <!-- 2. Overlay & Panel Ideas -->
-    <div class="tool-card">
-        <h3>🖼️ Overlay & Panel Ideas</h3>
-        <p>Custom overlay concepts & layouts</p>
-        <form class="tool-form" data-tool="overlay">
-            <input type="text" placeholder="Stream style (e.g. minimal, cyberpunk)" required>
-            <button type="submit" class="generate-btn">Suggest Overlays</button>
-        </form>
-        <div class="output-box"></div>
-    </div>
-
-    <!-- 3. Emote Suggestions -->
-    <div class="tool-card">
-        <h3>😎 Emote Suggestions</h3>
-        <p>Ideas for custom emotes</p>
-        <form class="tool-form" data-tool="emote">
-            <input type="text" placeholder="Your brand or inside joke" required>
-            <button type="submit" class="generate-btn">Suggest Emotes</button>
-        </form>
-        <div class="output-box"></div>
-    </div>
-
-    <!-- 4. Schedule Planner -->
-    <div class="tool-card">
-        <h3>📅 Schedule Planner</h3>
-        <p>Optimal streaming times & announcements</p>
-        <form class="tool-form" data-tool="schedule">
-            <input type="text" placeholder="Your timezone + audience" required>
-            <button type="submit" class="generate-btn">Plan Schedule</button>
-        </form>
-        <div class="output-box"></div>
-    </div>
-
-    <!-- 5. Chat Command Creator -->
-    <div class="tool-card">
-        <h3>🤖 Chat Command Creator</h3>
-        <p>Fun !commands for Nightbot/Streamlabs</p>
-        <form class="tool-form" data-tool="command">
-            <input type="text" placeholder="Command idea (e.g. !socials, !uptime)" required>
-            <button type="submit" class="generate-btn">Create Commands</button>
-        </form>
-        <div class="output-box"></div>
-    </div>
-
-    <!-- 6. Clip Highlight Ideas -->
-    <div class="tool-card">
-        <h3>🎬 Clip Highlight Ideas</h3>
-        <p>Captions & thumbnails for viral clips</p>
-        <form class="tool-form" data-tool="clip">
-            <input type="text" placeholder="Clip moment description" required>
-            <button type="submit" class="generate-btn">Highlight Clip</button>
-        </form>
-        <div class="output-box"></div>
-    </div>
-
-    <!-- 7. Engagement Booster -->
-    <div class="tool-card">
-        <h3>🚀 Engagement Booster</h3>
-        <p>Chat games, polls & viewer challenges</p>
-        <form class="tool-form" data-tool="engagement">
-            <input type="text" placeholder="Stream length or game" required>
-            <button type="submit" class="generate-btn">Boost Engagement</button>
-        </form>
-        <div class="output-box"></div>
-    </div>
-
 </div>
 
+<!-- JS (unchanged logic) -->
 <script>
-    document.querySelectorAll('.tool-form').forEach(form => {
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const input = form.querySelector('input').value;
-            const tool = form.dataset.tool;
-            const output = form.nextElementSibling;
-            output.innerHTML = '<p style="color:#aaa;">Generating...</p>';
+document.querySelectorAll('.tool-form').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-            const res = await fetch('/use_tool', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({tool, input})
-            });
-            const data = await res.json();
+        const input = form.querySelector('input').value;
+        const tool = form.dataset.tool;
+        const output = form.nextElementSibling;
 
-            if (data.status === 'success') {
-                const text = data.result.text || data.result.hashtags?.join(' ') || JSON.stringify(data.result, null, 2);
-                output.innerHTML = `<pre style="white-space: pre-wrap;">${text}</pre>
-                    <button onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText)">Copy All</button>`;
-            } else {
-                output.innerHTML = `<p style="color:red;">${data.message}</p>`;
-            }
+        output.innerHTML = '<p class="loading">Generating…</p>';
+
+        const res = await fetch('/use_tool', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ tool, input })
         });
+
+        const data = await res.json();
+
+        if (data.status === 'success') {
+            const text =
+                data.result.text ||
+                data.result.hashtags?.join(' ') ||
+                JSON.stringify(data.result, null, 2);
+
+            output.innerHTML = `
+                <pre>${text}</pre>
+                <button class="copy-btn"
+                    onclick="navigator.clipboard.writeText(this.previousElementSibling.innerText)">
+                    Copy
+                </button>
+            `;
+        } else {
+            output.innerHTML = `<p class="error">${data.message}</p>`;
+        }
     });
+});
 </script>
 
 <style>
-    .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin: 30px 0; }
-    .tool-card { background: rgba(80,50,140,0.2); padding: 28px; border-radius: 20px; border: 1px solid rgba(200,150,255,0.3); backdrop-filter: blur(10px); }
-    .tool-form input { width: 100%; padding: 14px; margin: 12px 0; background: rgba(10,10,40,0.6); border: 1px solid #666; color: white; border-radius: 10px; }
-    .generate-btn { background: linear-gradient(90deg, #9d4edd, #c77dff); width: 100%; padding: 16px; border: none; color: white; font-weight: bold; border-radius: 12px; cursor: pointer; box-shadow: 0 6px 25px rgba(157,78,221,0.4); }
-    .output-box { min-height: 120px; margin-top: 20px; padding: 20px; background: rgba(0,0,30,0.7); border-radius: 14px; border: 1px solid #555; }
+/* =============================
+   LAYOUT
+============================= */
+.tool-wrapper {
+    max-width: 1200px;
+    margin: auto;
+    padding: 44px 20px;
+}
+
+/* =============================
+   TWITCH HEADER
+============================= */
+.twitch-header {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.twitch-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.twitch-icon {
+    font-size: 22px;
+    color: #9147ff;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: rgba(145,71,255,0.15);
+    box-shadow: 0 0 20px rgba(145,71,255,0.5);
+}
+
+.twitch-text {
+    font-size: 22px;
+    font-weight: 800;
+}
+
+/* =============================
+   TITLE
+============================= */
+.twitch-title {
+    font-size: 40px;
+    font-weight: 900;
+    letter-spacing: -0.6px;
+}
+
+.twitch-main {
+    background: linear-gradient(90deg, #9147ff, #5a00ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.twitch-sub {
+    color: white;
+    margin-left: 6px;
+}
+
+.twitch-subtitle {
+    color: #ddd;
+    margin-top: 8px;
+}
+
+/* =============================
+   GRID
+============================= */
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 26px;
+}
+
+/* =============================
+   TOOL CARD
+============================= */
+.tool-card {
+    background: rgba(20,10,40,0.85);
+    border-radius: 22px;
+    padding: 24px;
+    border: 1px solid rgba(145,71,255,0.25);
+    backdrop-filter: blur(12px);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.tool-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 36px rgba(145,71,255,0.45);
+}
+
+/* =============================
+   CARD HEADER
+============================= */
+.tool-card-header {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.tool-icon {
+    font-size: 26px;
+    padding: 12px;
+    border-radius: 14px;
+    background: #9147ff;
+    color: white;
+    box-shadow: 0 0 18px rgba(145,71,255,0.4);
+}
+
+.tool-card h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.tool-card p {
+    font-size: 13px;
+    color: #ddd;
+}
+
+/* =============================
+   FORM
+============================= */
+.tool-form input {
+    width: 100%;
+    padding: 14px;
+    background: rgba(0,0,0,0.75);
+    border: 1px solid rgba(145,71,255,0.35);
+    border-radius: 12px;
+    color: white;
+    margin-bottom: 12px;
+}
+
+.tool-form input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(145,71,255,.35);
+}
+
+/* =============================
+   BUTTONS
+============================= */
+.tool-form button,
+.copy-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: 800;
+    color: white;
+    background: linear-gradient(90deg, #9147ff, #5a00ff);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.tool-form button:hover,
+.copy-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 28px rgba(145,71,255,0.6);
+}
+
+.copy-btn {
+    margin-top: 12px;
+}
+
+/* =============================
+   OUTPUT
+============================= */
+.output-box {
+    margin-top: 16px;
+    padding: 16px;
+    min-height: 120px;
+    background: rgba(0,0,30,0.7);
+    border-radius: 16px;
+    border: 1px solid rgba(145,71,255,0.25);
+    font-size: 14px;
+}
+
+.output-box pre {
+    white-space: pre-wrap;
+}
+
+.loading {
+    color: #aaa;
+}
+
+.error {
+    color: #ff6b6b;
+}
 </style>
 
 {% endblock %}
