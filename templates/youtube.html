@@ -3,11 +3,18 @@
 
 <div class="tool-wrapper">
 
-    <header class="tool-header">
-        <h1>📺 YouTube AI Toolkit</h1>
+    <!-- HEADER -->
+    <header class="tool-header yt-header">
+        <div class="yt-logo">
+            <span class="play-icon">▶</span>
+            <span class="yt-text">YouTube</span>
+        </div>
+
+        <h1>AI Toolkit</h1>
         <p>Professional growth, monetization & optimization tools</p>
     </header>
 
+    <!-- TOOLS GRID -->
     <div class="tools-grid">
 
         {% for tool in [
@@ -16,9 +23,10 @@
             ('thumbnail','🖼️','Thumbnail Ideas','High-click thumbnail concepts'),
             ('hashtag','🏷️','SEO Tags & Hashtags','Maximize discoverability'),
             ('script','📝','Script Outline','Hook → body → CTA'),
-            ('endscreen','🔚','End Screen Ideas','Engagement & retention'),
-            ('monetization_tip','💰','Growth Predictor','Monetization strategy & tips')
+            ('endscreen','🔚','End Screen Ideas','Retention & engagement'),
+            ('monetization_tip','💰','Growth Predictor','Monetization & strategy tips')
         ] %}
+
         <div class="tool-card">
             <div class="tool-card-header">
                 <span class="tool-icon">{{ tool[1] }}</span>
@@ -35,11 +43,13 @@
 
             <div class="output-box"></div>
         </div>
+
         {% endfor %}
 
     </div>
 </div>
 
+<!-- JS (UNCHANGED LOGIC) -->
 <script>
 document.querySelectorAll('.tool-form').forEach(form => {
     form.addEventListener('submit', async (e) => {
@@ -87,9 +97,37 @@ document.querySelectorAll('.tool-form').forEach(form => {
     padding: 40px 20px;
 }
 
+/* ---------- HEADER ---------- */
+.yt-header {
+    text-align: center;
+    margin-bottom: 45px;
+}
+
+.yt-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.play-icon {
+    background: #ff0033;
+    color: white;
+    font-size: 14px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255,0,51,0.6);
+}
+
+.yt-text {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
 .tool-header h1 {
-    font-size: 40px;
-    font-weight: 700;
+    font-size: 38px;
+    margin-top: 6px;
 }
 
 .tool-header p {
@@ -102,7 +140,6 @@ document.querySelectorAll('.tool-form').forEach(form => {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
     gap: 26px;
-    margin-top: 35px;
 }
 
 /* ---------- TOOL CARD ---------- */
@@ -120,7 +157,7 @@ document.querySelectorAll('.tool-form').forEach(form => {
     box-shadow: 0 0 35px rgba(255,0,51,0.35);
 }
 
-/* ---------- HEADER ---------- */
+/* ---------- CARD HEADER ---------- */
 .tool-card-header {
     display: flex;
     gap: 14px;
@@ -162,7 +199,7 @@ document.querySelectorAll('.tool-form').forEach(form => {
     box-shadow: 0 0 0 2px rgba(255,0,51,.35);
 }
 
-/* ---------- BUTTON ---------- */
+/* ---------- BUTTONS ---------- */
 .tool-form button,
 .copy-btn {
     width: 100%;
@@ -180,6 +217,10 @@ document.querySelectorAll('.tool-form').forEach(form => {
 .copy-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 0 25px rgba(255,0,51,0.6);
+}
+
+.copy-btn {
+    margin-top: 12px;
 }
 
 /* ---------- OUTPUT ---------- */
