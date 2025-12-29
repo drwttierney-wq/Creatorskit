@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
+{% if session.user %}
 <div class="create-post-wrapper">
 
     <!-- HEADER -->
@@ -271,5 +272,7 @@ select {
     opacity: .9;
 }
 </style>
+
+{% endif %}
 
 {% endblock %}
