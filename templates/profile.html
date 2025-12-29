@@ -2,35 +2,217 @@
 {% block title %}Profile{% endblock %}
 
 {% block content %}
-<div class="profile-header">
-    <div class="avatar"></div>
-    <h2>@{{ session['user'] }}</h2>
-    <p class="role">Creator • Member</p>
-</div>
 
-<div class="profile-stats">
-    <div class="stat-card">Posts</div>
-    <div class="stat-card">Followers</div>
-    <div class="stat-card">Earnings</div>
+<div class="profile-wrapper">
+
+    <!-- PROFILE HEADER -->
+    <div class="profile-header">
+        <div class="avatar-ring">
+            <div class="avatar"></div>
+        </div>
+
+        <h2 class="username">
+            @{{ session['user'] }}
+            <span class="verified">✔</span>
+        </h2>
+
+        <p class="role">Creator • Member</p>
+
+        <div class="profile-actions">
+            <button class="primary-btn">Edit Profile</button>
+            <button class="secondary-btn">Share</button>
+        </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="profile-stats">
+        <div class="stat-card">
+            <span class="stat-number">128</span>
+            <span class="stat-label">Posts</span>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-number">2.4K</span>
+            <span class="stat-label">Followers</span>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-number">$340</span>
+            <span class="stat-label">Earnings</span>
+        </div>
+    </div>
+
+    <!-- BIO / ABOUT -->
+    <div class="profile-bio">
+        <h3>About</h3>
+        <p>
+            Building content, growing brands, and using AI tools to scale faster.
+            🚀
+        </p>
+    </div>
+
 </div>
 
 <style>
-.profile-header { text-align:center; margin-bottom:40px; }
-.avatar { width:100px; height:100px; border-radius:50%; background:#222; margin:auto; }
-.profile-header h2 { margin-top:16px; font-size:24px; }
-.role { color:#888; font-size:14px; }
-.profile-stats {
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:20px;
+/* =========================
+   LAYOUT
+========================= */
+.profile-wrapper {
+    max-width: 900px;
+    margin: auto;
+    padding: 40px 20px;
+    color: white;
 }
+
+/* =========================
+   HEADER
+========================= */
+.profile-header {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.avatar-ring {
+    width: 110px;
+    height: 110px;
+    margin: auto;
+    border-radius: 50%;
+    padding: 4px;
+    background: linear-gradient(135deg, #8b5cf6, #22d3ee);
+    box-shadow: 0 0 40px rgba(139,92,246,0.5);
+}
+
+.avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #1a1a2e;
+}
+
+.username {
+    margin-top: 18px;
+    font-size: 26px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.verified {
+    font-size: 14px;
+    background: #22d3ee;
+    color: black;
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+
+.role {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #aaa;
+}
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+.profile-actions {
+    margin-top: 18px;
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+}
+
+.primary-btn,
+.secondary-btn {
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all .25s ease;
+}
+
+.primary-btn {
+    background: linear-gradient(90deg, #8b5cf6, #22d3ee);
+    color: white;
+    box-shadow: 0 6px 24px rgba(139,92,246,0.4);
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 36px rgba(139,92,246,0.6);
+}
+
+.secondary-btn {
+    background: transparent;
+    border: 1px solid #333;
+    color: #ddd;
+}
+
+.secondary-btn:hover {
+    background: #1a1a2e;
+}
+
+/* =========================
+   STATS
+========================= */
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    margin-bottom: 42px;
+}
+
 .stat-card {
-    background:#121218;
-    padding:20px;
-    border-radius:16px;
-    border:1px solid #1f1f2b;
-    text-align:center;
-    color:white;
+    background: rgba(20,20,40,0.85);
+    border-radius: 20px;
+    padding: 28px 20px;
+    border: 1px solid rgba(139,92,246,0.3);
+    text-align: center;
+    backdrop-filter: blur(10px);
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 36px rgba(139,92,246,0.4);
+}
+
+.stat-number {
+    font-size: 30px;
+    font-weight: 900;
+    display: block;
+    background: linear-gradient(90deg, #8b5cf6, #22d3ee);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.stat-label {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #bbb;
+}
+
+/* =========================
+   BIO
+========================= */
+.profile-bio {
+    background: rgba(15,15,30,0.85);
+    border-radius: 20px;
+    padding: 26px;
+    border: 1px solid #222;
+}
+
+.profile-bio h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+.profile-bio p {
+    font-size: 14px;
+    color: #ccc;
+    line-height: 1.6;
 }
 </style>
+
 {% endblock %}
