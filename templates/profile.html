@@ -3,215 +3,285 @@
 
 {% block content %}
 
-<div class="profile-wrapper">
+<div class="profile-container">
 
-    <!-- PROFILE HEADER -->
+    <!-- HEADER -->
     <div class="profile-header">
-        <div class="avatar-ring">
-            <div class="avatar"></div>
+        <div class="avatar-section">
+            <div class="avatar-ring">
+                <img src="{{ session.get('avatar_url', '/static/default-avatar.png') }}"
+                     class="avatar"
+                     id="avatarPreview">
+            </div>
+
+            <form id="avatarForm" enctype="multipart/form-data">
+                <label class="upload-btn">
+                    Change Photo
+                    <input type="file" name="avatar" hidden onchange="previewAvatar(event)">
+                </label>
+            </form>
         </div>
 
-        <h2 class="username">
-            @{{ session['user'] }}
-            <span class="verified">✔</span>
-        </h2>
+        <div class="profile-main">
+            <h2 class="username">
+                @{{ session['user'] }}
+                <span class="verified">✔</span>
+            </h2>
 
-        <p class="role">Creator • Member</p>
+            <p class="role">Creator • Member</p>
 
-        <div class="profile-actions">
-            <button class="primary-btn">Edit Profile</button>
-            <button class="secondary-btn">Share</button>
+            <p class="bio-text" id="bioText">
+                Building content, scaling brands, and using AI to grow faster 🚀
+            </p>
+
+            <div class="profile-actions">
+                <button class="primary-btn" onclick="openEdit()">Edit Profile</button>
+                <button class="secondary-btn">Share Profile</button>
+            </div>
         </div>
     </div>
 
+    <!-- SOCIAL LINKS -->
+    <div class="social-links">
+        <a href="#" class="social yt">YouTube</a>
+        <a href="#" class="social ig">Instagram</a>
+        <a href="#" class="social x">X</a>
+        <a href="#" class="social tt">TikTok</a>
+        <a href="#" class="social tw">Twitch</a>
+    </div>
+
     <!-- STATS -->
-    <div class="profile-stats">
+    <div class="stats-grid">
         <div class="stat-card">
             <span class="stat-number">128</span>
             <span class="stat-label">Posts</span>
         </div>
-
         <div class="stat-card">
             <span class="stat-number">2.4K</span>
             <span class="stat-label">Followers</span>
         </div>
-
+        <div class="stat-card">
+            <span class="stat-number">87</span>
+            <span class="stat-label">Following</span>
+        </div>
         <div class="stat-card">
             <span class="stat-number">$340</span>
             <span class="stat-label">Earnings</span>
         </div>
     </div>
 
-    <!-- BIO / ABOUT -->
-    <div class="profile-bio">
-        <h3>About</h3>
-        <p>
-            Building content, growing brands, and using AI tools to scale faster.
-            🚀
-        </p>
+    <!-- CONTENT SECTIONS -->
+    <div class="profile-sections">
+        <div class="section-card">
+            <h3>Creator Tools Used</h3>
+            <ul>
+                <li>YouTube AI Toolkit</li>
+                <li>Instagram Caption Generator</li>
+                <li>Twitch Growth Tools</li>
+            </ul>
+        </div>
+
+        <div class="section-card">
+            <h3>Achievements</h3>
+            <div class="badges">
+                <span class="badge">🚀 Early Creator</span>
+                <span class="badge">🔥 1K+ Followers</span>
+                <span class="badge">🤖 AI Power User</span>
+            </div>
+        </div>
     </div>
 
 </div>
 
+<!-- EDIT PROFILE MODAL -->
+<div class="modal" id="editModal">
+    <div class="modal-content">
+        <h3>Edit Profile</h3>
+
+        <input type="text" placeholder="Display name">
+        <textarea placeholder="Bio"></textarea>
+
+        <input type="text" placeholder="YouTube link">
+        <input type="text" placeholder="Instagram link">
+        <input type="text" placeholder="X link">
+        <input type="text" placeholder="TikTok link">
+        <input type="text" placeholder="Twitch link">
+
+        <div class="modal-actions">
+            <button class="primary-btn" onclick="closeEdit()">Save</button>
+            <button class="secondary-btn" onclick="closeEdit()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function openEdit() {
+    document.getElementById('editModal').classList.add('show');
+}
+function closeEdit() {
+    document.getElementById('editModal').classList.remove('show');
+}
+function previewAvatar(event) {
+    const img = document.getElementById('avatarPreview');
+    img.src = URL.createObjectURL(event.target.files[0]);
+}
+</script>
+
 <style>
-/* =========================
-   LAYOUT
-========================= */
-.profile-wrapper {
-    max-width: 900px;
+/* ====== CONTAINER ====== */
+.profile-container {
+    max-width: 1100px;
     margin: auto;
     padding: 40px 20px;
     color: white;
 }
 
-/* =========================
-   HEADER
-========================= */
+/* ====== HEADER ====== */
 .profile-header {
-    text-align: center;
-    margin-bottom: 48px;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    margin-bottom: 40px;
 }
 
 .avatar-ring {
-    width: 110px;
-    height: 110px;
-    margin: auto;
-    border-radius: 50%;
+    width: 130px;
+    height: 130px;
     padding: 4px;
+    border-radius: 50%;
     background: linear-gradient(135deg, #8b5cf6, #22d3ee);
-    box-shadow: 0 0 40px rgba(139,92,246,0.5);
+    box-shadow: 0 0 40px rgba(139,92,246,.6);
 }
 
 .avatar {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: #1a1a2e;
+    object-fit: cover;
+}
+
+.upload-btn {
+    margin-top: 10px;
+    font-size: 12px;
+    cursor: pointer;
+    color: #22d3ee;
 }
 
 .username {
-    margin-top: 18px;
-    font-size: 26px;
-    font-weight: 800;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    font-size: 28px;
+    font-weight: 900;
 }
 
 .verified {
-    font-size: 14px;
     background: #22d3ee;
     color: black;
     padding: 2px 6px;
     border-radius: 6px;
+    font-size: 12px;
 }
 
-.role {
-    margin-top: 6px;
-    font-size: 14px;
-    color: #aaa;
+.bio-text {
+    color: #ccc;
+    max-width: 500px;
 }
 
-/* =========================
-   ACTION BUTTONS
-========================= */
-.profile-actions {
-    margin-top: 18px;
-    display: flex;
-    justify-content: center;
-    gap: 14px;
-}
-
-.primary-btn,
-.secondary-btn {
-    padding: 10px 18px;
-    border-radius: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    border: none;
-    transition: all .25s ease;
-}
-
+/* ====== BUTTONS ====== */
 .primary-btn {
     background: linear-gradient(90deg, #8b5cf6, #22d3ee);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 12px;
     color: white;
-    box-shadow: 0 6px 24px rgba(139,92,246,0.4);
+    font-weight: 700;
 }
-
-.primary-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 36px rgba(139,92,246,0.6);
-}
-
 .secondary-btn {
     background: transparent;
     border: 1px solid #333;
-    color: #ddd;
+    padding: 10px 18px;
+    border-radius: 12px;
+    color: #ccc;
 }
 
-.secondary-btn:hover {
+/* ====== SOCIAL ====== */
+.social-links {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 40px;
+}
+.social {
+    padding: 10px 16px;
+    border-radius: 12px;
     background: #1a1a2e;
+    border: 1px solid #333;
 }
 
-/* =========================
-   STATS
-========================= */
-.profile-stats {
+/* ====== STATS ====== */
+.stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
     gap: 24px;
-    margin-bottom: 42px;
+    margin-bottom: 40px;
 }
-
 .stat-card {
-    background: rgba(20,20,40,0.85);
+    background: rgba(20,20,40,.8);
+    padding: 28px;
     border-radius: 20px;
-    padding: 28px 20px;
-    border: 1px solid rgba(139,92,246,0.3);
     text-align: center;
-    backdrop-filter: blur(10px);
-    transition: transform .25s ease, box-shadow .25s ease;
 }
-
-.stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 0 36px rgba(139,92,246,0.4);
-}
-
 .stat-number {
-    font-size: 30px;
+    font-size: 32px;
     font-weight: 900;
-    display: block;
-    background: linear-gradient(90deg, #8b5cf6, #22d3ee);
+    background: linear-gradient(90deg,#8b5cf6,#22d3ee);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-.stat-label {
-    margin-top: 6px;
-    font-size: 14px;
-    color: #bbb;
+/* ====== SECTIONS ====== */
+.profile-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
+    gap: 30px;
 }
-
-/* =========================
-   BIO
-========================= */
-.profile-bio {
-    background: rgba(15,15,30,0.85);
+.section-card {
+    background: rgba(15,15,30,.9);
     border-radius: 20px;
     padding: 26px;
-    border: 1px solid #222;
+}
+.badge {
+    display: inline-block;
+    margin: 6px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: #222;
 }
 
-.profile-bio h3 {
-    margin-bottom: 10px;
-    font-size: 18px;
+/* ====== MODAL ====== */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
 }
-
-.profile-bio p {
-    font-size: 14px;
-    color: #ccc;
-    line-height: 1.6;
+.modal.show {
+    display: flex;
+}
+.modal-content {
+    background: #0f0f1e;
+    padding: 30px;
+    border-radius: 20px;
+    width: 420px;
+}
+.modal-content input,
+.modal-content textarea {
+    width: 100%;
+    margin: 10px 0;
+    padding: 12px;
+    border-radius: 10px;
+    background: #1a1a2e;
+    border: 1px solid #333;
+    color: white;
 }
 </style>
 
