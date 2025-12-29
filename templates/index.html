@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
 
+<!-- Small logout indicator for testing (only shows if logged in) -->
+{% if session.user %}
+<div style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.7); padding: 10px 20px; border-radius: 12px; font-size: 14px; z-index: 9999;">
+    Logged in as @{{ session.user }} — <a href="/logout" style="color: #c77dff; font-weight: bold;">Logout</a>
+</div>
+{% endif %}
+
 <div style="text-align: center; margin-top: 100px;">
     <h1 style="font-size: 60px; font-weight: 900; margin-bottom: 30px; background: linear-gradient(90deg, #9d4edd, #c77dff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
         Creators Kit
@@ -8,7 +15,7 @@
     <p style="font-size: 24px; color: #aaa; margin-bottom: 60px;">
         The ultimate platform for creators — tools, community, messaging, monetization.
     </p>
-    <a href="/login" style="background: linear-gradient(90deg, #9d4edd, #c77dff); padding: 20px 60px; border-radius: 50px; font-size: 24px; font-weight: bold; text-decoration: none; box-shadow: 0 10px 40px rgba(157,78,221,0.5);">
+    <a href="/login" style="background: linear-gradient(90deg, #9d4edd, #c77dff); padding: 20px 60px; border-radius: 50px; font-size: 24px; font-weight: bold; text-decoration: none; box-shadow: 0 10px 40px rgba(157,78,221,0.5); color: white;">
         Get Started Free
     </a>
 </div>
