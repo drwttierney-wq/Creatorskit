@@ -41,8 +41,7 @@ def login_required(f):
 
 @app.route("/")
 def index():
-    # This line fixes the bottom bar showing on landing
-    session.clear()  # Forces clean public view for everyone
+    session.clear()  # Keeps landing clean
     return render_template("index.html")
 
 @app.route("/login", methods=["GET", "POST"])
@@ -99,6 +98,21 @@ def create_post():
         db.session.add(post)
         db.session.commit()
     return redirect("/community")
+
+@app.route("/messages")
+@login_required
+def messages():
+    return render_template("messages_inbox.html")
+
+@app.route("/profile")
+@login_required
+def profile():
+    return render_template("profile.html")
+
+@app.route("/settings")
+@login_required
+def settings():
+    return render_template("settings.html")
 
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
