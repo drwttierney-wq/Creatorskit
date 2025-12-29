@@ -1,15 +1,275 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1 class="page-title">Create Post</h1>
-<p class="subtitle">Share with the community</p>
+<div class="create-post-wrapper">
 
-<form action="/create_post" method="POST" enctype="multipart/form-data">
-    <textarea name="content" placeholder="What's on your mind?" required style="width:100%; height:250px; background:#111; color:white; border:1px solid #555; border-radius:12px; padding:15px; font-size:16px; margin-bottom:15px;"></textarea>
-    <input type="file" name="image" accept="image/*" style="width:100%; padding:14px; background:#111; color:white; border:1px solid #555; border-radius:12px; margin-bottom:20px;">
-    <button type="submit" style="width:100%; padding:16px; background: linear-gradient(90deg, #9d4edd, #c77dff); border:none; color:white; font-weight:bold; border-radius:12px; cursor:pointer;">Share Post</button>
-</form>
+    <!-- HEADER -->
+    <div class="create-post-header">
+        <h1>Create Post</h1>
+        <p>Share ideas, updates, or media with the community</p>
+    </div>
 
-<a href="/community" style="display:block; margin-top:20px; color:#c77dff; text-align:center;">← Back</a>
+    <!-- POST CARD -->
+    <form class="post-card" action="/create_post" method="POST" enctype="multipart/form-data">
+
+        <!-- USER BAR -->
+        <div class="post-user">
+            <div class="avatar"></div>
+            <div>
+                <strong>@{{ session['user'] }}</strong>
+                <span class="visibility">Posting publicly</span>
+            </div>
+        </div>
+
+        <!-- TEXTAREA -->
+        <textarea
+            name="content"
+            id="postContent"
+            placeholder="What’s happening?"
+            maxlength="2000"
+            required></textarea>
+
+        <div class="post-meta">
+            <span id="charCount">0 / 2000</span>
+        </div>
+
+        <!-- IMAGE PREVIEW -->
+        <div class="image-preview" id="imagePreview" style="display:none;">
+            <img id="previewImg">
+            <button type="button" onclick="removeImage()">✕</button>
+        </div>
+
+        <!-- ACTION ROW -->
+        <div class="post-actions">
+
+            <div class="left-actions">
+                <label class="icon-btn">
+                    📷
+                    <input type="file" name="image" accept="image/*" hidden onchange="previewImage(event)">
+                </label>
+
+                <button type="button" class="icon-btn" onclick="addEmoji('😊')">😊</button>
+                <button type="button" class="icon-btn" onclick="addEmoji('🔥')">🔥</button>
+                <button type="button" class="icon-btn" onclick="addEmoji('🚀')">🚀</button>
+            </div>
+
+            <div class="right-actions">
+                <select name="visibility">
+                    <option value="public">🌍 Public</option>
+                    <option value="followers">👥 Followers</option>
+                    <option value="private">🔒 Private</option>
+                </select>
+            </div>
+
+        </div>
+
+        <!-- TAGS -->
+        <input
+            type="text"
+            name="tags"
+            class="tags-input"
+            placeholder="#tags (e.g. ai, creators, growth)">
+
+        <!-- SUBMIT -->
+        <div class="submit-bar">
+            <a href="/community" class="cancel">Cancel</a>
+            <button type="submit" class="submit-btn">Post</button>
+        </div>
+
+    </form>
+</div>
+
+<script>
+/* Character Counter */
+const textarea = document.getElementById("postContent");
+const charCount = document.getElementById("charCount");
+
+textarea.addEventListener("input", () => {
+    charCount.textContent = `${textarea.value.length} / 2000`;
+});
+
+/* Image Preview */
+function previewImage(event) {
+    const img = document.getElementById("previewImg");
+    const container = document.getElementById("imagePreview");
+    img.src = URL.createObjectURL(event.target.files[0]);
+    container.style.display = "block";
+}
+
+function removeImage() {
+    document.getElementById("imagePreview").style.display = "none";
+    document.querySelector('input[type="file"]').value = "";
+}
+
+/* Emoji Insert */
+function addEmoji(emoji) {
+    textarea.value += emoji;
+    textarea.dispatchEvent(new Event('input'));
+}
+</script>
+
+<style>
+/* ===== WRAPPER ===== */
+.create-post-wrapper {
+    max-width: 720px;
+    margin: auto;
+    padding: 40px 20px;
+    color: white;
+}
+
+/* ===== HEADER ===== */
+.create-post-header {
+    margin-bottom: 30px;
+}
+.create-post-header h1 {
+    font-size: 34px;
+    font-weight: 900;
+}
+.create-post-header p {
+    color: #aaa;
+}
+
+/* ===== CARD ===== */
+.post-card {
+    background: rgba(15,15,30,0.9);
+    border-radius: 24px;
+    padding: 26px;
+    border: 1px solid #222;
+    box-shadow: 0 10px 40px rgba(0,0,0,.4);
+}
+
+/* ===== USER BAR ===== */
+.post-user {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg,#8b5cf6,#22d3ee);
+}
+.visibility {
+    display: block;
+    font-size: 12px;
+    color: #888;
+}
+
+/* ===== TEXTAREA ===== */
+textarea {
+    width: 100%;
+    min-height: 180px;
+    background: #0b0b16;
+    border: 1px solid #333;
+    border-radius: 18px;
+    padding: 18px;
+    font-size: 17px;
+    color: white;
+    resize: vertical;
+}
+textarea:focus {
+    outline: none;
+    border-color: #8b5cf6;
+}
+
+/* ===== META ===== */
+.post-meta {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 12px;
+    color: #777;
+    margin-top: 6px;
+}
+
+/* ===== IMAGE PREVIEW ===== */
+.image-preview {
+    margin-top: 16px;
+    position: relative;
+}
+.image-preview img {
+    width: 100%;
+    border-radius: 16px;
+}
+.image-preview button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,.6);
+    border: none;
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+/* ===== ACTIONS ===== */
+.post-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 18px;
+}
+.left-actions {
+    display: flex;
+    gap: 10px;
+}
+.icon-btn {
+    background: #141428;
+    border: 1px solid #333;
+    padding: 8px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    color: white;
+}
+.icon-btn:hover {
+    background: #1d1d3a;
+}
+
+select {
+    background: #141428;
+    border: 1px solid #333;
+    padding: 8px 12px;
+    border-radius: 10px;
+    color: white;
+}
+
+/* ===== TAGS ===== */
+.tags-input {
+    width: 100%;
+    margin-top: 16px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #333;
+    background: #0b0b16;
+    color: white;
+}
+
+/* ===== SUBMIT BAR ===== */
+.submit-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 26px;
+}
+.cancel {
+    color: #888;
+    text-decoration: none;
+}
+.submit-btn {
+    background: linear-gradient(90deg,#8b5cf6,#22d3ee);
+    border: none;
+    padding: 14px 28px;
+    border-radius: 14px;
+    font-weight: 800;
+    color: white;
+    cursor: pointer;
+}
+.submit-btn:hover {
+    opacity: .9;
+}
+</style>
 
 {% endblock %}
