@@ -1,197 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Creators Kit</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Creators Kit{% endblock %}</title>
 
-<style>
-:root {
-    --bg: #0b0b0f;
-    --panel: #121218;
-    --border: #2a2a35;
-    --text: #ffffff;
-    --muted: #a1a1b3;
-    --accent1: #9d4edd;
-    --accent2: #c77dff;
-    --shadow: rgba(157,78,221,0.25);
-    --hover-bg: rgba(199,125,255,0.15);
-    --fab-shadow: rgba(157,78,221,0.5);
-}
+    <style>
+        :root {
+            --bg: #0b0b0f;
+            --panel: #121218;
+            --border: #2a2a35;
+            --text: #ffffff;
+            --muted: #a1a1b3;
+            --accent1: #9d4edd;
+            --accent2: #c77dff;
+        }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: "Segoe UI", system-ui, sans-serif;
-    min-height: 100vh;
-    display: flex;
-    transition: background 0.3s;
-}
-a { text-decoration: none; color: inherit; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family:"Segoe UI", system-ui, sans-serif; background:var(--bg); color:var(--text); min-height:100vh; display:flex; flex-direction:row; }
+        a { text-decoration:none; color:inherit; }
 
-/* ===== SIDEBAR ===== */
-.sidebar {
-    display: none;
-    flex-direction: column;
-    width: 260px;
-    background: var(--panel);
-    border-right: 1px solid var(--border);
-    padding: 30px 25px;
-}
-.sidebar .logo {
-    font-size: 32px;
-    font-weight: 900;
-    margin-bottom: 40px;
-    background: linear-gradient(90deg, var(--accent1), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-.sidebar nav a {
-    display: block;
-    padding: 14px 18px;
-    margin-bottom: 12px;
-    border-radius: 12px;
-    color: var(--muted);
-    font-size: 18px;
-    transition: 0.2s;
-}
-.sidebar nav a:hover {
-    background: var(--hover-bg);
-    color: white;
-    transform: translateX(5px);
-}
-@media (min-width: 900px) {
-    .sidebar { display: flex; }
-}
+        /* SIDEBAR (DESKTOP) */
+        .sidebar {
+            display:none;
+        }
+        @media (min-width:900px){
+            .sidebar { display:flex; flex-direction:column; width:260px; background:var(--panel); border-right:1px solid var(--border); padding:30px 25px; }
+            .sidebar .logo { font-size:30px; font-weight:800; margin-bottom:40px; background:linear-gradient(90deg,var(--accent1),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+            .sidebar nav a { display:block; padding:12px 15px; margin-bottom:10px; border-radius:12px; color:var(--muted); font-size:18px; transition:0.2s; }
+            .sidebar nav a:hover { background:rgba(199,125,255,0.15); color:white; }
+        }
 
-/* ===== MAIN AREA ===== */
-.main { flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+        /* MAIN AREA */
+        .main { flex:1; display:flex; flex-direction:column; min-height:100vh; }
 
-/* ===== HEADER (mobile only) ===== */
-header {
-    background: var(--panel);
-    border-bottom: 1px solid var(--border);
-    padding: 15px;
-    text-align: center;
-}
-header .logo {
-    font-size: 26px;
-    font-weight: 800;
-    background: linear-gradient(90deg, var(--accent1), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-@media (min-width: 900px) {
-    header { display: none; }
-}
+        header { background:var(--panel); border-bottom:1px solid var(--border); padding:15px; text-align:center; }
+        header .logo { font-size:26px; font-weight:800; background:linear-gradient(90deg,var(--accent1),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+        @media (min-width:900px){ header { display:none; } }
 
-/* ===== CONTENT ===== */
-.content {
-    flex: 1;
-    padding: 20px;
-    padding-bottom: 100px; /* space for bottom nav */
-    transition: padding 0.3s;
-}
-@media (min-width: 900px) {
-    .content { padding: 40px; padding-bottom: 40px; }
-}
+        .content { flex:1; padding:20px; padding-bottom:100px; }
+        @media (min-width:900px){ .content { padding:40px; padding-bottom:40px; } }
 
-/* ===== BOTTOM NAV ===== */
-.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 70px;
-    background: var(--panel);
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    z-index: 100;
-    transition: transform 0.3s;
-}
-.bottom-nav a {
-    font-size: 26px;
-    color: var(--muted);
-    transition: transform 0.2s, color 0.2s;
-}
-.bottom-nav a:hover { color: white; transform: scale(1.2); }
-@media (min-width: 900px) { .bottom-nav { display: none; } }
+        /* MOBILE NAV & FAB */
+        .bottom-nav, .fab { display:none; } /* default hidden, will only show if logged in */
+        .bottom-nav { position:fixed; bottom:0; left:0; right:0; height:70px; background:var(--panel); border-top:1px solid var(--border); display:flex; justify-content:space-around; align-items:center; z-index:100; }
+        .bottom-nav a { font-size:24px; color:var(--muted); }
+        .bottom-nav a:hover { color:white; }
+        .fab { position:fixed; bottom:90px; right:20px; width:60px; height:60px; border-radius:50%; background:linear-gradient(135deg,var(--accent1),var(--accent2)); display:flex; align-items:center; justify-content:center; font-size:32px; box-shadow:0 10px 30px rgba(157,78,221,0.5); z-index:101; }
+        .fab a { color:white; }
+        @media (min-width:900px){ .fab { display:none; } }
 
-/* ===== FLOATING ACTION BUTTON ===== */
-.fab {
-    position: fixed;
-    bottom: 90px;
-    right: 20px;
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--accent1), var(--accent2));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 34px;
-    box-shadow: 0 12px 30px var(--fab-shadow);
-    z-index: 101;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-.fab:hover { transform: scale(1.1) rotate(10deg); }
-.fab a { color: white; }
-
-/* ===== CONDITIONAL LOGIN VISIBILITY ===== */
-{% if not session.user %}
-.sidebar, header, .bottom-nav, .fab { display: none !important; }
-{% endif %}
-
-</style>
+    </style>
 </head>
 <body>
 
-<!-- SIDEBAR (desktop) -->
-{% if session.user %}
-<aside class="sidebar">
-    <div class="logo">Creators Kit</div>
-    <nav>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/community">Community</a>
-        <a href="/messages">Messages</a>
-        <a href="/profile">Profile</a>
-        <a href="/settings">Settings</a>
-        <a href="/logout">Logout</a>
-    </nav>
-</aside>
-{% endif %}
-
-<!-- MAIN -->
-<div class="main">
     {% if session.user %}
+    <!-- DESKTOP SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo">Creators Kit</div>
+        <nav>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/community">Community</a>
+            <a href="/messages">Messages</a>
+            <a href="/profile">Profile</a>
+            <a href="/settings">Settings</a>
+            <a href="/logout">Logout</a>
+        </nav>
+    </aside>
+
+    <!-- MOBILE HEADER -->
     <header>
         <div class="logo">Creators Kit</div>
     </header>
     {% endif %}
 
-    <main class="content">
-        {% block content %}{% endblock %}
-    </main>
-</div>
+    <!-- MAIN CONTENT -->
+    <div class="main">
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
 
-<!-- MOBILE NAV & FAB -->
-{% if session.user %}
-<nav class="bottom-nav">
-    <a href="/dashboard">🏠</a>
-    <a href="/community">🌐</a>
-    <a href="/post">➕</a>
-    <a href="/messages">💬</a>
-    <a href="/profile">👤</a>
-</nav>
+    {% if session.user %}
+    <!-- MOBILE NAV & FAB -->
+    <nav class="bottom-nav">
+        <a href="/dashboard">🏠</a>
+        <a href="/community">🌐</a>
+        <a href="/post">➕</a>
+        <a href="/messages">💬</a>
+        <a href="/profile">👤</a>
+    </nav>
 
-<div class="fab">
-    <a href="/post">+</a>
-</div>
-{% endif %}
+    <div class="fab">
+        <a href="/post">+</a>
+    </div>
+    {% endif %}
 
 </body>
 </html>
