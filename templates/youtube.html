@@ -10,8 +10,14 @@
             <span class="yt-text">YouTube</span>
         </div>
 
-        <h1>AI Toolkit</h1>
-        <p>Professional growth, monetization & optimization tools</p>
+        <h1 class="yt-title">
+            <span class="yt-main">AI</span>
+            <span class="yt-sub">Toolkit</span>
+        </h1>
+
+        <p class="yt-subtitle">
+            Professional growth, monetization & optimization tools
+        </p>
     </header>
 
     <!-- TOOLS GRID -->
@@ -38,7 +44,9 @@
 
             <form class="tool-form" data-tool="{{ tool[0] }}">
                 <input type="text" placeholder="Enter your video idea…" required>
-                <button type="submit">🚀 Generate with AI</button>
+                <button type="submit">
+                    🚀 Generate with AI
+                </button>
             </form>
 
             <div class="output-box"></div>
@@ -49,7 +57,7 @@
     </div>
 </div>
 
-<!-- JS (UNCHANGED LOGIC) -->
+<!-- JS (UNCHANGED / SAFE) -->
 <script>
 document.querySelectorAll('.tool-form').forEach(form => {
     form.addEventListener('submit', async (e) => {
@@ -90,24 +98,28 @@ document.querySelectorAll('.tool-form').forEach(form => {
 </script>
 
 <style>
-/* ---------- PAGE ---------- */
+/* =============================
+   PAGE LAYOUT
+============================= */
 .tool-wrapper {
     max-width: 1200px;
     margin: auto;
-    padding: 40px 20px;
+    padding: 42px 20px;
 }
 
-/* ---------- HEADER ---------- */
+/* =============================
+   YOUTUBE HEADER
+============================= */
 .yt-header {
     text-align: center;
-    margin-bottom: 45px;
+    margin-bottom: 46px;
 }
 
 .yt-logo {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 
 .play-icon {
@@ -116,48 +128,70 @@ document.querySelectorAll('.tool-form').forEach(form => {
     font-size: 14px;
     padding: 10px 14px;
     border-radius: 10px;
-    box-shadow: 0 0 20px rgba(255,0,51,0.6);
+    box-shadow: 0 0 18px rgba(255,0,51,0.6);
 }
 
 .yt-text {
     font-size: 22px;
     font-weight: 800;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.4px;
 }
 
-.tool-header h1 {
-    font-size: 38px;
+/* =============================
+   TITLE
+============================= */
+.yt-title {
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -0.6px;
     margin-top: 6px;
 }
 
-.tool-header p {
+.yt-main {
+    background: linear-gradient(135deg, #ff0033, #ff4d6d);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.yt-sub {
+    color: white;
+    margin-left: 6px;
+}
+
+.yt-subtitle {
     color: #b5b5b5;
-    margin-top: 6px;
+    margin-top: 8px;
 }
 
-/* ---------- GRID ---------- */
+/* =============================
+   GRID
+============================= */
 .tools-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
     gap: 26px;
 }
 
-/* ---------- TOOL CARD ---------- */
+/* =============================
+   TOOL CARD
+============================= */
 .tool-card {
-    background: rgba(15,15,18,0.85);
+    background: rgba(15,15,18,0.9);
     border-radius: 20px;
     padding: 24px;
-    border: 1px solid rgba(255,0,51,0.25);
+    border: 1px solid rgba(255,0,51,0.28);
     backdrop-filter: blur(14px);
     transition: transform .25s ease, box-shadow .25s ease;
 }
 
 .tool-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 0 35px rgba(255,0,51,0.35);
+    box-shadow: 0 0 34px rgba(255,0,51,0.35);
 }
 
-/* ---------- CARD HEADER ---------- */
+/* =============================
+   CARD HEADER
+============================= */
 .tool-card-header {
     display: flex;
     gap: 14px;
@@ -170,7 +204,7 @@ document.querySelectorAll('.tool-form').forEach(form => {
     padding: 12px;
     border-radius: 14px;
     background: linear-gradient(135deg, #ff0033, #ff4d6d);
-    box-shadow: 0 0 20px rgba(255,0,51,0.5);
+    box-shadow: 0 0 18px rgba(255,0,51,0.5);
 }
 
 .tool-card h3 {
@@ -183,11 +217,13 @@ document.querySelectorAll('.tool-form').forEach(form => {
     color: #b5b5b5;
 }
 
-/* ---------- FORM ---------- */
+/* =============================
+   FORM
+============================= */
 .tool-form input {
     width: 100%;
     padding: 14px;
-    background: rgba(0,0,0,0.65);
+    background: rgba(0,0,0,0.7);
     border: 1px solid rgba(255,0,51,0.35);
     border-radius: 12px;
     color: white;
@@ -199,7 +235,9 @@ document.querySelectorAll('.tool-form').forEach(form => {
     box-shadow: 0 0 0 2px rgba(255,0,51,.35);
 }
 
-/* ---------- BUTTONS ---------- */
+/* =============================
+   BUTTONS
+============================= */
 .tool-form button,
 .copy-btn {
     width: 100%;
@@ -216,19 +254,21 @@ document.querySelectorAll('.tool-form').forEach(form => {
 .tool-form button:hover,
 .copy-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 0 25px rgba(255,0,51,0.6);
+    box-shadow: 0 0 24px rgba(255,0,51,0.6);
 }
 
 .copy-btn {
     margin-top: 12px;
 }
 
-/* ---------- OUTPUT ---------- */
+/* =============================
+   OUTPUT
+============================= */
 .output-box {
     margin-top: 16px;
     padding: 14px;
     min-height: 110px;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.75);
     border-radius: 14px;
     border: 1px solid rgba(255,0,51,0.25);
     font-size: 14px;
