@@ -87,7 +87,7 @@
             min-height: 100vh;
         }
 
-        /* Header (mobile) */
+        /* Header (mobile only) */
         header {
             background: var(--panel);
             border-bottom: 1px solid var(--border);
@@ -113,7 +113,7 @@
         .content {
             flex: 1;
             padding: 20px;
-            padding-bottom: 100px;
+            padding-bottom: 100px; /* space for bottom nav */
         }
 
         @media (min-width: 900px) {
@@ -187,11 +187,19 @@
                 display: none;
             }
         }
+
+        /* Hide nav elements on public pages */
+        {% if not session.user %}
+        .bottom-nav, .fab {
+            display: none;
+        }
+        {% endif %}
     </style>
 </head>
 <body>
 
     <!-- DESKTOP SIDEBAR -->
+    {% if session.user %}
     <aside class="sidebar">
         <div class="logo">Creators Kit</div>
         <nav>
@@ -203,12 +211,15 @@
             <a href="/logout">Logout</a>
         </nav>
     </aside>
+    {% endif %}
 
     <!-- MAIN -->
     <div class="main">
+        {% if session.user %}
         <header>
             <div class="logo">Creators Kit</div>
         </header>
+        {% endif %}
 
         <main class="content">
             {% block content %}
@@ -216,7 +227,8 @@
         </main>
     </div>
 
-    <!-- MOBILE NAV -->
+    <!-- MOBILE NAV & FAB (only when logged in) -->
+    {% if session.user %}
     <nav class="bottom-nav">
         <a href="/dashboard">🏠</a>
         <a href="/community">🌐</a>
@@ -225,10 +237,10 @@
         <a href="/profile">👤</a>
     </nav>
 
-    <!-- FAB -->
     <div class="fab">
         <a href="/post">+</a>
     </div>
+    {% endif %}
 
 </body>
 </html>
