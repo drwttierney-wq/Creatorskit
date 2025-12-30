@@ -1,51 +1,121 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1 class="text-4xl font-bold mb-8">Community Feed</h1>
-<a href="/post" class="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 px-6 py-3 rounded-xl mb-8 inline-block font-bold">
+
+<h1 class="feed-title">Community Feed</h1>
+
+<a href="/post" class="share-btn">
     + Share Idea
 </a>
 
-<div class="space-y-8">
+<div class="feed-container">
     {% if posts %}
         {% for post in posts %}
-        <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
-            
-            <!-- User & Follow Button -->
-            <div class="flex items-center mb-4">
-                <div class="font-bold text-xl">{{ post.user.username }}</div>
+        <div class="post-card">
+
+            <!-- USER & FOLLOW -->
+            <div class="post-header">
+                <div class="user-info">
+                    <div class="avatar"></div>
+                    <div>
+                        <strong>{{ post.user.username }}</strong>
+                    </div>
+                </div>
                 {% set is_following = Follow.query.filter_by(follower_id=current_user.id, followed_id=post.user.id).first() %}
-                <a href="/follow/{{ post.user.id }}" class="ml-auto text-sm px-4 py-2 rounded {% if is_following %}bg-gray-700{% else %}bg-pink-600{% endif %} hover:opacity-90 transition">
+                <a href="/follow/{{ post.user.id }}" class="follow-btn {% if is_following %}following{% endif %}">
                     {% if is_following %}Unfollow{% else %}Follow{% endif %}
                 </a>
             </div>
 
-            <!-- Post Content -->
-            <p class="mb-4 text-lg">{{ post.content }}</p>
+            <!-- POST CONTENT -->
+            <p class="post-content">{{ post.content }}</p>
 
-            <!-- Post Image -->
+            <!-- IMAGE -->
             {% if post.image %}
-            <img src="{{ url_for('uploaded_file', filename=post.image) }}" class="max-w-full rounded-xl mb-4 object-cover">
+            <img src="{{ url_for('uploaded_file', filename=post.image) }}" class="post-image">
             {% endif %}
 
-            <!-- Attached Idea -->
+            <!-- ATTACHED IDEA -->
             {% if post.attached_idea %}
-            <div class="bg-gray-700 p-4 rounded-xl mb-4 whitespace-pre-wrap border-l-4 border-pink-500">
+            <div class="attached-idea">
                 <strong>Attached Idea:</strong><br>{{ post.attached_idea|safe }}
             </div>
             {% endif %}
 
-            <!-- Likes & Timestamp -->
-            <div class="flex items-center text-sm">
-                <a href="/like/{{ post.id }}" class="text-pink-400 mr-6 hover:opacity-80 transition">
-                    ❤️ {{ post.likes|length }} Likes
-                </a>
-                <span class="text-gray-500">{{ post.timestamp.strftime('%b %d at %H:%M') }}</span>
+            <!-- ACTIONS -->
+            <div class="post-actions">
+                <a href="/like/{{ post.id }}" class="like-btn">❤️ {{ post.likes|length }}</a>
+                <span class="timestamp">{{ post.timestamp.strftime('%b %d at %H:%M') }}</span>
+                <button class="comment-toggle" onclick="toggleComments({{ post.id }})">💬 Comments</button>
+            </div>
+
+            <!-- COMMENTS -->
+            <div class="comments-section" id="comments-{{ post.id }}" style="display:none;">
+                {% for comment in post.comments %}
+                <div class="comment">
+                    <strong>{{ comment.user.username }}:</strong> {{ comment.content }}
+                </div>
+                {% endfor %}
+                <form action="/comment/{{ post.id }}" method="POST" class="comment-form">
+                    <input type="text" name="comment" placeholder="Add a comment...">
+                    <button type="submit">Post</button>
+                </form>
             </div>
 
         </div>
         {% endfor %}
     {% else %}
-        <p class="text-xl text-gray-400 italic">No posts yet — be the first to share an idea!</p>
+        <p class="no-posts">No posts yet — be the first to share an idea!</p>
     {% endif %}
 </div>
+
+<script>
+function toggleComments(postId){
+    const section = document.getElementById(`comments-${postId}`);
+    section.style.display = section.style.display === "none" ? "block" : "none";
+}
+</script>
+
+<style>
+.feed-title{
+    font-size:2.5rem;
+    font-weight:900;
+    margin-bottom:1.5rem;
+    color:white;
+}
+.share-btn{
+    display:inline-block;
+    padding:0.75rem 1.5rem;
+    margin-bottom:2rem;
+    background:linear-gradient(90deg,#8b5cf6,#22d3ee);
+    color:white;
+    font-weight:700;
+    border-radius:12px;
+    text-decoration:none;
+    transition:opacity 0.2s;
+}
+.share-btn:hover{opacity:0.9;}
+.feed-container{display:flex;flex-direction:column;gap:2rem;}
+.post-card{background:rgba(15,15,30,0.9);padding:24px;border-radius:20px;box-shadow:0 8px 30px rgba(0,0,0,0.5);}
+.post-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;}
+.user-info{display:flex;align-items:center;gap:12px;}
+.user-info .avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#22d3ee);}
+.follow-btn{padding:6px 12px;border-radius:12px;text-decoration:none;font-weight:600;color:white;background:#e11d48;transition:opacity 0.2s;}
+.follow-btn.following{background:#4b5563;}
+.follow-btn:hover{opacity:0.85;}
+.post-content{font-size:1.125rem;margin-bottom:1rem;color:white;}
+.post-image{width:100%;border-radius:16px;margin-bottom:1rem;object-fit:cover;}
+.attached-idea{background:#1a1a2e;padding:12px;border-left:4px solid #8b5cf6;border-radius:12px;margin-bottom:1rem;color:#ccc;white-space:pre-wrap;}
+.post-actions{display:flex;align-items:center;gap:1rem;font-size:0.875rem;color:#ccc;margin-bottom:1rem;}
+.like-btn{color:#ec4899;text-decoration:none;transition:opacity 0.2s;}
+.like-btn:hover{opacity:0.8;}
+.comment-toggle{background:none;border:none;color:#22d3ee;cursor:pointer;}
+.comments-section{background:#141428;padding:12px;border-radius:12px;}
+.comment{margin-bottom:0.5rem;font-size:0.875rem;color:#ddd;}
+.comment-form{display:flex;gap:8px;margin-top:8px;}
+.comment-form input{flex:1;padding:8px;border-radius:10px;border:none;background:#0b0b16;color:white;}
+.comment-form button{padding:8px 12px;border-radius:10px;border:none;background:#8b5cf6;color:white;cursor:pointer;}
+.comment-form button:hover{opacity:0.85;}
+.no-posts{color:#888;font-style:italic;font-size:1.125rem;}
+</style>
+
 {% endblock %}
