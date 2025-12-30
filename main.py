@@ -55,7 +55,8 @@ def signup():
         username = request.form.get("username")
         password = request.form.get("password")
         if username and password:
-            if User.query.filter_by(username=username).first():
+            existing_user = User.query.filter_by(username=username).first()
+            if existing_user:
                 flash("Username already exists", "error")
                 return redirect(url_for("signup"))
             hashed_pw = generate_password_hash(password)
@@ -119,11 +120,6 @@ def platform(name):
 def community():
     posts = Post.query.order_by(Post.timestamp.desc()).all()
     return render_template("community.html", posts=posts)
-
-@app.route("/post")
-@login_required
-def post_page():
-    return render_template("post.html")
 
 @app.route("/create_post", methods=["POST"])
 @login_required
@@ -194,7 +190,7 @@ def chat(conversation_id):
     if session["user_id"] not in [conversation.participant1_id, conversation.participant2_id]:
         return "Unauthorized", 403
     if request.method == "POST":
-        content = request.form.get("content")
+        content = request.form.get("message")
         if content:
             receiver_id = conversation.participant2_id if session["user_id"] == conversation.participant1_id else conversation.participant1_id
             msg = Message(conversation_id=conversation.id, sender_id=session["user_id"], receiver_id=receiver_id, content=content)
@@ -203,12 +199,10 @@ def chat(conversation_id):
             db.session.add(notif)
             db.session.commit()
     messages = Message.query.filter_by(conversation_id=conversation.id).order_by(Message.timestamp.asc()).all()
-    other_user_id = conversation.participant2_id if session["user_id"] == conversation.participant1_id else conversation.participant1_id
-    other_user = User.query.get(other_user_id)
-    return render_template("chat.html", messages=messages, other_user=other_user)
+    return render_template("chat.html", conversation=conversation, messages=messages, user_id=session["user_id"])
 
 # ----------------------------
-# PROFILE / SETTINGS
+# PROFILE / FOLLOW / SETTINGS
 # ----------------------------
 @app.route("/profile/<int:user_id>")
 @login_required
@@ -222,14 +216,6 @@ def profile(user_id=None):
     return render_template("profile.html", user=user, post_count=post_count,
                            follower_count=follower_count, following_count=following_count)
 
-@app.route("/settings")
-@login_required
-def settings():
-    return render_template("settings.html")
-
-# ----------------------------
-# FOLLOW / UNFOLLOW
-# ----------------------------
 @app.route("/follow/<int:user_id>")
 @login_required
 def follow(user_id):
@@ -246,6 +232,11 @@ def follow(user_id):
         db.session.add(notif)
     db.session.commit()
     return redirect(url_for("profile", user_id=user_id))
+
+@app.route("/settings")
+@login_required
+def settings():
+    return render_template("settings.html")
 
 # ----------------------------
 # UPLOADS
