@@ -1,8 +1,10 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "change-this-in-production"
@@ -26,28 +28,9 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
 # ----------------------------
-# MODELS
+# IMPORT MODELS
 # ----------------------------
-class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user = db.Column(db.String(100), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    image_path = db.Column(db.String(200))
-    timestamp = db.Column(db.DateTime, default=db.func.now())
-    likes = db.relationship("Like", backref="post", lazy=True)
-    comments = db.relationship("Comment", backref="post", lazy=True)
-
-class Like(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user = db.Column(db.String(100), nullable=False)
-    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
-
-class Comment(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user = db.Column(db.String(100), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    post_id = db.Column(db.Integer, db.ForeignKey('post.id'), nullable=False)
-    timestamp = db.Column(db.DateTime, default=db.func.now())
+from models import User, Post, Comment, Like, Follow, Notification, Conversation, Message
 
 with app.app_context():
     db.create_all()
@@ -58,38 +41,67 @@ with app.app_context():
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if "user" not in session:
+        if "user_id" not in session:
             return redirect(url_for("login"))
         return f(*args, **kwargs)
     return decorated
 
 # ----------------------------
-# ROUTES
+# AUTH ROUTES
 # ----------------------------
-@app.route("/")
-def index():
-    session.clear()
-    return render_template("index.html")
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        if username and password:
+            existing_user = User.query.filter_by(username=username).first()
+            if existing_user:
+                flash("Username already exists", "error")
+                return redirect(url_for("signup"))
+            hashed_pw = generate_password_hash(password)
+            user = User(username=username, avatar="default-avatar.png")
+            user.password_hash = hashed_pw
+            db.session.add(user)
+            db.session.commit()
+            session["user_id"] = user.id
+            return redirect(url_for("dashboard"))
+    return render_template("signup.html")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         username = request.form.get("username")
-        if username:
-            session["user"] = username
+        password = request.form.get("password")
+        user = User.query.filter_by(username=username).first()
+        if user and check_password_hash(user.password_hash, password):
+            session["user_id"] = user.id
             return redirect(url_for("dashboard"))
+        flash("Invalid username or password", "error")
     return render_template("login.html")
 
 @app.route("/logout")
+@login_required
 def logout():
-    session.pop("user", None)
+    session.pop("user_id", None)
     return redirect(url_for("index"))
+
+# ----------------------------
+# INDEX / DASHBOARD
+# ----------------------------
+@app.route("/")
+def index():
+    return render_template("index.html")
 
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template("dashboard.html")
+    user = User.query.get(session["user_id"])
+    return render_template("dashboard.html", user=user)
 
+# ----------------------------
+# PLATFORM ROUTES
+# ----------------------------
 @app.route("/platform/<name>")
 @login_required
 def platform(name):
@@ -101,7 +113,7 @@ def platform(name):
     return "Page not found", 404
 
 # ----------------------------
-# COMMUNITY / FEED
+# COMMUNITY / POSTS
 # ----------------------------
 @app.route("/community")
 @login_required
@@ -118,6 +130,7 @@ def post_page():
 @login_required
 def create_post():
     content = request.form.get("content")
+    attached_idea = request.form.get("attached_idea")
     image_path = None
     if 'image' in request.files:
         file = request.files['image']
@@ -126,23 +139,28 @@ def create_post():
             file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
             image_path = filename
     if content:
-        post = Post(user=session["user"], content=content, image_path=image_path)
+        post = Post(user_id=session["user_id"], content=content, image=image_path, attached_idea=attached_idea)
         db.session.add(post)
         db.session.commit()
-    return redirect("/community")
+    return redirect(url_for("community"))
 
 @app.route("/like/<int:post_id>")
 @login_required
 def like_post(post_id):
     post = Post.query.get_or_404(post_id)
-    existing_like = Like.query.filter_by(post_id=post_id, user=session["user"]).first()
+    user_id = session["user_id"]
+    existing_like = Like.query.filter_by(post_id=post_id, user_id=user_id).first()
     if existing_like:
         db.session.delete(existing_like)
     else:
-        like = Like(user=session["user"], post_id=post_id)
+        like = Like(user_id=user_id, post_id=post_id)
         db.session.add(like)
+        # Add notification
+        if post.user_id != user_id:
+            notif = Notification(user_id=post.user_id, type="like", from_user_id=user_id, post_id=post.id)
+            db.session.add(notif)
     db.session.commit()
-    return redirect("/community")
+    return redirect(url_for("community"))
 
 @app.route("/comment/<int:post_id>", methods=["POST"])
 @login_required
@@ -150,35 +168,85 @@ def comment_post(post_id):
     post = Post.query.get_or_404(post_id)
     content = request.form.get("comment")
     if content:
-        comment = Comment(user=session["user"], content=content, post_id=post_id)
+        comment = Comment(user_id=session["user_id"], post_id=post.id, content=content)
         db.session.add(comment)
+        # Add notification
+        if post.user_id != session["user_id"]:
+            notif = Notification(user_id=post.user_id, type="comment", from_user_id=session["user_id"], post_id=post.id)
+            db.session.add(notif)
         db.session.commit()
-    return redirect("/community")
+    return redirect(url_for("community"))
 
 # ----------------------------
-# MESSAGES / PROFILE / SETTINGS
+# MESSAGING
 # ----------------------------
 @app.route("/messages")
 @login_required
 def messages():
-    return render_template("messages_inbox.html")
+    user_id = session["user_id"]
+    conversations = Conversation.query.filter(
+        (Conversation.participant1_id == user_id) | (Conversation.participant2_id == user_id)
+    ).order_by(Conversation.created_at.desc()).all()
+    return render_template("messages_inbox.html", conversations=conversations, user_id=user_id)
 
-@app.route("/profile")
+@app.route("/chat/<int:conversation_id>", methods=["GET", "POST"])
 @login_required
-def profile():
-    # Example: count stats dynamically
-    post_count = Post.query.filter_by(user=session["user"]).count()
-    follower_count = 0   # Placeholder if you implement followers table
-    following_count = 0  # Placeholder if you implement followers table
-    return render_template("profile.html",
-                           post_count=post_count,
-                           follower_count=follower_count,
-                           following_count=following_count)
+def chat(conversation_id):
+    conversation = Conversation.query.get_or_404(conversation_id)
+    if session["user_id"] not in [conversation.participant1_id, conversation.participant2_id]:
+        return "Unauthorized", 403
+    if request.method == "POST":
+        content = request.form.get("message")
+        if content:
+            receiver_id = conversation.participant2_id if session["user_id"] == conversation.participant1_id else conversation.participant1_id
+            msg = Message(conversation_id=conversation.id, sender_id=session["user_id"], receiver_id=receiver_id, content=content)
+            db.session.add(msg)
+            # Add notification
+            notif = Notification(user_id=receiver_id, type="message", from_user_id=session["user_id"])
+            db.session.add(notif)
+            db.session.commit()
+    messages = Message.query.filter_by(conversation_id=conversation.id).order_by(Message.timestamp.asc()).all()
+    return render_template("chat.html", conversation=conversation, messages=messages, user_id=session["user_id"])
+
+# ----------------------------
+# PROFILE / SETTINGS
+# ----------------------------
+@app.route("/profile/<int:user_id>")
+@login_required
+def profile(user_id=None):
+    if user_id is None:
+        user_id = session["user_id"]
+    user = User.query.get_or_404(user_id)
+    post_count = Post.query.filter_by(user_id=user.id).count()
+    follower_count = user.followers.count()
+    following_count = user.following.count()
+    return render_template("profile.html", user=user, post_count=post_count,
+                           follower_count=follower_count, following_count=following_count)
 
 @app.route("/settings")
 @login_required
 def settings():
     return render_template("settings.html")
+
+# ----------------------------
+# FOLLOW / UNFOLLOW
+# ----------------------------
+@app.route("/follow/<int:user_id>")
+@login_required
+def follow(user_id):
+    current_user = session["user_id"]
+    if current_user == user_id:
+        return redirect(url_for("profile", user_id=user_id))
+    existing = Follow.query.filter_by(follower_id=current_user, followed_id=user_id).first()
+    if existing:
+        db.session.delete(existing)
+    else:
+        follow = Follow(follower_id=current_user, followed_id=user_id)
+        db.session.add(follow)
+        notif = Notification(user_id=user_id, type="follow", from_user_id=current_user)
+        db.session.add(notif)
+    db.session.commit()
+    return redirect(url_for("profile", user_id=user_id))
 
 # ----------------------------
 # UPLOADS
