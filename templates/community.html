@@ -1,34 +1,389 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1 class="page-title">Community Feed</h1>
-<p class="subtitle">Share creations, get feedback & connect</p>
+<div class="community-wrapper">
+    <h1 class="page-title">Community Feed</h1>
+    <p class="subtitle">Latest from creators</p>
 
-<div class="feed-container">
-    {% for post in posts %}
-    <div class="post-card">
-        <div class="post-header">
-            <div class="avatar">{{ post.author.username[0]|upper }}</div>
-            <div>
-                <h4>@{{ post.author.username }}</h4>
-                <span class="timestamp">{{ post.timestamp.strftime('%b %d · %I:%M %p') }}</span>
+    <a href="/post" class="create-post-btn">
+        + Share Idea
+    </a>
+
+    <div class="feed">
+        {% if posts %}
+            {% for post in posts %}
+            <div class="post-card">
+
+                <!-- Post Header -->
+                <div class="post-header">
+                    <div class="avatar">
+                        {% if post.user_avatar %}
+                            <img src="{{ post.user_avatar }}" class="avatar-img">
+                        {% else %}
+                            {{ post.user[0]|upper }}
+                        {% endif %}
+                    </div>
+                    <div>
+                        <strong>@{{ post.user }}</strong>
+                        {% if post.verified %}
+                            <span class="verified">✔</span>
+                        {% endif %}
+                        <span class="timestamp">{{ post.timestamp.strftime('%b %d · %I:%M %p') }}</span>
+                    </div>
+                    <div class="post-options">
+                        {% if session.user == post.user %}
+                        <button class="options-btn" data-post="{{ post.id }}">⋮</button>
+                        <div class="options-menu" id="options-{{ post.id }}">
+                            <a href="/edit_post/{{ post.id }}">Edit</a>
+                            <a href="/delete_post/{{ post.id }}">Delete</a>
+                        </div>
+                        {% else %}
+                        <button class="options-btn" data-post="{{ post.id }}">⋮</button>
+                        <div class="options-menu" id="options-{{ post.id }}">
+                            <a href="/report_post/{{ post.id }}">Report</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Post Content -->
+                <p class="post-content">{{ post.content }}</p>
+
+                <!-- Post Image -->
+                {% if post.image_path %}
+                    <img src="/uploads/{{ post.image_path }}" class="post-image" onclick="openLightbox('{{ post.image_path }}')">
+                {% endif %}
+
+                <!-- Reactions -->
+                <div class="post-actions">
+                    <div class="emoji-reactions" data-post="{{ post.id }}">
+                        <button class="like-btn" onclick="likePost({{ post.id }})">❤️ {{ post.likes|length }}</button>
+                        <button class="comment-toggle" data-post="{{ post.id }}">💬 {{ post.comments|length }}</button>
+                        <button>🔄 Share</button>
+                    </div>
+                    <div class="reaction-picker" id="reactions-{{ post.id }}" style="display:none;">
+                        {% for emoji in ['🔥','🚀','😊','💡','🎯','🤖','💎','🌟'] %}
+                        <button onclick="addReaction({{ post.id }}, '{{ emoji }}')">{{ emoji }}</button>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Comment Section -->
+                <div class="comments-section" id="comments-{{ post.id }}" style="display:none;">
+                    <form action="/comment/{{ post.id }}" method="POST" class="comment-form">
+                        <input type="text" name="comment" placeholder="Write a comment..." required>
+                        <button type="submit">Post</button>
+                    </form>
+
+                    {% for comment in post.comments %}
+                    <div class="comment-card">
+                        <strong>@{{ comment.user }}</strong>: {{ comment.content }}
+                        <span class="comment-time">{{ comment.timestamp.strftime('%b %d · %I:%M %p') }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+
             </div>
-        </div>
-        <p>{{ post.content }}</p>
-        {% if post.image_path %}
-        <img src="/uploads/{{ post.image_path }}" alt="Post image" style="width:100%; border-radius:12px; margin:15px 0;">
+            {% endfor %}
+        {% else %}
+            <p class="no-posts">No posts yet — be the first to share!</p>
         {% endif %}
-        <div class="post-actions">
-            <form action="/like_post/{{ post.id }}" method="POST">
-                <button type="submit">❤️ {{ post.likes }}</button>
-            </form>
-            <button>💬 0</button>
-            <button>🔄 Share</button>
-        </div>
     </div>
-    {% else %}
-    <p style="text-align:center; color:#aaa; margin:50px 0;">No posts yet — be the first!</p>
-    {% endfor %}
 </div>
+
+<!-- Image Lightbox -->
+<div id="lightbox" onclick="closeLightbox()">
+    <img id="lightbox-img">
+</div>
+
+<script>
+document.querySelectorAll('.comment-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const postId = btn.getAttribute('data-post');
+        const section = document.getElementById('comments-' + postId);
+        section.style.display = section.style.display === 'block' ? 'none' : 'block';
+    });
+});
+
+document.querySelectorAll('.options-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const postId = btn.getAttribute('data-post');
+        const menu = document.getElementById('options-' + postId);
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+    });
+});
+document.body.addEventListener('click', () => {
+    document.querySelectorAll('.options-menu').forEach(menu => menu.style.display='none');
+});
+
+// Lightbox functions
+function openLightbox(src) {
+    document.getElementById('lightbox-img').src = '/uploads/' + src;
+    document.getElementById('lightbox').style.display = 'flex';
+}
+function closeLightbox() {
+    document.getElementById('lightbox').style.display = 'none';
+}
+
+// Placeholder functions for reactions (connect to backend)
+function likePost(postId) {
+    window.location.href = '/like/' + postId;
+}
+function addReaction(postId, emoji) {
+    console.log('Reaction', emoji, 'on post', postId);
+    // Backend call can be implemented here
+}
+</script>
+
+<style>
+.community-wrapper {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-title {
+    font-size: 34px;
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #aaa;
+    margin-bottom: 20px;
+}
+
+.create-post-btn {
+    display: inline-block;
+    text-align: center;
+    background: linear-gradient(90deg, #8b5cf6, #22d3ee);
+    color: white;
+    font-weight: bold;
+    padding: 12px 24px;
+    border-radius: 12px;
+    margin: 0 auto 30px auto;
+    text-decoration: none;
+    transition: 0.3s;
+}
+.create-post-btn:hover {
+    opacity: 0.9;
+}
+
+.feed {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.post-card {
+    background: rgba(15,15,30,0.95);
+    border-radius: 24px;
+    padding: 24px;
+    border: 1px solid #222;
+    box-shadow: 0 12px 40px rgba(0,0,0,.5);
+    position: relative;
+}
+
+.post-header {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg,#8b5cf6,#22d3ee);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 20px;
+    overflow: hidden;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.verified {
+    background: #22d3ee;
+    color: black;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    margin-left: 6px;
+}
+
+.timestamp {
+    font-size: 13px;
+    color: #888;
+    display: block;
+    margin-top: 4px;
+}
+
+.post-content {
+    font-size: 17px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+
+.post-image {
+    width: 100%;
+    border-radius: 18px;
+    margin: 16px 0;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.post-actions {
+    display: flex;
+    gap: 20px;
+    margin-top: 16px;
+    align-items: center;
+}
+
+.post-actions button {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 15px;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 10px;
+    transition: 0.2s;
+}
+
+.post-actions button:hover {
+    background: rgba(139,92,246,0.2);
+}
+
+.reaction-picker {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.reaction-picker button {
+    font-size: 18px;
+    cursor: pointer;
+    background: #222;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    transition: 0.2s;
+}
+.reaction-picker button:hover {
+    transform: scale(1.2);
+}
+
+.comments-section {
+    margin-top: 16px;
+}
+
+.comment-form {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.comment-form input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 12px;
+    border: 1px solid #333;
+    background: #1a1a2e;
+    color: white;
+}
+
+.comment-form button {
+    background: #8b5cf6;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.comment-card {
+    padding: 8px 12px;
+    background: #111;
+    border-radius: 12px;
+    margin-bottom: 8px;
+}
+
+.comment-time {
+    font-size: 11px;
+    color: #888;
+    margin-left: 8px;
+}
+
+.post-options {
+    margin-left: auto;
+    position: relative;
+}
+
+.options-btn {
+    background: none;
+    border: none;
+    color: #ccc;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.options-menu {
+    position: absolute;
+    right: 0;
+    top: 28px;
+    background: #111;
+    border: 1px solid #333;
+    border-radius: 12px;
+    display: none;
+    flex-direction: column;
+    min-width: 120px;
+    z-index: 10;
+}
+
+.options-menu a {
+    padding: 10px 12px;
+    color: white;
+    text-decoration: none;
+}
+.options-menu a:hover {
+    background: #222;
+}
+
+#lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.8);
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+#lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 20px;
+}
+
+.no-posts {
+    text-align: center;
+    color: #aaa;
+    font-size: 18px;
+    margin: 80px 0;
+}
+</style>
 
 {% endblock %}
