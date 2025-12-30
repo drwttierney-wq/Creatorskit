@@ -55,8 +55,7 @@ def signup():
         username = request.form.get("username")
         password = request.form.get("password")
         if username and password:
-            existing_user = User.query.filter_by(username=username).first()
-            if existing_user:
+            if User.query.filter_by(username=username).first():
                 flash("Username already exists", "error")
                 return redirect(url_for("signup"))
             hashed_pw = generate_password_hash(password)
@@ -155,7 +154,7 @@ def like_post(post_id):
     else:
         like = Like(user_id=user_id, post_id=post_id)
         db.session.add(like)
-        # Add notification
+        # Notification
         if post.user_id != user_id:
             notif = Notification(user_id=post.user_id, type="like", from_user_id=user_id, post_id=post.id)
             db.session.add(notif)
@@ -170,7 +169,6 @@ def comment_post(post_id):
     if content:
         comment = Comment(user_id=session["user_id"], post_id=post.id, content=content)
         db.session.add(comment)
-        # Add notification
         if post.user_id != session["user_id"]:
             notif = Notification(user_id=post.user_id, type="comment", from_user_id=session["user_id"], post_id=post.id)
             db.session.add(notif)
@@ -196,17 +194,18 @@ def chat(conversation_id):
     if session["user_id"] not in [conversation.participant1_id, conversation.participant2_id]:
         return "Unauthorized", 403
     if request.method == "POST":
-        content = request.form.get("message")
+        content = request.form.get("content")
         if content:
             receiver_id = conversation.participant2_id if session["user_id"] == conversation.participant1_id else conversation.participant1_id
             msg = Message(conversation_id=conversation.id, sender_id=session["user_id"], receiver_id=receiver_id, content=content)
             db.session.add(msg)
-            # Add notification
             notif = Notification(user_id=receiver_id, type="message", from_user_id=session["user_id"])
             db.session.add(notif)
             db.session.commit()
     messages = Message.query.filter_by(conversation_id=conversation.id).order_by(Message.timestamp.asc()).all()
-    return render_template("chat.html", conversation=conversation, messages=messages, user_id=session["user_id"])
+    other_user_id = conversation.participant2_id if session["user_id"] == conversation.participant1_id else conversation.participant1_id
+    other_user = User.query.get(other_user_id)
+    return render_template("chat.html", messages=messages, other_user=other_user)
 
 # ----------------------------
 # PROFILE / SETTINGS
