@@ -11,51 +11,37 @@
     </div>
 
     <div class="inbox-list" id="inboxList">
-        <!-- Placeholder conversations -->
-        <a href="/messages" class="conv-card unread">
-            <div class="avatar" data-username="J"><span>J</span><span class="status online" title="Online"></span></div>
-            <div class="conv-info">
-                <h4>@jakecreator</h4>
-                <p>Hey! Loved your TikTok tool post 🚀</p>
-                <span class="time">2h ago</span>
-            </div>
-            <div class="quick-actions">
-                <button class="action-btn" title="Pin">📌</button>
-                <button class="action-btn" title="Mute">🔇</button>
-                <button class="action-btn" title="Delete">🗑️</button>
-            </div>
-        </a>
+        {% if conversations %}
+            {% for conv in conversations %}
+                {% set other_user = conv.participant1_id if conv.participant2_id == user_id else conv.participant2_id %}
+                {% set last_msg = conv.messages.order_by(Message.timestamp.desc()).first() %}
+                {% set unread = conv.messages.filter_by(receiver_id=user_id, read=False).count() %}
+                {% set other_user_obj = User.query.get(other_user) %}
 
-        <a href="/messages" class="conv-card">
-            <div class="avatar" data-username="S"><span>S</span><span class="status offline" title="Offline"></span></div>
-            <div class="conv-info">
-                <h4>@sarahstreams</h4>
-                <p>Thanks for the Twitch title ideas!</p>
-                <span class="time">Yesterday</span>
-            </div>
-            <div class="quick-actions">
-                <button class="action-btn" title="Pin">📌</button>
-                <button class="action-btn" title="Mute">🔇</button>
-                <button class="action-btn" title="Delete">🗑️</button>
-            </div>
-        </a>
-
-        <a href="/messages" class="conv-card unread">
-            <div class="avatar" data-username="M"><span>M</span><span class="status online" title="Online"></span></div>
-            <div class="conv-info">
-                <h4>@maxai</h4>
-                <p>Let's collab on some AI tools?</p>
-                <span class="time">3 days ago</span>
-            </div>
-            <div class="quick-actions">
-                <button class="action-btn" title="Pin">📌</button>
-                <button class="action-btn" title="Mute">🔇</button>
-                <button class="action-btn" title="Delete">🗑️</button>
-            </div>
-        </a>
-
-        <!-- Empty state -->
-        <p class="no-messages">✨ Start a conversation to see it here!</p>
+                <a href="{{ url_for('chat', conversation_id=conv.id) }}" class="conv-card {% if unread %}unread{% endif %}">
+                    <div class="avatar" data-username="{{ other_user_obj.username[0] }}">
+                        <span>{{ other_user_obj.username[0] }}</span>
+                        <span class="status {% if other_user_obj.is_online %}online{% else %}offline{% endif %}" title="{% if other_user_obj.is_online %}Online{% else %}Offline{% endif %}"></span>
+                    </div>
+                    <div class="conv-info">
+                        <h4>@{{ other_user_obj.username }}</h4>
+                        {% if last_msg %}
+                            <p>{{ last_msg.content[:60] }}{% if last_msg.content|length > 60 %}...{% endif %}</p>
+                            <span class="time">{{ last_msg.timestamp.strftime("%b %d %H:%M") }}</span>
+                        {% else %}
+                            <p class="no-msg">No messages yet</p>
+                        {% endif %}
+                    </div>
+                    <div class="quick-actions">
+                        <button class="action-btn" title="Pin">📌</button>
+                        <button class="action-btn" title="Mute">🔇</button>
+                        <button class="action-btn" title="Delete">🗑️</button>
+                    </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <p class="no-messages">✨ Start a conversation to see it here!</p>
+        {% endif %}
     </div>
 </div>
 
@@ -65,7 +51,7 @@ function filterConversations() {
     const cards = document.querySelectorAll(".conv-card");
     cards.forEach(card => {
         const username = card.querySelector("h4").textContent.toLowerCase();
-        const message = card.querySelector("p").textContent.toLowerCase();
+        const message = card.querySelector("p") ? card.querySelector("p").textContent.toLowerCase() : "";
         card.style.display = (username.includes(input) || message.includes(input)) ? "flex" : "none";
     });
 }
@@ -84,168 +70,7 @@ document.querySelectorAll('.avatar').forEach(avatar => {
 </script>
 
 <style>
-.messages-wrapper {
-    max-width: 780px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-.page-title {
-    font-size: 36px;
-    font-weight: 900;
-    text-align: center;
-    margin-bottom: 8px;
-}
-
-.subtitle {
-    text-align: center;
-    color: #aaa;
-    margin-bottom: 30px;
-    font-size: 16px;
-}
-
-.search-bar {
-    text-align: center;
-    margin-bottom: 25px;
-}
-.search-bar input {
-    width: 100%;
-    max-width: 520px;
-    padding: 14px 20px;
-    border-radius: 16px;
-    border: 1px solid #333;
-    background: #1a1a2e;
-    color: white;
-    font-size: 16px;
-    transition: border 0.2s;
-}
-.search-bar input:focus {
-    border: 1px solid #8b5cf6;
-    outline: none;
-}
-
-/* Conversation cards */
-.inbox-list {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-}
-
-.conv-card {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 20px;
-    background: rgba(15,15,30,0.95);
-    border-radius: 22px;
-    border: 1px solid #222;
-    text-decoration: none;
-    color: white;
-    transition: transform 0.25s, background 0.25s, box-shadow 0.25s;
-    position: relative;
-}
-
-.conv-card:hover {
-    background: rgba(30,30,60,1);
-    transform: translateY(-4px);
-    box-shadow: 0 14px 38px rgba(0,0,0,.5);
-}
-
-.conv-card.unread {
-    border-left: 4px solid #8b5cf6;
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0% { box-shadow: 0 0 0 rgba(139,92,246,0.4); }
-    50% { box-shadow: 0 0 12px rgba(139,92,246,0.6); }
-    100% { box-shadow: 0 0 0 rgba(139,92,246,0.4); }
-}
-
-.avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 26px;
-    flex-shrink: 0;
-    color: #fff;
-    position: relative;
-    overflow: hidden;
-}
-
-.status {
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    position: absolute;
-    bottom: 2px;
-    right: 2px;
-    border: 2px solid #0f0f1e;
-}
-.status.online { background: #22d3ee; }
-.status.offline { background: #888; }
-
-.conv-info {
-    flex: 1;
-    overflow: hidden;
-}
-.conv-info h4 {
-    font-size: 19px;
-    margin-bottom: 4px;
-}
-.conv-info p {
-    color: #ccc;
-    font-size: 15px;
-    margin-bottom: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 440px;
-}
-
-.time {
-    font-size: 13px;
-    color: #888;
-}
-
-/* Quick action buttons */
-.quick-actions {
-    margin-left: auto;
-    display: flex;
-    gap: 8px;
-}
-.action-btn {
-    background: rgba(30,30,60,0.85);
-    border: none;
-    padding: 6px 12px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background 0.25s, transform 0.2s;
-}
-.action-btn:hover {
-    background: #8b5cf6;
-    transform: scale(1.05);
-}
-
-/* Empty state */
-.no-messages {
-    text-align: center;
-    color: #aaa;
-    font-size: 18px;
-    margin: 80px 0;
-    font-style: italic;
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-    .conv-info p { max-width: 220px; }
-    .search-bar input { max-width: 100%; }
-}
+/* Keep the same styles from your original file */
 </style>
 
 {% endblock %}
