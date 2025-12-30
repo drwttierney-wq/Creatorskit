@@ -1,31 +1,73 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1 class="page-title">Chat with @{{ other_user.username }}</h1>
+<h1 class="page-title">💬 Chat with @{{ other_user.username }}</h1>
 
-<div class="chat-container">
-    {% for msg in messages %}
-    <div class="message {{ 'sent' if msg.sender_id == session.user_id else 'received' }}">
-        <p>{{ msg.content }}</p>
-        <span class="timestamp">{{ msg.timestamp.strftime('%I:%M %p') }}</span>
-    </div>
-    {% endfor %}
+<div class="chat-container" id="chatContainer">
+    {% if messages %}
+        {% for msg in messages %}
+        <div class="message {{ 'sent' if msg.sender_id == session['user_id'] else 'received' }}">
+            <div class="message-info">
+                {% if msg.sender_id != session['user_id'] %}
+                <img src="{{ url_for('uploaded_file', filename=msg.sender.avatar) }}" class="avatar-small">
+                {% endif %}
+                <p>{{ msg.content }}</p>
+            </div>
+            <span class="timestamp">{{ msg.timestamp.strftime('%I:%M %p') }}</span>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="no-messages">Start the conversation by typing below!</p>
+    {% endif %}
 </div>
 
 <form action="{{ url_for('chat', username=other_user.username) }}" method="POST" class="chat-form">
-    <input type="text" name="content" placeholder="Type a message..." required>
+    <input type="text" name="content" placeholder="Type a message..." required autocomplete="off">
     <button type="submit">Send</button>
 </form>
 
 <style>
-    .chat-container { max-width: 700px; margin: 0 auto; padding-bottom: 100px; }
-    .message { max-width: 70%; padding: 15px; border-radius: 18px; margin: 10px 0; }
+    .chat-container { 
+        max-width: 700px; 
+        margin: 0 auto; 
+        padding-bottom: 100px; 
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .message { 
+        max-width: 70%; 
+        padding: 15px; 
+        border-radius: 18px; 
+        margin: 5px 0; 
+        display: flex;
+        flex-direction: column;
+    }
+    .message-info { display: flex; align-items: flex-end; gap: 10px; }
     .received { background: rgba(80,50,140,0.3); }
     .sent { background: linear-gradient(90deg, #9d4edd, #c77dff); margin-left: auto; }
-    .timestamp { font-size: 12px; color: #aaa; display: block; margin-top: 5px; }
-    .chat-form { position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; background: #111; display: flex; gap: 10px; border-top: 1px solid #333; }
-    .chat-form input { flex: 1; padding: 15px; background: #222; color: white; border: 1px solid #555; border-radius: 12px; }
-    .chat-form button { padding: 15px 25px; background: linear-gradient(90deg, #9d4edd, #c77dff); border: none; color: white; border-radius: 12px; font-weight: bold; cursor: pointer; }
+    .timestamp { font-size: 12px; color: #aaa; margin-top: 5px; align-self: flex-end; }
+    .avatar-small { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+    .chat-form { 
+        position: fixed; bottom: 0; left: 0; right: 0; padding: 15px; 
+        background: #111; display: flex; gap: 10px; border-top: 1px solid #333; 
+    }
+    .chat-form input { 
+        flex: 1; padding: 15px; background: #222; color: white; border: 1px solid #555; border-radius: 12px; 
+    }
+    .chat-form button { 
+        padding: 15px 25px; background: linear-gradient(90deg, #9d4edd, #c77dff); border: none; 
+        color: white; border-radius: 12px; font-weight: bold; cursor: pointer; 
+    }
+    .no-messages { text-align: center; color: #aaa; margin-top: 50px; font-style: italic; }
 </style>
+
+<script>
+    // Scroll to bottom automatically
+    const chatContainer = document.getElementById('chatContainer');
+    if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+</script>
 
 {% endblock %}
