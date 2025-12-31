@@ -2,28 +2,28 @@
    DESIGN SYSTEM
 ===================================================== */
 :root {
-  --bg-root: #05010d;
-  --bg-deep: #0b0218;
-  --bg-surface: rgba(20, 6, 40, 0.85);
-  --bg-card: rgba(40, 18, 80, 0.55);
+  --bg-root: #0a0418;
+  --bg-deep: #120826;
+  --bg-surface: rgba(32, 14, 64, 0.9);
+  --bg-card: rgba(60, 32, 120, 0.55);
 
-  --accent-main: #c77dff;
+  --accent-main: #cfa6ff;
   --accent-strong: #9d4edd;
-  --accent-glow: rgba(157, 78, 221, 0.6);
+  --accent-glow: rgba(157, 78, 221, 0.7);
 
   --text-main: #ffffff;
-  --text-muted: #b8a9d9;
-  --text-dim: #8a7fa8;
+  --text-muted: #d0c2f2;
+  --text-dim: #a294c8;
 
-  --border-soft: rgba(200, 150, 255, 0.25);
-  --border-strong: rgba(200, 150, 255, 0.45);
+  --border-soft: rgba(210, 180, 255, 0.25);
+  --border-strong: rgba(210, 180, 255, 0.45);
 
   --radius-sm: 12px;
   --radius-md: 18px;
-  --radius-lg: 26px;
+  --radius-lg: 28px;
 
-  --shadow-soft: 0 15px 40px rgba(0,0,0,0.55);
-  --shadow-glow: 0 0 40px rgba(157,78,221,0.55);
+  --shadow-soft: 0 20px 50px rgba(0,0,0,0.5);
+  --shadow-glow: 0 0 50px rgba(157,78,221,0.65);
 }
 
 /* =====================================================
@@ -40,121 +40,80 @@
 ===================================================== */
 body {
   background:
-    radial-gradient(circle at top, #1b0438, var(--bg-root) 60%),
-    linear-gradient(180deg, var(--bg-root), #000);
+    radial-gradient(circle at top, #2a0a55, var(--bg-root) 65%),
+    linear-gradient(180deg, var(--bg-root), #05000c);
   color: var(--text-main);
   font-family: "Segoe UI", system-ui, sans-serif;
   min-height: 100vh;
 }
 
 /* =====================================================
-   HEADER
-===================================================== */
-.header {
-  text-align: center;
-  padding: 28px 20px;
-  background: linear-gradient(
-    180deg,
-    rgba(40,18,80,0.7),
-    rgba(10,0,25,0.9)
-  );
-  border-bottom: 1px solid var(--border-soft);
-  backdrop-filter: blur(12px);
-}
-
-.logo {
-  font-size: 38px;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  background: linear-gradient(90deg, #e0aaff, #9d4edd);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-/* =====================================================
-   NAV
-===================================================== */
-nav {
-  margin-top: 14px;
-}
-
-nav a {
-  color: var(--accent-main);
-  margin: 0 18px;
-  font-size: 18px;
-  font-weight: 600;
-  text-decoration: none;
-  position: relative;
-}
-
-nav a::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -6px;
-  width: 0%;
-  height: 2px;
-  background: linear-gradient(90deg, #9d4edd, #e0aaff);
-  transition: width 0.3s ease;
-}
-
-nav a:hover::after {
-  width: 100%;
-}
-
-/* =====================================================
-   MAIN CONTENT
+   CONTENT
 ===================================================== */
 .content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 50px 24px;
 }
 
 /* =====================================================
    TITLES
 ===================================================== */
 .page-title {
-  font-size: 44px;
-  margin-bottom: 16px;
+  font-size: 48px;
+  margin-bottom: 10px;
   text-align: center;
   font-weight: 900;
-  background: linear-gradient(90deg, #e0aaff, #9d4edd);
+  background: linear-gradient(90deg, #f1ddff, #9d4edd);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .subtitle {
-  font-size: 18px;
+  font-size: 19px;
   color: var(--text-muted);
-  margin-bottom: 48px;
+  margin-bottom: 56px;
   text-align: center;
 }
 
 /* =====================================================
-   GRID / DASHBOARD
+   SECTION BLOCKS
+===================================================== */
+.section {
+  margin-bottom: 70px;
+}
+
+.section-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 22px;
+  color: #f1e9ff;
+}
+
+/* =====================================================
+   GRID SYSTEM (ASYMMETRICAL)
 ===================================================== */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 28px;
 }
 
 /* =====================================================
-   CARDS
+   CARD BASE
 ===================================================== */
 .card {
+  grid-column: span 4;
   background: linear-gradient(
     180deg,
     var(--bg-card),
-    rgba(15,5,35,0.9)
+    rgba(20,8,45,0.95)
   );
-  padding: 32px;
+  padding: 34px;
   border-radius: var(--radius-lg);
-  text-align: center;
   border: 1px solid var(--border-soft);
-  transition: all 0.35s ease;
   box-shadow: var(--shadow-soft);
+  transition: all 0.35s ease;
   position: relative;
   overflow: hidden;
 }
@@ -163,7 +122,7 @@ nav a:hover::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at top, rgba(157,78,221,0.25), transparent 60%);
+  background: radial-gradient(circle at top, rgba(157,78,221,0.35), transparent 60%);
   opacity: 0;
   transition: opacity 0.35s ease;
 }
@@ -173,14 +132,14 @@ nav a:hover::after {
 }
 
 .card:hover {
-  transform: translateY(-8px) scale(1.03);
+  transform: translateY(-10px);
   border-color: var(--border-strong);
   box-shadow: var(--shadow-glow);
 }
 
 .card h2 {
-  font-size: 26px;
-  margin-bottom: 12px;
+  font-size: 24px;
+  margin-bottom: 10px;
 }
 
 .card p {
@@ -189,125 +148,73 @@ nav a:hover::after {
 }
 
 /* =====================================================
+   FEATURED CARDS (PRIMARY)
+===================================================== */
+.card.featured {
+  grid-column: span 8;
+  padding: 44px;
+}
+
+.card.featured h2 {
+  font-size: 30px;
+}
+
+/* =====================================================
+   COMPACT CARDS (SECONDARY)
+===================================================== */
+.card.compact {
+  grid-column: span 3;
+  padding: 26px;
+}
+
+.card.compact h2 {
+  font-size: 20px;
+}
+
+/* =====================================================
    FEED
 ===================================================== */
 .feed-container {
-  max-width: 720px;
+  max-width: 760px;
   margin: 0 auto;
 }
 
 .post-card {
   background: linear-gradient(
     180deg,
-    rgba(40,18,80,0.45),
-    rgba(10,0,30,0.85)
+    rgba(60,32,120,0.5),
+    rgba(20,8,45,0.95)
   );
-  padding: 26px;
+  padding: 28px;
   border-radius: var(--radius-lg);
-  margin-bottom: 30px;
+  margin-bottom: 34px;
   border: 1px solid var(--border-soft);
   box-shadow: var(--shadow-soft);
-  transition: transform 0.25s ease;
-}
-
-.post-card:hover {
-  transform: translateY(-4px);
-}
-
-/* =====================================================
-   POST HEADER
-===================================================== */
-.post-header {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-bottom: 16px;
-}
-
-.avatar {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #9d4edd, #e0aaff);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  font-size: 20px;
-  box-shadow: 0 0 20px rgba(157,78,221,0.6);
-}
-
-.timestamp {
-  font-size: 14px;
-  color: var(--text-dim);
-}
-
-/* =====================================================
-   POST ACTIONS
-===================================================== */
-.post-actions {
-  display: flex;
-  gap: 34px;
-  margin-top: 18px;
-}
-
-.post-actions button {
-  background: none;
-  border: none;
-  color: var(--accent-main);
-  font-size: 22px;
-  cursor: pointer;
-  transition: transform 0.2s ease, color 0.2s ease;
-}
-
-.post-actions button:hover {
-  transform: scale(1.2);
-  color: #e0aaff;
-}
-
-/* =====================================================
-   FLOATING ACTION BUTTON
-===================================================== */
-.new-post-btn {
-  position: fixed;
-  bottom: 32px;
-  right: 32px;
-  background: linear-gradient(135deg, #9d4edd, #e0aaff);
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 34px;
-  color: white;
-  box-shadow: 0 12px 40px rgba(157,78,221,0.8);
-  transition: transform 0.25s ease;
-}
-
-.new-post-btn:hover {
-  transform: scale(1.1) rotate(6deg);
-}
-
-.new-post-btn a {
-  color: white;
-  text-decoration: none;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 /* =====================================================
    RESPONSIVE
 ===================================================== */
-@media (min-width: 768px) {
+@media (max-width: 900px) {
   .grid {
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(6, 1fr);
   }
 
-  .card {
-    padding: 42px;
+  .card,
+  .card.featured,
+  .card.compact {
+    grid-column: span 6;
   }
 }
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .card,
+  .card.featured,
+  .card.compact {
+    grid-column: span 1;
+  }
+   }
