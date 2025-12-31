@@ -1,175 +1,313 @@
+/* =====================================================
+   DESIGN SYSTEM
+===================================================== */
+:root {
+  --bg-root: #05010d;
+  --bg-deep: #0b0218;
+  --bg-surface: rgba(20, 6, 40, 0.85);
+  --bg-card: rgba(40, 18, 80, 0.55);
+
+  --accent-main: #c77dff;
+  --accent-strong: #9d4edd;
+  --accent-glow: rgba(157, 78, 221, 0.6);
+
+  --text-main: #ffffff;
+  --text-muted: #b8a9d9;
+  --text-dim: #8a7fa8;
+
+  --border-soft: rgba(200, 150, 255, 0.25);
+  --border-strong: rgba(200, 150, 255, 0.45);
+
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 26px;
+
+  --shadow-soft: 0 15px 40px rgba(0,0,0,0.55);
+  --shadow-glow: 0 0 40px rgba(157,78,221,0.55);
+}
+
+/* =====================================================
+   RESET
+===================================================== */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
+/* =====================================================
+   BODY
+===================================================== */
 body {
-    background: #000814;
-    color: white;
-    font-family: 'Segoe UI', sans-serif;
-    min-height: 100vh;
+  background:
+    radial-gradient(circle at top, #1b0438, var(--bg-root) 60%),
+    linear-gradient(180deg, var(--bg-root), #000);
+  color: var(--text-main);
+  font-family: "Segoe UI", system-ui, sans-serif;
+  min-height: 100vh;
 }
 
+/* =====================================================
+   HEADER
+===================================================== */
 .header {
-    text-align: center;
-    padding: 20px;
-    background: #111;
-    border-bottom: 1px solid #333;
+  text-align: center;
+  padding: 28px 20px;
+  background: linear-gradient(
+    180deg,
+    rgba(40,18,80,0.7),
+    rgba(10,0,25,0.9)
+  );
+  border-bottom: 1px solid var(--border-soft);
+  backdrop-filter: blur(12px);
 }
 
 .logo {
-    font-size: 36px;
-    font-weight: 900;
-    background: linear-gradient(90deg, #9d4edd, #c77dff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  font-size: 38px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  background: linear-gradient(90deg, #e0aaff, #9d4edd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* =====================================================
+   NAV
+===================================================== */
+nav {
+  margin-top: 14px;
 }
 
 nav a {
-    color: #c77dff;
-    margin: 0 15px;
-    font-size: 18px;
-    text-decoration: none;
+  color: var(--accent-main);
+  margin: 0 18px;
+  font-size: 18px;
+  font-weight: 600;
+  text-decoration: none;
+  position: relative;
 }
 
+nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(90deg, #9d4edd, #e0aaff);
+  transition: width 0.3s ease;
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
+/* =====================================================
+   MAIN CONTENT
+===================================================== */
 .content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
 }
 
+/* =====================================================
+   TITLES
+===================================================== */
 .page-title {
-    font-size: 40px;
-    margin-bottom: 20px;
-    text-align: center;
-    background: linear-gradient(90deg, #9d4edd, #c77dff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  font-size: 44px;
+  margin-bottom: 16px;
+  text-align: center;
+  font-weight: 900;
+  background: linear-gradient(90deg, #e0aaff, #9d4edd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .subtitle {
-    font-size: 18px;
-    color: #aaa;
-    margin-bottom: 40px;
-    text-align: center;
+  font-size: 18px;
+  color: var(--text-muted);
+  margin-bottom: 48px;
+  text-align: center;
 }
 
+/* =====================================================
+   GRID / DASHBOARD
+===================================================== */
 .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px;
 }
 
+/* =====================================================
+   CARDS
+===================================================== */
 .card {
-    background: rgba(80,50,140,0.2);
-    padding: 25px;
-    border-radius: 16px;
-    text-align: center;
-    border: 1px solid rgba(200,150,255,0.3);
-    transition: 0.3s;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+  background: linear-gradient(
+    180deg,
+    var(--bg-card),
+    rgba(15,5,35,0.9)
+  );
+  padding: 32px;
+  border-radius: var(--radius-lg);
+  text-align: center;
+  border: 1px solid var(--border-soft);
+  transition: all 0.35s ease;
+  box-shadow: var(--shadow-soft);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top, rgba(157,78,221,0.25), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.card:hover::before {
+  opacity: 1;
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(157,78,221,0.3);
+  transform: translateY(-8px) scale(1.03);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-glow);
 }
 
 .card h2 {
-    font-size: 24px;
-    margin-bottom: 10px;
+  font-size: 26px;
+  margin-bottom: 12px;
 }
 
 .card p {
-    color: #ccc;
-    font-size: 16px;
+  color: var(--text-muted);
+  font-size: 16px;
 }
 
+/* =====================================================
+   FEED
+===================================================== */
 .feed-container {
-    max-width: 700px;
-    margin: 0 auto;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
 .post-card {
-    background: rgba(80,50,140,0.15);
-    padding: 20px;
-    border-radius: 18px;
-    margin-bottom: 25px;
-    border: 1px solid rgba(200,150,255,0.2);
+  background: linear-gradient(
+    180deg,
+    rgba(40,18,80,0.45),
+    rgba(10,0,30,0.85)
+  );
+  padding: 26px;
+  border-radius: var(--radius-lg);
+  margin-bottom: 30px;
+  border: 1px solid var(--border-soft);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.25s ease;
 }
 
+.post-card:hover {
+  transform: translateY(-4px);
+}
+
+/* =====================================================
+   POST HEADER
+===================================================== */
 .post-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
 }
 
 .avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: #c77dff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 20px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #9d4edd, #e0aaff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 20px;
+  box-shadow: 0 0 20px rgba(157,78,221,0.6);
 }
 
 .timestamp {
-    font-size: 14px;
-    color: #999;
+  font-size: 14px;
+  color: var(--text-dim);
 }
 
+/* =====================================================
+   POST ACTIONS
+===================================================== */
 .post-actions {
-    display: flex;
-    gap: 30px;
-    margin-top: 15px;
+  display: flex;
+  gap: 34px;
+  margin-top: 18px;
 }
 
 .post-actions button {
-    background: none;
-    border: none;
-    color: #c77dff;
-    font-size: 20px;
-    cursor: pointer;
+  background: none;
+  border: none;
+  color: var(--accent-main);
+  font-size: 22px;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
 }
 
+.post-actions button:hover {
+  transform: scale(1.2);
+  color: #e0aaff;
+}
+
+/* =====================================================
+   FLOATING ACTION BUTTON
+===================================================== */
 .new-post-btn {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background: linear-gradient(90deg, #9d4edd, #c77dff);
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
-    color: white;
-    box-shadow: 0 8px 30px rgba(157,78,221,0.6);
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  background: linear-gradient(135deg, #9d4edd, #e0aaff);
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  color: white;
+  box-shadow: 0 12px 40px rgba(157,78,221,0.8);
+  transition: transform 0.25s ease;
+}
+
+.new-post-btn:hover {
+  transform: scale(1.1) rotate(6deg);
 }
 
 .new-post-btn a {
-    color: white;
-    text-decoration: none;
-    display: block;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  color: white;
+  text-decoration: none;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+/* =====================================================
+   RESPONSIVE
+===================================================== */
 @media (min-width: 768px) {
-    .grid {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 30px;
-    }
-    .card {
-        padding: 40px;
-    }
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+
+  .card {
+    padding: 42px;
+  }
 }
