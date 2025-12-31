@@ -1,226 +1,244 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<div class="dashboard-wrapper">
+<div class="dashboard-wrapper">  
+    <header class="dashboard-header">  
+        <h1>Creator Dashboard</h1>  
+        <p>Your creator tools — organized for peak performance in 2026</p>  
+    </header>  
 
-    <header class="dashboard-header">
-        <h1>Creator Dashboard</h1>
-        <p>Your creator tools — organized for peak performance in 2026</p>
-    </header>
+    <div class="dashboard-grid">  
 
-    <div class="dashboard-grid">
+        <!-- VIDEO PLATFORMS -->  
+        <section class="platform-box">  
+            <h3>🎬 Video Platforms</h3>  
 
-        <!-- TikTok -->
-        <div class="platform-card">
-            <h2>🎵 TikTok</h2>
-            <p>Viral videos & trends</p>
-            <div class="platform-tools">
-                <button>Tool 1</button>
-                <button>Tool 2</button>
-                <button>Tool 3</button>
-                <button>Tool 4</button>
-                <button>Tool 5</button>
-                <button>Tool 6</button>
-                <button>Tool 7</button>
-            </div>
-        </div>
+            <a href="/platform/tiktok" class="platform-card">  
+                <span>🎵</span>  
+                <div>  
+                    <h2>TikTok</h2>  
+                    <p>Viral videos & trends</p>  
+                    <!-- YOUR REAL TOOLS HERE -->
+                </div>  
+            </a>  
 
-        <!-- YouTube -->
-        <div class="platform-card">
-            <h2>📺 YouTube</h2>
-            <p>Growth & monetization</p>
-            <div class="platform-tools">
-                <button>Tool 1</button>
-                <button>Tool 2</button>
-                <button>Tool 3</button>
-                <button>Tool 4</button>
-                <button>Tool 5</button>
-                <button>Tool 6</button>
-                <button>Tool 7</button>
-            </div>
-        </div>
+            <a href="/platform/youtube" class="platform-card">  
+                <span>📺</span>  
+                <div>  
+                    <h2>YouTube</h2>  
+                    <p>Growth & monetization</p>  
+                    <!-- YOUR REAL TOOLS HERE -->
+                </div>  
+            </a>  
 
-        <!-- Instagram -->
-        <div class="platform-card">
-            <h2>📸 Instagram</h2>
-            <p>Reels & aesthetics</p>
-            <div class="platform-tools">
-                <button>Tool 1</button>
-                <button>Tool 2</button>
-                <button>Tool 3</button>
-                <button>Tool 4</button>
-                <button>Tool 5</button>
-                <button>Tool 6</button>
-                <button>Tool 7</button>
-            </div>
-        </div>
+            <a href="/platform/instagram" class="platform-card">  
+                <span>📸</span>  
+                <div>  
+                    <h2>Instagram</h2>  
+                    <p>Reels & aesthetics</p>  
+                    <!-- YOUR REAL TOOLS HERE -->
+                </div>  
+            </a>  
 
-        <!-- Twitter / X -->
-        <div class="platform-card">
-            <h2>🐦 Twitter / X</h2>
-            <p>Threads & reach</p>
-            <div class="platform-tools">
-                <button>Tool 1</button>
-                <button>Tool 2</button>
-                <button>Tool 3</button>
-                <button>Tool 4</button>
-                <button>Tool 5</button>
-                <button>Tool 6</button>
-                <button>Tool 7</button>
-            </div>
-        </div>
+            <a href="/platform/snapchat" class="platform-card">  
+                <span>👻</span>  
+                <div>  
+                    <h2>Snapchat</h2>  
+                    <p>Stories & Spotlight</p>  
+                    <!-- YOUR REAL TOOLS HERE -->
+                </div>  
+            </a>  
 
-        <!-- Facebook -->
-        <div class="platform-card">
-            <h2>👥 Facebook</h2>
-            <p>Groups & engagement</p>
-            <div class="platform-tools">
-                <button>Tool 1</button>
-                <button>Tool 2</button>
-                <button>Tool 3</button>
-                <button>Tool 4</button>
-                <button>Tool 5</button>
-                <button>Tool 6</button>
-                <button>Tool 7</button>
-            </div>
-        </div>
+            <a href="/platform/twitch" class="platform-card">  
+                <span>🎮</span>  
+                <div>  
+                    <h2>Twitch</h2>  
+                    <p>Streaming growth</p>  
+                    <!-- YOUR REAL TOOLS HERE -->
+                </div>  
+            </a>  
+        </section>  
 
-        <!-- Snapchat -->
-        <div class="platform-card">
-            <h2>👻 Snapchat</h2>
-            <p>Stories & Spotlight</p>
-            <div class="platform-tools">
-                <button>Tool 1</button>
-                <button>Tool 2</button>
-                <button>Tool 3</button>
-                <button>Tool 4</button>
-                <button>Tool 5</button>
-                <button>Tool 6</button>
-                <button>Tool 7</button>
-            </div>
-        </div>
+        <!-- SOCIAL PLATFORMS -->  
+        <section class="platform-box">  
+            <h3>💬 Social Platforms</h3>  
 
-        <!-- Reddit -->
-        <div class="platform-card">
-            <h2>👽 Reddit</h2>
-            <p>Upvotes & discussions</p>
-            <div class="platform-tools">
-                <button>Tool 1</button>
-                <button>Tool 2</button>
-                <button>Tool 3</button>
-                <button>Tool 4</button>
-                <button>Tool 5</button>
-                <button>Tool 6</button>
-                <button>Tool 7</button>
-            </div>
-        </div>
+            <a href="/platform/twitter" class="platform-card">  
+                <span>🐦</span>  
+                <div>  
+                    <h2>Twitter / X</h2>  
+                    <p>Threads & reach</p>  
+                    <!-- YOUR REAL TOOLS HERE -->
+                </div>  
+            </a>  
 
-        <!-- Threads -->
-        <div class="platform-card">
-            <h2>🧵 Threads</h2>
-            <p>Conversation starters</p>
-            <div class="platform-tools">
-                <button>Tool 1</button>
-                <button>Tool 2</button>
-                <button>Tool 3</button>
-                <button>Tool 4</button>
-                <button>Tool 5</button>
-                <button>Tool 6</button>
-                <button>Tool 7</button>
-            </div>
-        </div>
+            <a href="/platform/facebook" class="platform-card">  
+                <span>👥</span>  
+                <div>  
+                    <h2>Facebook</h2>  
+                    <p>Groups & engagement</p>  
+                    <!-- YOUR REAL TOOLS HERE -->
+                </div>  
+            </a>  
 
-        <!-- LinkedIn -->
-        <div class="platform-card">
-            <h2>💼 LinkedIn</h2>
-            <p>Professional reach</p>
-            <div class="platform-tools">
-                <button>Tool 1</button>
-                <button>Tool 2</button>
-                <button>Tool 3</button>
-                <button>Tool 4</button>
-                <button>Tool 5</button>
-                <button>Tool 6</button>
-                <button>Tool 7</button>
-            </div>
-        </div>
+            <a href="/platform/reddit" class="platform-card">  
+                <span>👽</span>  
+                <div>  
+                    <h2>Reddit</h2>  
+                    <p>Upvotes & discussions</p>  
+                    <!-- YOUR REAL TOOLS HERE -->
+                </div>  
+            </a>  
 
-        <!-- Discord -->
-        <div class="platform-card">
-            <h2>💬 Discord</h2>
-            <p>Community building</p>
-            <div class="platform-tools">
-                <button>Tool 1</button>
-                <button>Tool 2</button>
-                <button>Tool 3</button>
-                <button>Tool 4</button>
-                <button>Tool 5</button>
-                <button>Tool 6</button>
-                <button>Tool 7</button>
-            </div>
-        </div>
+            <a href="/platform/threads" class="platform-card">  
+                <span>🧵</span>  
+                <div>  
+                    <h2>Threads</h2>  
+                    <p>Conversation starters</p>  
+                    <!-- YOUR REAL TOOLS HERE -->
+                </div>  
+            </a>  
 
-        <!-- Pinterest -->
-        <div class="platform-card">
-            <h2>📌 Pinterest</h2>
-            <p>Discovery & traffic</p>
-            <div class="platform-tools">
-                <button>Tool 1</button>
-                <button>Tool 2</button>
-                <button>Tool 3</button>
-                <button>Tool 4</button>
-                <button>Tool 5</button>
-                <button>Tool 6</button>
-                <button>Tool 7</button>
-            </div>
-        </div>
+            <a href="/platform/linkedin" class="platform-card">  
+                <span>💼</span>  
+                <div>  
+                    <h2>LinkedIn</h2>  
+                    <p>Professional reach</p>  
+                    <!-- YOUR REAL TOOLS HERE -->
+                </div>  
+            </a>  
 
-        <!-- OnlyFans -->
-        <div class="platform-card">
-            <h2>🔒 OnlyFans</h2>
-            <p>Creator monetization</p>
-            <div class="platform-tools">
-                <button>Tool 1</button>
-                <button>Tool 2</button>
-                <button>Tool 3</button>
-                <button>Tool 4</button>
-                <button>Tool 5</button>
-                <button>Tool 6</button>
-                <button>Tool 7</button>
-            </div>
-        </div>
+            <a href="/platform/discord" class="platform-card">  
+                <span>💬</span>  
+                <div>  
+                    <h2>Discord</h2>  
+                    <p>Community building</p>  
+                    <!-- YOUR REAL TOOLS HERE -->
+                </div>  
+            </a>  
+        </section>  
 
-        <!-- Monetization Hub -->
-        <div class="platform-card highlight">
-            <h2>💸 Monetization Hub</h2>
-            <p>Revenue & strategy</p>
-            <div class="platform-tools">
-                <button>Tool 1</button>
-                <button>Tool 2</button>
-                <button>Tool 3</button>
-                <button>Tool 4</button>
-                <button>Tool 5</button>
-                <button>Tool 6</button>
-                <button>Tool 7</button>
-            </div>
-        </div>
+        <!-- MONETIZATION -->  
+        <section class="platform-box">  
+            <h3>💰 Monetization & Discovery</h3>  
 
-        <!-- Community -->
-        <div class="platform-card">
-            <h2>🌐 Community</h2>
-            <p>Share creations, get feedback & connect</p>
-            <div class="platform-tools">
-                <button>Tool 1</button>
-                <button>Tool 2</button>
-                <button>Tool 3</button>
-                <button>Tool 4</button>
-                <button>Tool 5</button>
-                <button>Tool 6</button>
-                <button>Tool 7</button>
-            </div>
-        </div>
+            <a href="/platform/onlyfans" class="platform-card">  
+                <span>🔒</span>  
+                <div>  
+                    <h2>OnlyFans</h2>  
+                    <p>Creator monetization</p>  
+                    <!-- YOUR REAL TOOLS HERE -->
+                </div>  
+            </a>  
+
+            <a href="/platform/pinterest" class="platform-card">  
+                <span>📌</span>  
+                <div>  
+                    <h2>Pinterest</h2>  
+                    <p>Discovery & traffic</p>  
+                    <!-- YOUR REAL TOOLS HERE -->
+                </div>  
+            </a>  
+
+            <a href="/platform/monetization" class="platform-card highlight">  
+                <span>💸</span>  
+                <div>  
+                    <h2>Monetization Hub</h2>  
+                    <p>Revenue & strategy</p>  
+                    <!-- YOUR REAL TOOLS HERE -->
+                </div>  
+            </a>  
+        </section>  
 
     </div>
-</div>
+</div>  
+
+<style>  
+/* ---------- DASHBOARD LAYOUT ---------- */  
+.dashboard-wrapper {  
+    max-width: 1200px;  
+    margin: auto;  
+    padding: 40px 20px;  
+}  
+
+.dashboard-header {  
+    margin-bottom: 40px;  
+}  
+
+.dashboard-header h1 {  
+    font-size: 42px;  
+    font-weight: 700;  
+}  
+
+.dashboard-header p {  
+    color: #9aa0aa;  
+    margin-top: 8px;  
+}  
+
+/* ---------- GRID ---------- */  
+.dashboard-grid {  
+    display: grid;  
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));  
+    gap: 30px;  
+}  
+
+/* ---------- SECTION BOX ---------- */  
+.platform-box {  
+    background: rgba(20, 20, 30, 0.75);  
+    border-radius: 18px;  
+    padding: 24px;  
+    border: 1px solid rgba(199, 125, 255, 0.15);  
+    backdrop-filter: blur(12px);  
+}  
+
+.platform-box h3 {  
+    margin-bottom: 18px;  
+    color: #c77dff;  
+    font-size: 20px;  
+}  
+
+/* ---------- PLATFORM CARD ---------- */  
+.platform-card {  
+    display: flex;  
+    align-items: center;  
+    gap: 16px;  
+    background: rgba(255, 255, 255, 0.04);  
+    border-radius: 14px;  
+    padding: 14px 16px;  
+    margin-bottom: 12px;  
+    text-decoration: none;  
+    color: inherit;  
+    transition: all 0.25s ease;  
+    border: 1px solid transparent;  
+}  
+
+.platform-card span {  
+    font-size: 26px;  
+}  
+
+.platform-card h2 {  
+    font-size: 16px;  
+    margin: 0;  
+}  
+
+.platform-card p {  
+    font-size: 13px;  
+    color: #9aa0aa;  
+    margin: 2px 0 0;  
+}  
+
+/* ---------- HOVER EFFECT ---------- */  
+.platform-card:hover {  
+    transform: translateY(-2px);  
+    background: rgba(199, 125, 255, 0.08);  
+    border-color: rgba(199, 125, 255, 0.35);  
+    box-shadow: 0 0 20px rgba(199, 125, 255, 0.15);  
+}  
+
+/* ---------- HIGHLIGHT CARD ---------- */  
+.platform-card.highlight {  
+    background: linear-gradient(135deg, rgba(199,125,255,0.15), rgba(123,97,255,0.15));  
+}  
+</style>  
 
 {% endblock %}
