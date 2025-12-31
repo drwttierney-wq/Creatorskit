@@ -7,29 +7,27 @@
 
 <style>
 /* =====================================================
-   DESIGN SYSTEM (LIGHTER / CLEARER)
+   DESIGN TOKENS
 ===================================================== */
 :root {
-  --bg-root: #0b1020;
-  --bg-canvas: #11162a;
-  --bg-panel: #181f3a;
-  --bg-card: #1f2a52;
+  --bg-root: #05010d;
+  --bg-panel: rgba(20, 6, 40, 0.9);
+  --bg-glass: rgba(40, 18, 80, 0.55);
 
-  --border-soft: rgba(255,255,255,0.08);
-  --border-strong: rgba(199,125,255,0.45);
+  --border-soft: rgba(200,150,255,0.25);
+  --border-strong: rgba(200,150,255,0.45);
 
   --text-main: #ffffff;
-  --text-muted: #c7cbe6;
+  --text-muted: #b8a9d9;
 
   --accent-main: #9d4edd;
   --accent-soft: #c77dff;
 
-  --radius-md: 14px;
-  --radius-lg: 22px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
 
-  --shadow-soft: 0 15px 40px rgba(0,0,0,0.45);
-  --shadow-strong: 0 25px 70px rgba(0,0,0,0.6);
-  --shadow-glow: 0 0 35px rgba(157,78,221,0.55);
+  --shadow-soft: 0 20px 60px rgba(0,0,0,0.6);
+  --shadow-glow: 0 0 40px rgba(157,78,221,0.6);
 }
 
 /* =====================================================
@@ -50,7 +48,9 @@ a {
    BODY
 ===================================================== */
 body {
-  background: linear-gradient(180deg, #0f1430, var(--bg-root));
+  background:
+    radial-gradient(circle at top, #1b0438, var(--bg-root) 60%),
+    linear-gradient(180deg, var(--bg-root), #000);
   color: var(--text-main);
   font-family: "Segoe UI", system-ui, sans-serif;
   min-height: 100vh;
@@ -68,43 +68,59 @@ body {
   .sidebar {
     display: flex;
     flex-direction: column;
-    width: 300px;
+    width: 280px;
     padding: 36px 28px;
     background: linear-gradient(
       180deg,
-      #141a35,
-      #0d1226
+      rgba(40,18,80,0.85),
+      rgba(10,0,30,0.95)
     );
     border-right: 1px solid var(--border-soft);
-    box-shadow: var(--shadow-strong);
+    box-shadow: var(--shadow-soft);
   }
 
   .sidebar .logo {
     font-size: 32px;
     font-weight: 900;
     margin-bottom: 50px;
+    letter-spacing: -0.03em;
     background: linear-gradient(90deg, var(--accent-soft), var(--accent-main));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
   .sidebar nav a {
+    display: flex;
+    align-items: center;
     padding: 14px 18px;
     margin-bottom: 14px;
     border-radius: var(--radius-md);
     font-size: 18px;
     font-weight: 600;
     color: var(--text-muted);
-    background: transparent;
     transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
   }
 
-  .sidebar nav a:hover {
+  .sidebar nav a::before {
+    content: "";
+    position: absolute;
+    inset: 0;
     background: linear-gradient(
       90deg,
       rgba(157,78,221,0.25),
-      rgba(157,78,221,0.05)
+      transparent
     );
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .sidebar nav a:hover::before {
+    opacity: 1;
+  }
+
+  .sidebar nav a:hover {
     color: white;
     transform: translateX(6px);
     box-shadow: var(--shadow-glow);
@@ -112,28 +128,34 @@ body {
 }
 
 /* =====================================================
-   MAIN STRUCTURE
+   MAIN LAYOUT
 ===================================================== */
 .main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: var(--bg-canvas);
+  min-height: 100vh;
 }
 
 /* =====================================================
    MOBILE HEADER
 ===================================================== */
 header {
-  background: var(--bg-panel);
+  background: linear-gradient(
+    180deg,
+    rgba(40,18,80,0.9),
+    rgba(10,0,30,0.95)
+  );
   border-bottom: 1px solid var(--border-soft);
   padding: 18px;
   text-align: center;
+  backdrop-filter: blur(12px);
 }
 
 header .logo {
   font-size: 28px;
   font-weight: 900;
+  letter-spacing: -0.03em;
   background: linear-gradient(90deg, var(--accent-soft), var(--accent-main));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -146,29 +168,18 @@ header .logo {
 }
 
 /* =====================================================
-   CONTENT CANVAS (IMPORTANT CHANGE)
+   CONTENT
 ===================================================== */
 .content {
   flex: 1;
-  padding: 28px 20px 140px;
-  display: flex;
-  justify-content: center;
+  padding: 26px 20px;
+  padding-bottom: 120px;
 }
 
-.content > * {
-  width: 100%;
-  max-width: 1200px;
-}
-
-/* =====================================================
-   CONTENT BLOCK (ALL PAGES SIT IN THIS VISUALLY)
-===================================================== */
-.page-block {
-  background: var(--bg-panel);
-  border: 1px solid var(--border-soft);
-  border-radius: var(--radius-lg);
-  padding: 32px;
-  box-shadow: var(--shadow-soft);
+@media (min-width: 900px) {
+  .content {
+    padding: 48px;
+  }
 }
 
 /* =====================================================
@@ -179,13 +190,18 @@ header .logo {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 76px;
-  background: var(--bg-panel);
+  height: 74px;
+  background: linear-gradient(
+    180deg,
+    rgba(20,6,40,0.9),
+    rgba(10,0,30,0.98)
+  );
   border-top: 1px solid var(--border-soft);
   display: flex;
   justify-content: space-around;
   align-items: center;
   z-index: 100;
+  backdrop-filter: blur(12px);
 }
 
 .bottom-nav a {
@@ -196,7 +212,13 @@ header .logo {
 
 .bottom-nav a:hover {
   color: white;
-  transform: scale(1.25);
+  transform: scale(1.2);
+}
+
+@media (min-width: 900px) {
+  .bottom-nav {
+    display: none;
+  }
 }
 
 /* =====================================================
@@ -204,22 +226,33 @@ header .logo {
 ===================================================== */
 .fab {
   position: fixed;
-  bottom: 96px;
-  right: 24px;
-  width: 66px;
-  height: 66px;
+  bottom: 92px;
+  right: 22px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--accent-main), var(--accent-soft));
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 34px;
-  box-shadow: var(--shadow-glow);
+  box-shadow: 0 15px 50px rgba(157,78,221,0.9);
   z-index: 101;
+  transition: transform 0.25s ease;
+}
+
+.fab:hover {
+  transform: scale(1.1) rotate(8deg);
 }
 
 .fab a {
   color: white;
+}
+
+@media (min-width: 900px) {
+  .fab {
+    display: none;
+  }
 }
 </style>
 </head>
@@ -249,9 +282,7 @@ header .logo {
 {% endif %}
 
 <main class="content">
-  <div class="page-block">
-    {% block content %}{% endblock %}
-  </div>
+{% block content %}{% endblock %}
 </main>
 
 </div>
