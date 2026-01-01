@@ -1,5 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* =====================================================
-   DESIGN SYSTEM
+   DESIGN SYSTEM VARIABLES
 ===================================================== */
 :root {
   --bg-root: #0a0418;
@@ -36,28 +40,23 @@
 }
 
 /* =====================================================
-   BODY
+   BODY & NAV
 ===================================================== */
 body {
-  background:
-    radial-gradient(circle at top, #2a0a55, var(--bg-root) 65%),
-    linear-gradient(180deg, var(--bg-root), #05000c);
-  color: var(--text-main);
-  font-family: "Segoe UI", system-ui, sans-serif;
-  min-height: 100vh;
+    @apply font-sans text-gray-100 min-h-screen;
+    background:
+        radial-gradient(circle at top, #2a0a55, var(--bg-root) 65%),
+        linear-gradient(180deg, var(--bg-root), #05000c);
+    color: var(--text-main);
+    font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+nav {
+    @apply bg-gray-900/80 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50 shadow-lg;
 }
 
 /* =====================================================
-   CONTENT
-===================================================== */
-.content {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 50px 24px;
-}
-
-/* =====================================================
-   TITLES
+   PAGE TITLES & SUBTITLE
 ===================================================== */
 .page-title {
   font-size: 48px;
@@ -77,21 +76,7 @@ body {
 }
 
 /* =====================================================
-   SECTION BLOCKS
-===================================================== */
-.section {
-  margin-bottom: 70px;
-}
-
-.section-title {
-  font-size: 22px;
-  font-weight: 800;
-  margin-bottom: 22px;
-  color: #f1e9ff;
-}
-
-/* =====================================================
-   GRID SYSTEM (ASYMMETRICAL)
+   GRID SYSTEM
 ===================================================== */
 .grid {
   display: grid;
@@ -99,122 +84,180 @@ body {
   gap: 28px;
 }
 
+@media (max-width: 900px) {
+  .grid { grid-template-columns: repeat(6, 1fr); }
+  .card, .card.featured, .card.compact { grid-column: span 6; }
+}
+
+@media (max-width: 600px) {
+  .grid { grid-template-columns: repeat(1, 1fr); }
+  .card, .card.featured, .card.compact { grid-column: span 1; }
+}
+
 /* =====================================================
-   CARD BASE
+   PLATFORM CARDS (Tailwind + Design System)
+===================================================== */
+.platform-card {
+    @apply bg-gradient-to-br from-gray-900 to-gray-800
+           border-2 rounded-3xl p-10
+           shadow-2xl text-center transition-all duration-500
+           transform hover:scale-105;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-color: var(--border-soft);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-soft);
+    transition: all 0.35s ease;
+}
+
+.platform-card:hover {
+    box-shadow: var(--shadow-glow);
+    border-color: var(--border-strong);
+}
+
+.platform-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top, var(--accent-glow), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+
+.platform-card:hover::before {
+    opacity: 1;
+}
+
+.platform-card .icon { @apply text-8xl mb-6; }
+.platform-card h2 { @apply text-3xl font-bold tracking-tight; }
+.platform-card p { @apply text-xl mt-4 opacity-90; }
+
+/* Platform accents */
+.platform-accent-tiktok { border-color: #ff2ea0; }
+.platform-accent-youtube { border-color: #ff0000; }
+.platform-accent-instagram { border-color: #9d4edd; }
+.platform-accent-twitter { border-color: #1da1f2; }
+.platform-accent-facebook { border-color: #4267b2; }
+.platform-accent-snapchat { border-color: #fffc00; }
+.platform-accent-linkedin { border-color: #0a66c2; }
+.platform-accent-pinterest { border-color: #bd081c; }
+.platform-accent-threads { border-color: #e0e0e0; }
+.platform-accent-reddit { border-color: #ff4500; }
+.platform-accent-twitch { border-color: #9146ff; }
+.platform-accent-onlyfans { border-color: #ff79b0; }
+.platform-accent-discord { border-color: #5865f2; }
+.platform-accent-monetization { border-color: #00ff7f; }
+
+/* =====================================================
+   TOOL BUTTONS
+===================================================== */
+.tool-btn {
+    @apply w-full p-8 rounded-3xl mb-8 cursor-pointer relative overflow-hidden transition-all duration-300;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-soft);
+}
+
+.tool-btn:hover {
+    border-color: var(--accent-main);
+    box-shadow: 0 0 40px rgba(207,166,255,0.25);
+}
+
+/* =====================================================
+   TOOL RESULTS
+===================================================== */
+.result-box {
+    @apply mt-6 p-6 rounded-2xl whitespace-pre-wrap shadow-inner;
+    background: var(--bg-surface);
+    border: 1px solid rgba(207,166,255,0.3);
+    backdrop-blur: 4px;
+    color: var(--text-main);
+}
+
+/* =====================================================
+   BUTTONS
+===================================================== */
+.btn-primary {
+    @apply px-10 py-5 rounded-full text-2xl font-bold shadow-2xl transition-all duration-300;
+    background: linear-gradient(to right, #cfa6ff, #9d4edd);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(to right, #9d4edd, #cfa6ff);
+}
+
+.btn-secondary {
+    @apply px-8 py-4 rounded-full font-bold transition-all duration-300;
+    background: var(--bg-surface);
+    color: var(--text-main);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-deep);
+}
+
+/* =====================================================
+   GENERAL CARDS
 ===================================================== */
 .card {
-  grid-column: span 4;
-  background: linear-gradient(
-    180deg,
-    var(--bg-card),
-    rgba(20,8,45,0.95)
-  );
-  padding: 34px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-soft);
-  box-shadow: var(--shadow-soft);
-  transition: all 0.35s ease;
-  position: relative;
-  overflow: hidden;
+    background: var(--bg-card);
+    padding: 34px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-soft);
+    box-shadow: var(--shadow-soft);
+    transition: all 0.35s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at top, rgba(157,78,221,0.35), transparent 60%);
-  opacity: 0;
-  transition: opacity 0.35s ease;
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top, var(--accent-glow), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
 }
 
 .card:hover::before {
-  opacity: 1;
+    opacity: 1;
 }
 
 .card:hover {
-  transform: translateY(-10px);
-  border-color: var(--border-strong);
-  box-shadow: var(--shadow-glow);
+    transform: translateY(-10px);
+    border-color: var(--border-strong);
+    box-shadow: var(--shadow-glow);
 }
 
-.card h2 {
-  font-size: 24px;
-  margin-bottom: 10px;
-}
+.card h2 { font-size: 24px; margin-bottom: 10px; }
+.card p { color: var(--text-muted); font-size: 16px; }
 
-.card p {
-  color: var(--text-muted);
-  font-size: 16px;
-}
+.card.featured { grid-column: span 8; padding: 44px; }
+.card.featured h2 { font-size: 30px; }
 
-/* =====================================================
-   FEATURED CARDS (PRIMARY)
-===================================================== */
-.card.featured {
-  grid-column: span 8;
-  padding: 44px;
-}
-
-.card.featured h2 {
-  font-size: 30px;
-}
-
-/* =====================================================
-   COMPACT CARDS (SECONDARY)
-===================================================== */
-.card.compact {
-  grid-column: span 3;
-  padding: 26px;
-}
-
-.card.compact h2 {
-  font-size: 20px;
-}
+.card.compact { grid-column: span 3; padding: 26px; }
+.card.compact h2 { font-size: 20px; }
 
 /* =====================================================
    FEED
 ===================================================== */
-.feed-container {
-  max-width: 760px;
-  margin: 0 auto;
-}
-
+.feed-container { max-width: 760px; margin: 0 auto; }
 .post-card {
-  background: linear-gradient(
-    180deg,
-    rgba(60,32,120,0.5),
-    rgba(20,8,45,0.95)
-  );
-  padding: 28px;
-  border-radius: var(--radius-lg);
-  margin-bottom: 34px;
-  border: 1px solid var(--border-soft);
-  box-shadow: var(--shadow-soft);
+    background: linear-gradient(180deg, rgba(60,32,120,0.5), rgba(20,8,45,0.95));
+    padding: 28px;
+    border-radius: var(--radius-lg);
+    margin-bottom: 34px;
+    border: 1px solid var(--border-soft);
+    box-shadow: var(--shadow-soft);
 }
 
 /* =====================================================
-   RESPONSIVE
+   CONTENT CONTAINER
 ===================================================== */
-@media (max-width: 900px) {
-  .grid {
-    grid-template-columns: repeat(6, 1fr);
-  }
-
-  .card,
-  .card.featured,
-  .card.compact {
-    grid-column: span 6;
-  }
-}
-
-@media (max-width: 600px) {
-  .grid {
-    grid-template-columns: repeat(1, 1fr);
-  }
-
-  .card,
-  .card.featured,
-  .card.compact {
-    grid-column: span 1;
-  }
+.content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 50px 24px;
    }
