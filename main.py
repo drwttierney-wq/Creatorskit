@@ -192,3 +192,50 @@ def uploaded_file(filename):
 # ----------------------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+@app.route("/ai/tiktok/hook", methods=["POST"])
+@login_required
+def ai_tiktok_hook():
+    prompt = "Generate 5 viral TikTok hooks for a creator trying to grow fast."
+    return jsonify({"result": generate_ai(prompt)})
+
+
+@app.route("/ai/tiktok/script", methods=["POST"])
+@login_required
+def ai_tiktok_script():
+    prompt = "Create a high-retention TikTok video script with a strong hook, value, and CTA."
+    return jsonify({"result": generate_ai(prompt)})
+
+
+@app.route("/ai/tiktok/comments", methods=["POST"])
+@login_required
+def ai_tiktok_comments():
+    prompt = "Generate 10 engaging TikTok comments designed to boost reach."
+    return jsonify({"result": generate_ai(prompt)})
+
+
+@app.route("/ai/tiktok/analyze", methods=["POST"])
+@login_required
+def ai_tiktok_analyze():
+    prompt = "Analyze a TikTok account and give actionable growth improvements."
+    return jsonify({"result": generate_ai(prompt)})
+
+
+@app.route("/ai/tiktok/niche", methods=["POST"])
+@login_required
+def ai_tiktok_niche():
+    prompt = "Suggest profitable TikTok niches with high engagement in 2026."
+    return jsonify({"result": generate_ai(prompt)})
+
+
+@app.route("/ai/tiktok/trends", methods=["POST"])
+@login_required
+def ai_tiktok_trends():
+    prompt = "List current TikTok trends and content formats going viral right now."
+    return jsonify({"result": generate_ai(prompt)})
+
+
+@app.route("/ai/tiktok/30day", methods=["POST"])
+@login_required
+def ai_tiktok_30day():
+    prompt = "Create a 30-day TikTok content plan designed for fast growth."
+    return jsonify({"result": generate_ai(prompt, 500)})
