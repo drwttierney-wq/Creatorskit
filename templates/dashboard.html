@@ -122,41 +122,73 @@
           <p>Revenue & strategy</p>
         </div>
       </a>
+      <a href="/platform/community" class="platform-card highlight">
+        <span>🌐</span>
+        <div>
+          <h2>Community</h2>
+          <p>Share creations, get feedback & connect</p>
+        </div>
+      </a>
     </section>
 
   </div>
 </div>
 
 <style>
+/* DASHBOARD WRAPPER */
 .dashboard-wrapper {
   max-width: 1200px;
   margin: auto;
   padding: 30px 15px;
 }
 
+/* HEADER */
 .dashboard-header {
-  margin-bottom: 30px;
   text-align: center;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
 
 .dashboard-header h1 {
   font-size: 36px;
   font-weight: 700;
-  color: #fff; /* logo/text color */
+  color: #fff;
 }
 
 .dashboard-header p {
+  font-size: 14px;
   color: #9aa0aa;
   margin-top: 6px;
-  font-size: 14px;
 }
 
+.dashboard-header::before {
+  content: "🎛️";
+  font-size: 36px;
+}
+
+/* DASHBOARD GRID – FIXED 3 COLUMNS */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(3, 1fr); /* exactly 3 across */
+  gap: 32px;
 }
 
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 across for tablets */
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr; /* 1 per row for mobile */
+  }
+}
+
+/* PLATFORM BOX */
 .platform-box {
   background: rgba(20, 20, 30, 0.8);
   border-radius: 18px;
@@ -171,19 +203,22 @@
   font-size: 18px;
 }
 
-/* Platform card styles */
+/* PLATFORM CARDS */
 .platform-card {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 12px;
-  padding: 12px 14px;
-  margin-bottom: 10px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 18px;
+  padding: 14px;
+  margin-bottom: 12px;
   text-decoration: none;
   color: inherit;
-  transition: all 0.25s ease;
   border: 1px solid transparent;
+  transition: all 0.25s ease;
+  position: relative;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
 .platform-card span {
@@ -191,137 +226,50 @@
 }
 
 .platform-card h2 {
-  font-size: 15px;
+  font-size: 16px;
   margin: 0;
+  font-weight: 700;
 }
 
 .platform-card p {
   font-size: 12px;
   color: #9aa0aa;
-  margin: 2px 0 0;
+  opacity: .8;
+  margin-top: 2px;
 }
 
 .platform-card:hover {
-  transform: translateY(-1px);
-  background: rgba(199, 125, 255, 0.07);
-  border-color: rgba(199, 125, 255, 0.25);
-  box-shadow: 0 0 15px rgba(199, 125, 255, 0.12);
+  transform: translateY(-6px);
+  box-shadow: 0 22px 50px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.12);
+  border-color: rgba(199,125,255,0.45);
 }
 
 .platform-card.highlight {
   background: linear-gradient(135deg, rgba(199,125,255,0.12), rgba(123,97,255,0.12));
 }
 
-/* MOBILE ADJUSTMENTS */
-@media (max-width: 600px) {
-  .dashboard-header h1 {
-    font-size: 28px;
-  }
-
-  .dashboard-header p {
-    font-size: 12px;
-  }
-
-  .platform-card {
-    flex-direction: row;
-    gap: 10px;
-    padding: 10px 12px;
-  }
-/* ===============================
-   DASHBOARD CARD UPGRADE (CSS ONLY)
-   DOES NOT TOUCH YOUR TOOLS
-   =============================== */
-
-/* GRID */
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-    gap: 32px;
-}
-
-/* CARD – VISUAL ONLY */
-.platform-card {
-    position: relative;
-    background: linear-gradient(
-        145deg,
-        rgba(255,255,255,0.07),
-        rgba(255,255,255,0.02)
-    );
-    border-radius: 22px;
-    padding: 22px;
-    border: 1px solid rgba(255,255,255,0.1);
-    backdrop-filter: blur(16px);
-    box-shadow:
-        0 10px 30px rgba(0,0,0,0.35),
-        inset 0 1px 0 rgba(255,255,255,0.08);
-    transition: transform .25s ease, box-shadow .25s ease, border .25s ease;
-}
-
-/* HOVER */
-.platform-card:hover {
-    transform: translateY(-6px);
-    box-shadow:
-        0 22px 50px rgba(0,0,0,0.45),
-        inset 0 1px 0 rgba(255,255,255,0.12);
-    border-color: rgba(199,125,255,0.45);
-}
-
-/* HEADER AREA INSIDE CARD (NO STRUCTURE CHANGE) */
-.platform-card h2 {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 4px;
-}
-
-.platform-card p {
-    font-size: 13px;
-    opacity: .75;
-    margin-bottom: 14px;
-}
-
-/* TOOL AREA – UNTOUCHED, ONLY SPACING */
+/* TOOL BUTTONS – NO TOUCH */
 .platform-card .tools,
 .platform-card .platform-tools,
 .platform-card .card-tools {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-    gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 10px;
 }
 
-/* TOOL BUTTONS – STYLE ONLY */
 .platform-card button {
-    background: rgba(255,255,255,0.08);
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.12);
-    padding: 10px;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all .2s ease;
+  background: rgba(255,255,255,0.08);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all .2s ease;
 }
 
 .platform-card button:hover {
-    background: rgba(199,125,255,0.25);
-    transform: translateY(-2px);
-}
-
-/* CREATOR DASHBOARD LOGO AREA (OPTIONAL) */
-.dashboard-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-}
-
-.dashboard-header::before {
-    content: "🎛️";
-    font-size: 36px;
-                           }
-  .platform-card h2 {
-    font-size: 14px;
-  }
-
-  .platform-card p {
-    font-size: 11px;
-  }
+  background: rgba(199,125,255,0.25);
+  transform: translateY(-2px);
 }
 </style>
 
