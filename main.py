@@ -242,3 +242,37 @@ def ai_tiktok_30day():
 @app.route("/ai-test")
 def ai_test():
     return "AI route reached"
+import requests
+
+@app.route("/api/tiktok/hook", methods=["POST"])
+def tiktok_hook():
+    data = request.json
+    topic = data.get("topic", "viral TikTok growth")
+
+    prompt = f"Generate 5 viral TikTok hooks about {topic}"
+
+    headers = {
+        "Authorization": f"Bearer {os.getenv('OPENAI_API_KEY')}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "model": "gpt-4o-mini",
+        "messages": [
+            {"role": "system", "content": "You are a TikTok growth expert."},
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": 0.8
+    }
+
+    r = requests.post(
+        "https://api.openai.com/v1/chat/completions",
+        headers=headers,
+        json=payload,
+        timeout=30
+    )
+
+    result = r.json()
+    text = result["choices"][0]["message"]["content"]
+
+    return jsonify({"result": text})
