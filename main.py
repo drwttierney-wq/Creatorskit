@@ -239,3 +239,6 @@ def ai_tiktok_trends():
 def ai_tiktok_30day():
     prompt = "Create a 30-day TikTok content plan designed for fast growth."
     return jsonify({"result": generate_ai(prompt, 500)})
+@app.route("/ai-test")
+def ai_test():
+    return "AI route reached"
